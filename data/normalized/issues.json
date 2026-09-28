@@ -1,0 +1,1393 @@
+[
+  {
+    "number": 170,
+    "title": "jsonify doesn't accept a list",
+    "body": "I was suprised to find that jsonify(['hello', 'world']) will raise a TypeError even though \n\n> [\n>     \"hello\",\n>     \"world\"\n> ]\n\nis valid json.\n\nI think there should be a check to see if the first argument is a list instance and just do a json dump of the first argument if it is or something like that.\n",
+    "state": "closed",
+    "created_at": "2011-02-16T20:30:58+00:00",
+    "closed_at": "2011-02-16T20:33:09+00:00",
+    "author_login": "kwellman",
+    "url": "https://github.com/pallets/flask/issues/170",
+    "comments": [
+      {
+        "author_login": "mitsuhiko",
+        "body": "It's there for security reasons: http://flask.pocoo.org/docs/security/#json-security\n",
+        "created_at": "2011-02-16T20:33:09+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-779516"
+      },
+      {
+        "author_login": "adamjernst",
+        "body": "Can we have a way around this, perhaps a kwarg like `allow_lists`?\n\nI'm building a backend API with Flask and the data is public and unauthenticated, so I don't need to worry about security in this case. I respect Flask's decision to be secure by default, but it would be nice to have a way around it.\n",
+        "created_at": "2012-02-01T16:35:19+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-3761904"
+      },
+      {
+        "author_login": "chrispaolini",
+        "body": "I'm not sure what the point of the restriction is. Someone could easily just hit users/1 users/2 users/3 and such and get the JSON from each individually. All this does is stop jsonify from being useful for lists.\nIs there an alternative?\n",
+        "created_at": "2013-01-09T19:44:01+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-12062949"
+      },
+      {
+        "author_login": "apiguy",
+        "body": "Top level arrays are generally considered unsafe in json responses. Armin wrote an article about it once I believe: http://flask.pocoo.org/docs/security/#json-security\n\nIt's really not difficult to just do `jsonify(results=my_list)` and then in your javascript access it using `data.results` (or whatever your client language is)\n",
+        "created_at": "2013-01-09T20:59:46+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-12066325"
+      },
+      {
+        "author_login": "sigmavirus24",
+        "body": "If you're insistent on doing this, make your own response object, import the json module, dump your list as a string and fill the response object accordingly.\n",
+        "created_at": "2013-01-09T21:03:15+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-12066475"
+      },
+      {
+        "author_login": "chrispaolini",
+        "body": "I see. So just top-level have the issues. Fair enough. Thanks for the post apiguy\n",
+        "created_at": "2013-01-09T21:10:50+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-12066814"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Please continue discussion at #248 \n",
+        "created_at": "2014-10-19T22:37:57+00:00",
+        "url": "https://github.com/pallets/flask/issues/170#issuecomment-59668764"
+      }
+    ]
+  },
+  {
+    "number": 248,
+    "title": "Review JSON Security",
+    "body": "ECMAscript 5 changed behavior of Array literals. That part of the documentation is outdated by now. We should check what browsers are affected by this and update the docs accordingly.\n",
+    "state": "closed",
+    "created_at": "2011-06-20T07:57:08+00:00",
+    "closed_at": "2016-01-25T15:54:05+00:00",
+    "author_login": "mitsuhiko",
+    "url": "https://github.com/pallets/flask/issues/248",
+    "comments": [
+      {
+        "author_login": "duaneking",
+        "body": "Can you please explain what you mean by 'security issues'?\n\nhttps://github.com/mitsuhiko/flask-sqlalchemy/issues/229\n",
+        "created_at": "2014-10-19T22:57:13+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59669436"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "The linked issue is unrelated to this one.\n",
+        "created_at": "2014-10-19T23:03:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59669654"
+      },
+      {
+        "author_login": "duaneking",
+        "body": "The linked issue was closed due to a statement by you that reflected the idea that it was a security issue; Wouldnt this being about that same security issue mean they are related?\n\nAlso, with respect, you didn't answer my question as to what the security issue was.\n",
+        "created_at": "2014-10-19T23:08:11+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59669808"
+      },
+      {
+        "author_login": "davidism",
+        "body": "The security issue mentioned on that issue has nothing to do with JSON.  The issue he talks about there is exposing sensitive data unless attributes are whitelisted.  He makes the point that if attributes are whitelisted we might as well manually serialize the objects.  The conclusion is that an automatic solution is not appropriate for the extension, but should be implemented in the author's application.\n",
+        "created_at": "2014-10-20T04:26:31+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59682514"
+      },
+      {
+        "author_login": "duaneking",
+        "body": "Respectfully, The problem here is that @mitsuhiko has claimed on multiple topics that he is closing them due to security concerns, but has not in any of these cases clarified what that exact security concern is in that context.  The result is the current misunderstanding.\n",
+        "created_at": "2014-10-20T13:52:50+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59756877"
+      },
+      {
+        "author_login": "DasIch",
+        "body": "@duaneking The jsonify() feature you proposed, mirrors well known similar features in Ruby on Rails and Django in regard to automatic form generation and parsing of query arguments that caused severe security issues in a huge number of web applications, using these frameworks. Both projects have either deprecated or already removed such features. In general automatically generating anything users can interact with using a non-whitelist method is likely to cause information leakage, unauthorized writes and may provide a vector for DoS attacks.\n\nIf that isn't obvious to you (as you might have gathered it is, to several other people), you should educate yourself on basic security measures when writing software in general and web applications in particular. Reading about security issues (Django has excellent documentation on those) can also be very helpful.\n",
+        "created_at": "2014-10-20T14:27:23+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59765828"
+      },
+      {
+        "author_login": "duaneking",
+        "body": "Respectfully, Please stop making assumptions about what I do or do not know.  Its rude, and quit frankly as developers we should treat each other better than you just treated me.\n\nI'm fully aware of these issues in other frameworks; I'm also fully aware that other people making a mistake is on them, not on me in any way.  I'm not going to ever accept the false idea that what other people choose to do somehow can be blamed on me.  They have freedom of choice; Its up to them to be responsible for their own actions.\n\nThe jsonify issue as you pointed out, was separate from this; Why troll me?\n",
+        "created_at": "2014-10-20T18:23:46+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59815461"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "This bug has nothing to do with database models. In case you decide not to derail this issue for once, _please_ consider we already agreed that the current array-restriction in Flask's `jsonify` is unnecessary, which is exactly what you're advocating. Unless you have something new to say _on that topic_, spare the overly aggressive drive-by remarks.\n",
+        "created_at": "2014-10-20T18:47:35+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59819286"
+      },
+      {
+        "author_login": "nickretallack",
+        "body": "How about we make it easy to opt out of this feature, and check for it specifically?  My patch should do that.  Please review.\n",
+        "created_at": "2014-10-20T21:18:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59841427"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "The problem is that the reason this was prohibited doesn't really matter nowadays, as discussed in the linked issues.\n\n> While that may be possible, if you have to defend the API with \"it can be worked around\" you have unquestionably failed at its design.\n\nSo if we provide such an option where the default is already to disable the protection, we might as well remove that mechanism in its entirety, as it is a trivial one and isn't useful to a majority of Flask's userbase.\n",
+        "created_at": "2014-10-20T21:25:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59842435"
+      },
+      {
+        "author_login": "nickretallack",
+        "body": "The default in my patch is to enable the protection.\n\n[The exploit affects IE 6, 7, and 8](http://www.symantec.com/security_response/vulnerability.jsp?bid=59734) because [they use ECMAScript 3](http://ejohn.org/blog/versions-of-javascript/).\n\nI wish people didn't use IE8, but some people still do.\n",
+        "created_at": "2014-10-20T21:55:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59846349"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "There haven't been updates for these browsers fixing the hole?!\n",
+        "created_at": "2014-10-20T21:56:46+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59846496"
+      },
+      {
+        "author_login": "DasIch",
+        "body": "> There haven't been updates for these browsers fixing the hole?!\n> \"Fixing\" this means breaking backwards compatibility.\n\nI still have to target IE 7 running on the remaining Windows XP machines at work, I very much doubt that I'm the only one. I'm -1 on changing the default behavior, given that IE 7 is apparently affected. =\n",
+        "created_at": "2014-10-20T22:19:32+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59849348"
+      },
+      {
+        "author_login": "duaneking",
+        "body": "I agree with @DasIch , I do not feel that supporting an insecure, old, and not updated browser improves security in any way as it only allows such browsers to propagate and harm others.\n\n@nickretallack Would a back-end that uses this browser dependent code also need to mirror the same browser dependent interface on the client side, and use a custom client specific to that old version of IE?\n",
+        "created_at": "2014-10-20T23:00:39+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59853999"
+      },
+      {
+        "author_login": "nickretallack",
+        "body": "@duaneking what?  I think you are confused.\n\nThere is nothing browser-dependent here.  This \"security feature\" is only designed to warn web app developers that, if your users are running old IE, attack sites can read JSON responses that they shouldn't be able to read.  If you don't care about old IE users leaking data, possibly because your site explicitly disallows IE8 entirely, you can disable it.\n\nThe purpose of my patch is to make this protection more explicit and understandable, and not prevent other useful things.\n",
+        "created_at": "2014-10-21T01:37:07+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59866946"
+      },
+      {
+        "author_login": "DasIch",
+        "body": "> I agree with @DasIch , I do not feel that supporting an insecure, old, and not updated browser improves security in any way as it only allows such browsers to propagate and harm others.\n\nThis is _not_ at all what I said. I'm of the opinion that we should _not_ change the default behavior of _Flask_ from what it is right now. So we should continue to raise an exception, if a list is passed to jsonify().\n\nThe fact that IE7 is outdated alone, may be sufficient reason for a developer to stop ensuring that a website looks as intended or is even usable in IE7. It's not a sufficient reason to not ensure that these users remain safe. Flask users can always override this decision but we should go with the conservative option for the framework itself.\n",
+        "created_at": "2014-10-21T14:00:34+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59931400"
+      },
+      {
+        "author_login": "danielchatfield",
+        "body": "Just to reiterate what I said before (I cited a github dev's (formerly Microsoft) article on it), every browser affected by this (IE 5 and below, FF2 etc.)  also has unpatched RCE bugs.\n\nIE 7 is not affected by this.\n",
+        "created_at": "2014-10-21T14:20:11+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59934624"
+      },
+      {
+        "author_login": "danielchatfield",
+        "body": "Source: http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/\n",
+        "created_at": "2014-10-21T14:21:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59934857"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "@danielchatfield That is directly contradictory with what @nickretallack said.\n",
+        "created_at": "2014-10-21T14:53:38+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59940210"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "In this new situation, where it is at least _not clear_ whether this is a security issue, i suggest we merge #1209 (with the exact behavior as it stands) for 1.0.\n",
+        "created_at": "2014-10-21T15:42:36+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59948574"
+      },
+      {
+        "author_login": "danielchatfield",
+        "body": "@untitaker Those browsers have been patched though, and if a user is running a pre-patch version (disabled windows update) then they also won't have several RCE fixes.\n",
+        "created_at": "2014-10-21T15:55:51+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59950891"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Ah i see.\n",
+        "created_at": "2014-10-21T16:16:37+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59954300"
+      },
+      {
+        "author_login": "nickretallack",
+        "body": "Yeahs, sorry for sounding so definitive. I am not really sure if the exploit is possible in IE 6,7,8. If it isn't, feel free to ditch this feature. \n",
+        "created_at": "2014-10-21T17:00:11+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59960739"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "So if i understood that correctly, IE versions 6, 7, 8 are vulnerable unless they're patched. @danielchatfield argues there are far worse security issues in the unpatched versions, so this one shouldn't matter.\n\nI am still not sure about this. I think we should use the linked PR as-is, and update the security docs with the current status on vulnerable browser versions, so the user can decide if they want to take that risk.\n",
+        "created_at": "2014-10-21T17:06:39+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59961709"
+      },
+      {
+        "author_login": "nickretallack",
+        "body": "Now that I think about it, this is really another case where CSRF protection could be used.  The only time you'd want to load JSON data in a browser is in an XHR, and XHRs can easily set the X-CSRFToken header.  Also, the only time you'd leak private information is if you're using cookies.  So one way to implement the same security measure would be:\n\nIf all of these apply:\n- The request contains a session cookie\n- The request method is GET (or any other method, really)\n- The response type is application/json\n\nThen:\n- Ensure the X-CSRFToken header is set correctly\n\nAnyway, I'm curious to see if people can reproduce the exploits in any browsers than anyone still uses.  Anyone have old IE?\n\nI guess the point of the existing implementation was to ensure the output is always an object because anything beginning with `{` fails to parse as javascript, since it is interpreted as a block instead of an object.  In light of this, perhaps I should change the implementation to ensure the response starts with `{` instead of preventing it from starting with `[`.  But that may not be necessary if there's no way to hijack a string or integer.\n",
+        "created_at": "2014-10-21T18:31:21+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-59975103"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Sorry for responding so late:\n\n> But that may not be necessary if there's no way to hijack a string or integer.\n\nThere shouldn't be... I think the issue is specific to arrays.\n",
+        "created_at": "2015-01-25T21:00:23+00:00",
+        "url": "https://github.com/pallets/flask/issues/248#issuecomment-71393277"
+      }
+    ]
+  },
+  {
+    "number": 382,
+    "title": "Set TRAP_BAD_REQUEST_ERRORS to True as the default when debugging is enabled",
+    "body": "When debugging an application, it's surprising to get a simple \"400 Bad Request\" when accessing a form parameter that doesn't exist instead of a full traceback. I always forget that I also need to set TRAP_BAD_REQUEST_ERRORS.\n\nIs there a reason why this isn't set by default when debugging is enabled?\n",
+    "state": "closed",
+    "created_at": "2012-01-17T15:01:37+00:00",
+    "closed_at": "2017-05-30T02:53:19+00:00",
+    "author_login": "catlee",
+    "url": "https://github.com/pallets/flask/issues/382",
+    "comments": [
+      {
+        "author_login": "mitsuhiko",
+        "body": "Well. Because it breaks APIs. If you respond with Bad Request and you suddenly get an internal server error that's unfortunate :-)\n",
+        "created_at": "2012-01-17T15:27:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-3529465"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "That being said, i am open to changing it.\n",
+        "created_at": "2012-01-17T15:27:42+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-3529472"
+      },
+      {
+        "author_login": "catlee",
+        "body": "Ah, I thought that the trapped version also responded with a 400 error code since the title is then 'BadRequestKeyError: 400: Bad Request'.\n\nCan the status code be 400 and still present the debugging information?\n",
+        "created_at": "2012-01-17T15:57:14+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-3530018"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "Currently not because what we do is just to raise the error unchanged to the error handler chain. However I think you have a good point in that it's more user friendly and since you can still force disable it it might be not all that bad. I will think about it.\n",
+        "created_at": "2012-01-17T18:21:42+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-3532795"
+      },
+      {
+        "author_login": "Tjorriemorrie",
+        "body": "@mitsuhiko  Please think positively about it; it just wasted hours of my life :(\n",
+        "created_at": "2015-07-20T10:28:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-122842356"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Tenatively assigned to 1.0 milestone as that's the logical time to make a decision around changing this API.\n",
+        "created_at": "2016-06-03T22:24:36+00:00",
+        "url": "https://github.com/pallets/flask/issues/382#issuecomment-223709156"
+      }
+    ]
+  },
+  {
+    "number": 1135,
+    "title": "Deprecate flask.ext and create migration tool to flask_*",
+    "body": "",
+    "state": "closed",
+    "created_at": "2014-07-27T11:33:29+00:00",
+    "closed_at": "2016-04-04T18:39:21+00:00",
+    "author_login": "DasIch",
+    "url": "https://github.com/pallets/flask/issues/1135",
+    "comments": [
+      {
+        "author_login": "untitaker",
+        "body": "A migration tool could be a simple lib2to3-based, but i am not sure if such a thing is necessary. This case seems to be an easy enough task for simple search-and-replace or regexes.\n",
+        "created_at": "2014-10-19T18:24:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-59659252"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Some introductory information for new contributors:\n- Flask used to have `flaskext` as a namespace for extensions, so they were importable as `flaskext.foo`. This didn't work well, so the new form `flask_foo` was introduced. `flask.ext.foo` is a compatibility layer that will try to import both variants. See http://flask.pocoo.org/docs/0.10/extensions/\n- `flask.ext.foo` is hard to maintain, and since now all extensions have switched to the new package naming scheme, it is no longer worth it. We want to deprecate it for 1.0, so we need some sort of tool which can help users to rewrite all their old imports in their apps.\n- One could write a Python script similar to [this beast](https://github.com/mitsuhiko/werkzeug/blob/master/werkzeug-import-rewrite.py). This will get the job done, but as its docstring says, it's a terrible hack.\n- lib2to3 proved useful for writing larger migration tools, but it's nontrivial to use it.\n  - https://github.com/mitsuhiko/python-modernize/ is one based on it, and it seems to me that's the easiest project one could rip off from.\n  - I wasn't able to find complete tutorials that are useful for this. Most seem to be focused on porting to Python 3, which would imply running the default 2to3 fixers on the user's codebase (which we definetly don't want)\n  - One will have to read the sourcecode of 2to3 and lib2to3 to understand, i think. This is doable by entering `libraryname hg.python.org` into Google, where the libraryname is either 2to3 or lib2to3.\n  - The current state for doing sourcecode manipulation in Python sucks, and i'd like to see a library which wraps lib2to3 and provides a more concise API.\n",
+        "created_at": "2014-11-05T18:54:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-61860862"
+      },
+      {
+        "author_login": "keyan",
+        "body": "I'd like to try to tackle this. Just to get some clarification, the proposed migration tool would essentially search old sourcecode and replace instances of `import flask.ext.foo` with `import flask_foo`, am I understanding this correctly?\n",
+        "created_at": "2015-02-03T20:57:01+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72733019"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "Yes. It would have to cover these imports (unless I missed anything):\n\n```\nfrom flask.ext import foo\nfrom flask.ext.foo import <anything>\nimport flask.ext.foo[.anything]\n```\n",
+        "created_at": "2015-02-03T20:58:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72733238"
+      },
+      {
+        "author_login": "keyan",
+        "body": "And the aforementioned imports would be replaced with what?\n",
+        "created_at": "2015-02-03T21:02:38+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72733976"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "flask.ext.foo => flask_foo \n",
+        "created_at": "2015-02-03T21:04:32+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72734301"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Exactly what ThiefMaster said. Thanks for giving this a try!\n\n> And the aforementioned imports would be replaced with what?\n- `from flask.ext import foo` => `import flask_foo as foo`\n- `from flask.ext.foo import bam` => `from flask_foo import bam`\n- `import flask.ext.foo` => We'd have to rewrite any reference to `flask.ext.foo` in the code further below. If that's too hard, just skip those and show a warning.\n",
+        "created_at": "2015-02-03T21:04:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72734304"
+      },
+      {
+        "author_login": "davidism",
+        "body": "If you can actually evaluate the import, you could try to figure out the actual package name, rather than guessing that it's `flask_<name>`.  But that might be overkill over just printing \"make sure we got it right\" at the end.\n",
+        "created_at": "2015-02-03T21:19:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72737006"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "True, but then you'd be dependent on whether the migration script is running in the correct virtualenv, and things like that. Also I don't think anybody actually uses `flaskext` extensions anymore.\n",
+        "created_at": "2015-02-03T21:21:54+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-72737436"
+      },
+      {
+        "author_login": "lepture",
+        "body": "Let's correct every answer on http://stackoverflow.com/search?q=flask.ext, and encourage users to use `flask_foo` instead of `flask.ext.foo`.\n\nThere are many Flask extentions whose documentation contains `from flask.ext.foo import bar`. We should encourage the developers to change the documentation. For example: https://pythonhosted.org/Flask-Testing/\n",
+        "created_at": "2015-03-11T03:39:38+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78199923"
+      },
+      {
+        "author_login": "keyan",
+        "body": "@lepture that's certainly ambitious, I think it would be nice to resolve #1367 and #1366 before doing something like that. The current documentation still suggests using the `.ext` format. It will be easier to encourage a transition once the docs are fixed and use of the migration tool is fully supported and documented.\n\nThat said, I've fixed it a couple times when I happen to be using extensions and notice they had the old format in their examples.\n",
+        "created_at": "2015-03-11T03:48:07+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78200585"
+      },
+      {
+        "author_login": "lepture",
+        "body": "@keyanp in the meanwhile, we should notify Flask extention developers. Their documentations would also confuse users.\n",
+        "created_at": "2015-03-11T03:50:38+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78200789"
+      },
+      {
+        "author_login": "keyan",
+        "body": "@lepture sure, we can certainly try to let some developers know, alerting **all** extension developers is probably unrealistic.\n",
+        "created_at": "2015-03-11T03:53:43+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78201046"
+      },
+      {
+        "author_login": "lepture",
+        "body": "@keyanp that's what I am doing. I will do a search on [these projects](https://github.com/pocoo/metaflask/tree/master/projects), find out who should be notified.\n",
+        "created_at": "2015-03-11T03:58:11+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78201384"
+      },
+      {
+        "author_login": "keyan",
+        "body": "Figured I would at least change pocoo documentation regarding it.\n",
+        "created_at": "2015-03-11T04:11:37+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-78202280"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "@lepture thanks for notifying extension authors!\n",
+        "created_at": "2015-03-19T13:22:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-83561836"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "#1484 made the deprecation explicit in the docs and added runtime warnings if you try to import `flask.ext.*`. \n\nThe migration script is here: https://github.com/pocoo/flask-ext-migrate\n#1765 tracks making sure the migration script is linked from the docs.\n\nFor anyone coming here researching how to migrate their Flask project, the migration script is convenient but not a necessity. I've migrated multiple Flask projects to the new format using a simple find-and-replace for `flask.ext.` to `flask_`.\n\nClosing.\n",
+        "created_at": "2016-04-04T18:13:58+00:00",
+        "url": "https://github.com/pallets/flask/issues/1135#issuecomment-205427792"
+      }
+    ]
+  },
+  {
+    "number": 1348,
+    "title": "sessions not saved when streaming",
+    "body": "When streaming, changes to the session object at the start of the request \r\nprocessing are never saved at all, the moment template rendering starts, a new \r\nsession object is created which is then saved.\r\n\r\nThe statement on IRC was first that this is due to the fact that sessions (by default) are stored client side, and can not change anymore after the headers are send.\r\nThis is only true for sessions that are stored client side, if the sessions are server side it should be possible to change (and save) them during the whole request/response.\r\nThe real problem here seems to be that a new session is created when the stream starts.\r\n\r\nWe used the following example to stream contents: http://flask.pocoo.org/docs/0.10/patterns/streaming/\r\n\r\nFor now a workaround is to explicitly save the session after modifying, before rendering the template / starting the stream.\r\n\r\nExpected output is always the same, one time session open and one time session save.\r\nIn the stream example the output is different; 2 sessions are opend, the first one is the one that changes, but the second one (this is opened when the stream starts) is the only one that is saved.\r\n",
+    "state": "closed",
+    "created_at": "2015-02-08T19:03:16+00:00",
+    "closed_at": "2017-06-03T19:26:15+00:00",
+    "author_login": "ghost",
+    "url": "https://github.com/pallets/flask/issues/1348",
+    "comments": [
+      {
+        "author_login": "ghost",
+        "body": "```python\r\nfrom flask import Flask, Response, stream_with_context, session\r\nfrom flask.sessions import SessionMixin, SessionInterface\r\nfrom werkzeug.datastructures import CallbackDict\r\n\r\nclass Session(CallbackDict, SessionMixin):\r\n    modified = True\r\n\r\nclass TestSessionInterface(SessionInterface):\r\n    def open_session(self, *args, **kwargs):\r\n        print(\"OPEN SESSION CALLED\")\r\n        return Session()\r\n\r\n    def save_session(self, *args, **kwargs):\r\n        print(\"SAVE SESSION CALLED\")\r\n\r\napp = Flask(__name__)\r\napp.session_interface = TestSessionInterface()\r\n\r\n@app.route('/return')\r\ndef returndata():\r\n    return \"SDFSDF\"\r\n\r\n@app.route('/stream')\r\ndef stream():\r\n    def generate():\r\n        yield \"resp\"\r\n    return Response(stream_with_context(generate()))\r\n\r\nif __name__ == '__main__':\r\n    app.run()\r\n```",
+        "created_at": "2015-02-08T19:04:24+00:00",
+        "url": "https://github.com/pallets/flask/issues/1348#issuecomment-73425631"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Shorter example:\r\n\r\n~~~python\r\nfrom flask import Flask, Response, stream_with_context, session\r\n\r\napp = Flask(__name__)\r\napp.secret_key = 'dev'\r\n\r\n@app.route('/')\r\ndef index():\r\n    session['test'] = 'flask'\r\n\r\n    @stream_with_context\r\n    def gen():\r\n        yield session['test']\r\n\r\n    return Response(gen())\r\n~~~\r\n\r\nAccessing `session['test']` inside the generator raises a `KeyError` because a new session based on the initial request was opened by `stream_with_context`.",
+        "created_at": "2017-06-02T17:54:16+00:00",
+        "url": "https://github.com/pallets/flask/issues/1348#issuecomment-305865261"
+      },
+      {
+        "author_login": "davidism",
+        "body": "[These lines](https://github.com/pallets/flask/blob/0.12.2/flask/ctx.py#L332-L334) should only happen if the request is not already pushed. If `request.session` is set, it should be kept.",
+        "created_at": "2017-06-02T18:03:26+00:00",
+        "url": "https://github.com/pallets/flask/issues/1348#issuecomment-305867640"
+      }
+    ]
+  },
+  {
+    "number": 1421,
+    "title": "`request.json` deprecation discussion",
+    "body": "cont https://github.com/mitsuhiko/flask/pull/1416#issuecomment-90027039\n",
+    "state": "closed",
+    "created_at": "2015-04-06T11:51:02+00:00",
+    "closed_at": "2017-06-26T16:47:53+00:00",
+    "author_login": "untitaker",
+    "url": "https://github.com/pallets/flask/issues/1421",
+    "comments": [
+      {
+        "author_login": "untitaker",
+        "body": "cc @adambyrtek @ThiefMaster \n",
+        "created_at": "2015-04-06T11:52:17+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90027196"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "I'd keep `request.json` as a property. Not having to use `json_data = request.get_json()` in every view function that expects JSON is a plus.\n\nHowever, maybe it's worth changing its behavior to raise `BadRequest` when using it with a non-json payload?\n",
+        "created_at": "2015-04-06T11:53:07+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90027387"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Keep in mind that `get_data` etc still have an internal cache you can use (and AFAIK it's enabled by default).\n",
+        "created_at": "2015-04-06T11:53:14+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90027411"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "> However, maybe it's worth changing its behavior to raise BadRequest when using it with a non-json payload?\n\nIt already does that.\n",
+        "created_at": "2015-04-06T11:53:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90027493"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "Nope. Currently it only fails if the headers indicate JSON but the payload isn't JSON.\n\n```\n    if not (force or self.is_json):\n        return None\n```\n\nhttps://github.com/mitsuhiko/flask/blob/master/flask/wrappers.py#L142\n",
+        "created_at": "2015-04-06T11:54:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90027655"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "I see, I thought about non-JSON data under a JSON mimetype.\n",
+        "created_at": "2015-04-06T11:55:57+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90028169"
+      },
+      {
+        "author_login": "adambyrtek",
+        "body": "I'll try to summarise the arguments for keeping the `json` property:\n- Keeps backward compatibility. Otherwise everybody would have to replace `json` with `get_json()` in existing code for no obvious benefit, or simply ignore warnings.\n- More concise and readable for the common use cases (compare `request.json['foo']` with `request.get_json()['foo']`).\n- Consistent with `request.form` and `request.data` (both have properties in addition to getters).\n- The default behaviour for both `json` and `get_json()` is to cache the data, so there is no real reason to encourage calling it only once.\n- Advanced users who need more control can still use `get_data()` and `get_json()` directly.\n\nThere could be a way to make the errors more helpful when mixing both `json` and `data` in a single view function (which is the only rationale for this deprecation that I've heard so far).\n",
+        "created_at": "2015-04-06T17:24:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-90162405"
+      },
+      {
+        "author_login": "adambyrtek",
+        "body": "@untitaker Would be good to have @mitsuhiko take a look at this one as well. Deprecating APIs just before 1.0 should be carefully considered.\n",
+        "created_at": "2015-04-19T17:59:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-94301555"
+      },
+      {
+        "author_login": "adambyrtek",
+        "body": "Could we have a discussion about this issue? I should have some time for contributing if there's a consensus on this.\n",
+        "created_at": "2015-09-28T20:29:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-143865134"
+      },
+      {
+        "author_login": "sprin",
+        "body": "+1 to keep `request.json` property.\n\nI am not a user of this myself, instead assigning `request.get_json()` to a local variable. However, it does seem very likely to force many app developers to do lot of refactoring work for a benefit very few will see or appreciate.\n",
+        "created_at": "2015-10-05T04:03:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-145425036"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "EDIT: After reading the below comments, my curiosity got me looking into this a bunch more, and now it makes sense to me why some folks think it should get deprecated.\r\n",
+        "created_at": "2015-11-26T22:08:09+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-159998651"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "I'm really not very happy with `request.json` as a property.  It's causes errors and bugs, and it's too easy to trigger by accident.  However I'm happy keeping it as a forever deprecation with a very noisy warning that and a flag to completely disable it.\n",
+        "created_at": "2015-11-26T22:09:59+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-159998763"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "> It's causes errors and bugs, and it's too easy to trigger by accident.\n\nAfraid I'm not aware of these bad side effects... I'm sure they exist, but I haven't stumbled across them in my own projects. \n\nMind clarifying or linking to a few examples? \n",
+        "created_at": "2015-11-26T22:14:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-159999070"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "Accessing `.json` drains the input stream which is problematic if people want to use specific processing for that data.  While the same is true for `.files` and `.form` they have their own internal support systems for hooking and are so common that it does not really matter.  `.json` however is highly problematic because untrusted incoming JSON data is questionable due to its nested nature.\n\nHonestly, larger projects should never really accept JSON data verbatim like this but with a validating parser which however is largely out of the scope for Flask.  At Fireteam we used to parse JSON data with a stream processor and for that it's very important that accidentally touching a property does not entirely bypass this.\n",
+        "created_at": "2015-11-26T22:19:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-159999415"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "That makes sense, thanks!\n",
+        "created_at": "2015-11-26T22:25:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-159999779"
+      },
+      {
+        "author_login": "davidism",
+        "body": "@mitsuhiko Could you give an example of nested JSON that would be questionable?  It's not obvious how using unvalidated JSON is any more dangerous than using unvalidated form data.\n\nIf a project needs to do something different, they can already use a different deserializer, a different request object, or just make sure not to access the property, along with other properties with this behavior.  I think it is preferable to keep the convenience and consistency of `.json` and call out the fact that some properties drain the input.\n",
+        "created_at": "2015-11-27T04:40:27+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-160041846"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "Basic example: `json.loads('[' * 800 + ']' * 800)`\n",
+        "created_at": "2015-11-27T09:39:21+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-160094431"
+      },
+      {
+        "author_login": "davidism",
+        "body": "It seems like you'd want to remove JSON handling altogether, not just deprecate `.json`, since both the property and the method drain input and are open to malicious input by default.  Since you say handling this is out of scope though, there's two options: remove it completely, or leave it as is and document the use and security implications.  Only deprecating the property doesn't seem effective, just inconsistent.\n",
+        "created_at": "2015-11-27T17:25:17+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-160179535"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "If  someone post `'[' * 8000 + ']' * 8000`, what can we do?\n\n```\nif use `request.json`:\n    it will cost some CPU time, and raise a RuntimeError\n    the client will receive a 500 response\nif use `request.get_json()`:\n    the result is the same as use request.json\n    what can prevent me from touching the bad json data?\n```\n\nSo, Easier to Ask Forgiveness than Permission\n\n```\ntry:\n    data = request.json\nexcept:\n    abort(400, 'bad json data')\n```\n\nOr, let flask take care of the bad json data, catch RuntimeError and abort(400), and add wraning on documents.\n",
+        "created_at": "2016-02-03T15:55:35+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-179307688"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "first of all, bare `except` is bad. Then, the whole point of not using a \"normal\" json parser would be that you do not end up using a crapton of memory in the first place. Sending many requests with malicious json payload may easily overload your server, even if you abort when parsing eventually fails\n",
+        "created_at": "2016-02-03T15:59:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-179310519"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "Is there any security json parser?\n",
+        "created_at": "2016-02-03T16:03:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-179313419"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "[ijson](https://github.com/isagalaev/ijson) seems like an option\n",
+        "created_at": "2016-02-03T16:04:22+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-179314354"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "So use a security json parser is the key to solve the problem, yes or no?\n",
+        "created_at": "2016-02-03T16:11:48+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-179317671"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "As far as I understand, reading from the response body after accessing `request.json` is not a common pitfall, but if it does happen, it's ugly. So Flask needs to prevent this situation in some way, however, many people argue it's not worth the API change. How about preventing direct access to the stream (or to formdata) after JSON has been accessed? E.g.:\n\n```\nrequest.data  # works\n\n_ = request2.json\nrequest2.data  # raises exception\n```\n\nWith this, the pitfall is avoided. The API is still \"ugly\" (as argued by @mitsuhiko) because in principle properties are not supposed to change their value/behavior like that.\n\nI do not understand the memory exhaustion concerns at all.\n",
+        "created_at": "2016-05-22T17:14:07+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220844025"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "I think there is a very simple solution for this: while the deprecation is still ongoing nothing changes anyways other than a warning. Afterwards people could inject a custom subclass that reinstates it if they want it.\n",
+        "created_at": "2016-05-22T17:15:53+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220844124"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "@mitsuhiko That's just assuming people actually care about the aesthetic problem of properties exhausting the stream. Apparently that's not the case.\n",
+        "created_at": "2016-05-22T17:17:59+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220844241"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "Sometimes it's an issue if there are tools going over `dir(obj)` and then calling `getattr()` on all attributes. I haven't noticed anyone having issues with this on the request object though.\n",
+        "created_at": "2016-05-22T17:20:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220844360"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "It's imposible to avoid bad json data unless use a stream parser and tell the struct we needed to the parser. \nFor ijson, it yield (keys,event,value), once we get the keys we need, it stop.The keys is like `user.name` if we need the name of user object.\nAnd I am writing https://github.com/guyskk/validater which can validate json data by schema, the schema is like `{\"user\":{\"name\":\"str&required\"}}`. validater is based on ijson, it will stop once the json struct diff with schema, but this feature is not released, you should install it from master source code. \nBecause the parser need to know the struct of json, it can't compat with standard json lib.\n",
+        "created_at": "2016-05-23T02:50:24+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220877110"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "I don't think being able to use the stdlib parser is really a requirement - the simplicity of just getting a dict/list/whatever on the other hand does make a useful default (if you want to use e.g. ijson you'd simply not use `request.get_json` / `request.json`) and shouldn't be lost IMO. Especially for small applications the DoS risk of using a normal JSON parser is probably acceptable.\n\nBTW: If I were you I'd use JSON-Schema for that validator (with o, not e ;)) instead of something self-made (`str&required` looks really awkward/awful in my opinion).\n",
+        "created_at": "2016-05-23T02:54:10+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220877444"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "@ThiefMaster Without \n\nMy reason of use self-made syntax is to keep the same struct for schema and json data，it is easier to write and read. \n",
+        "created_at": "2016-05-23T03:19:45+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220879687"
+      },
+      {
+        "author_login": "guyskk",
+        "body": "@ThiefMaster sorry, without a stream parser, it'd imposible to avoid the risk. if the risk is acceptable, its no need to change request.json.\n",
+        "created_at": "2016-05-23T03:22:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-220879904"
+      },
+      {
+        "author_login": "dorianpula",
+        "body": "I'll be working on this for the PyCon sprints.  I'm going to verify that response.json gives a deprecation warning.\n",
+        "created_at": "2016-06-02T17:15:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-223358987"
+      },
+      {
+        "author_login": "dorianpula",
+        "body": "Yes it does have a Deprecation Warning: https://github.com/pallets/flask/blob/master/flask/wrappers.py#L106  And it has only been around since: 0.11.  See changeset 61097c47 from Oct 15, 2014.\n",
+        "created_at": "2016-06-02T17:35:45+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-223364812"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "That's not the point of this issue @dorianpula, that code was already there before this issue got opened IIRC.\n\nSince some people seem to disagree with this change, we opened this issue for discussion.\n",
+        "created_at": "2016-06-02T17:37:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-223365270"
+      },
+      {
+        "author_login": "dorianpula",
+        "body": "Sure, I was talking with @davidism and he said that he is with @mitsuhiko to remove the property.  The question was whether it can be done for 1.0.  And I was verifying when the deprecation was added.  But since the deprecation warning was just added, it doesn't seem we can just remove it right now, unless there will be a release or two before 1.0.\n",
+        "created_at": "2016-06-02T17:42:41+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-223366675"
+      },
+      {
+        "author_login": "davidism",
+        "body": "To clarify, I'd still rather see `json` left in, since `form` and `files` modify `request.data` as well and we're not changing those.  Since @mitsuhiko seemed set on it, I wanted to verify that we had deprecated it during the current release.\n",
+        "created_at": "2016-06-05T16:49:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-223823642"
+      },
+      {
+        "author_login": "pkch",
+        "body": "A slightly off-topic comment. \n\nThere's always a trade-off between making code more explicit and making it shorter. I thought it would make sense that flask would remain very explicit (since it's known for that, and there's plenty of frameworks on other end of the spectrum). So I was a bit surprised that the very implicit and often confusing behavior of properties that exhaust the stream on access (`.form`, `.files`)  is not being slowly deprecated. Especially since I don't think it's hard for anyone to add those properties, with the desired behavior, in a Request subclass.\n\nThat said, after I read the entire thread, the decision to deprecate `.json` but not other properties is understandable.\n",
+        "created_at": "2016-09-16T19:40:10+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-247689801"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "@pkch: In almost all cases people don't care and don't have to care/know about the WSGI input stream. So taking away `request.form` from them would be counterproductive. Accessing POST data is among the most common things you do in a webapp. The average new flask user should not have to subclass Flask/Request for that.\n",
+        "created_at": "2016-09-16T20:40:26+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-247703852"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Unless you deliberately do `.get_json(cache=False)` (which `.json` doesn't), `.data` still contains the raw data, and `.form` still contains form data if there wasn't actually JSON. I've tried all sorts of combinations of order of access, type of data, parameters, and nothing about the current behavior seems unexpected to me. I'm going with \"not deprecated\" unless I see a good concrete example of this breaking.",
+        "created_at": "2017-06-21T15:33:21+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-310117304"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Discussion with @mitsuhiko on IRC: https://botbot.me/freenode/pocoo/2017-06-21/?msg=87581412&page=3",
+        "created_at": "2017-06-21T17:33:59+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-310150915"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Issues discussed:\r\n\r\n- `.json` reads from the stream on access, but so does `.form`\r\n- `.data` should also be deprecated, but the `.disable_data_descriptor` flag exists to control it\r\n- small JSON payload can cause memory issues, unlike `.form`\r\n- multipart form reads into temp file when memory limit is exceeded\r\n- async?\r\n- HTTP 100 response?\r\n- adding a `max_json_depth` config, but this would require different parsing than what Flask currently supports\r\n\r\nAll the points raised seem tangential to `.json` existing. That is, they affect `.get_json()` just as much. Anecdotally, I can't remember coming across any Stack Overflow question about `.json` draining input when accessed, and as I pointed out above all the common properties keep working because they're cached.",
+        "created_at": "2017-06-21T20:03:15+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-310189333"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "At my day job, we use Flask for many microservices, but not many of our devs know Flask internals. I see in their code that they intuitively reach for `request.json` all the time, and they would be very confused/frustrated if it was deprecated/removed. Given @davidism 's points above, I don't see anything compelling to merit the headache and usability decrease of deprecating it.",
+        "created_at": "2017-06-21T20:53:23+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-310201906"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Related to `max_json_depth`, @mitsuhiko mentioned that @getsentry loads JSON in a way that mitigates `'[' * 800 + ']' * 800`, but I couldn't find it, [they're just using `simplejson.decode`](https://github.com/getsentry/sentry/blob/master/src/sentry/utils/json.py).",
+        "created_at": "2017-06-21T21:14:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/1421#issuecomment-310207395"
+      }
+    ]
+  },
+  {
+    "number": 1528,
+    "title": "Application/request stack corruption if unhandled exception is raised in session interface",
+    "body": "RequestContext push is called in [wsgi_app method](https://github.com/mitsuhiko/flask/blob/master/flask/app.py#L1952), outside try..finally block. In [push() method](https://github.com/mitsuhiko/flask/blob/master/flask/ctx.py#L332) application's open_session call takes place, which can possibly lead to exception. But, since original call is not in try..finally block, removal of stack top never takes place. This leads to following problems:\n### 1. Application context stack never updates again\n\nRequestContext.push() only [checks](https://github.com/mitsuhiko/flask/blob/master/flask/ctx.py#L316) that application context exists or belongs to current application, but same rules apply to previous context.\n### 2. Request context stack grows\n\nAgain, request context stack is pushed, but never removed. Actually just a memory leak :)\n### 3. Misleading code comment about open_session usage\n\nInspired by [this comment](https://github.com/mitsuhiko/flask/blob/master/flask/ctx.py#L328), i started to develop multi-tenant application, and found nothing but disappointment. **You can't actually access request_context before open_session interface call.** This means, you can't configure which database to use before opening a session.\n## My proposition.\n\nMove open_session call to full_dispatch_request, and add interfaces and methods, similar to before_request - before_open_session, or call before_request before opening session (may break code that depends on session interface)\n",
+    "state": "closed",
+    "created_at": "2015-07-12T07:06:49+00:00",
+    "closed_at": "2017-04-22T21:43:26+00:00",
+    "author_login": "WeirdCarrotMonster",
+    "url": "https://github.com/pallets/flask/issues/1528",
+    "comments": [
+      {
+        "author_login": "WeirdCarrotMonster",
+        "body": "I wrote a testcase for my situation: https://github.com/WeirdCarrotMonster/flask/blob/8efa675c9eb6541273164b075e531982eaaff267/tests/test_appctx.py#L46\n\nThis case also fails tests:\n1. test_app_context_provides_current_app\n2. test_request_locals\n3. test_preserve_only_once\n",
+        "created_at": "2015-07-13T05:52:50+00:00",
+        "url": "https://github.com/pallets/flask/issues/1528#issuecomment-120822656"
+      }
+    ]
+  },
+  {
+    "number": 1908,
+    "title": "TaggedJSONSerializer does not preserve int keys in dicts",
+    "body": "The `TaggedJSONSerializer` used for session serialization is rather smart when it comes to preserving types that usually cannot be JSON-encoded. However, it still has the problem that dict keys are converted to strings.\n\n```\n>>> from flask.sessions import TaggedJSONSerializer\n>>> tj = TaggedJSONSerializer()\n>>> tj.loads(tj.dumps({123: u'blah'}))\n{u'123': u'blah'}\n```\n\nI think it would make sense to also tag the key here:\n\n```\nelif isinstance(value, dict):\n    return dict((k, _tag(v)) for k, v in iteritems(value))\n```\n\nThe one drawback I see is that there could be code relying on the implicit conversion right now..\n",
+    "state": "closed",
+    "created_at": "2016-06-13T08:43:00+00:00",
+    "closed_at": "2017-06-02T17:08:01+00:00",
+    "author_login": "ThiefMaster",
+    "url": "https://github.com/pallets/flask/issues/1908",
+    "comments": [
+      {
+        "author_login": "RonnyPfannschmidt",
+        "body": "a json mapping key is defined to be a string, it cannot be replaced by a tagged value without changing the way mappings are represented\n\nyou'd need list of key value paris in mappings with tagged values\n",
+        "created_at": "2016-06-13T09:38:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/1908#issuecomment-225533921"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "ah true :/ would have to change the whole serialization logic for dicts to do that..\n",
+        "created_at": "2016-06-13T09:39:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/1908#issuecomment-225534139"
+      },
+      {
+        "author_login": "RonnyPfannschmidt",
+        "body": "i would suggest documenting the use of tags only on what json considers a value\na separate serialier should be used for tagging on mapping keys\n",
+        "created_at": "2016-06-13T09:44:30+00:00",
+        "url": "https://github.com/pallets/flask/issues/1908#issuecomment-225535274"
+      }
+    ]
+  },
+  {
+    "number": 2005,
+    "title": "AttributeError: 'DispatchingApp' object has no attribute 'config'",
+    "body": "going through the tutorial on latest master, this exception is raised on `flask run`\n(running inside a virtualenv)\n\n```\n>>> flask --version\nFlask 0.11.2-dev\nPython 3.5.2+ (default, Aug  5 2016, 08:07:14) \n[GCC 6.1.1 20160724]\n>>> which -v flask\n/home/laerus/.venvs/flask/bin/flask (from PATH element 0)\n>>> flask run\n * Serving Flask app \"flaskr\"\n * Forcing debug mode off\nTraceback (most recent call last):\n  File \"/home/laerus/.venvs/flask/bin/flask\", line 9, in <module>\n    load_entry_point('Flask==0.11.2.dev0', 'console_scripts', 'flask')()\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/flask/cli.py\", line 508, in main\n    cli.main(args=args, prog_name=name)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/flask/cli.py\", line 374, in main\n    return AppGroup.main(self, *args, **kwargs)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/core.py\", line 696, in main\n    rv = self.invoke(ctx)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/core.py\", line 1060, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/core.py\", line 889, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/core.py\", line 534, in invoke\n    return callback(*args, **kwargs)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/decorators.py\", line 64, in new_func\n    return ctx.invoke(f, obj, *args[1:], **kwargs)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/click/core.py\", line 534, in invoke\n    return callback(*args, **kwargs)\n  File \"/home/laerus/.venvs/flask/lib/python3.5/site-packages/flask/cli.py\", line 433, in run_command\n    passthrough_errors=app.config['PROPAGATE_EXCEPTIONS'])\nAttributeError: 'DispatchingApp' object has no attribute 'config'\n```\n",
+    "state": "closed",
+    "created_at": "2016-09-06T11:53:13+00:00",
+    "closed_at": "2016-09-06T20:32:34+00:00",
+    "author_login": "ghost",
+    "url": "https://github.com/pallets/flask/issues/2005",
+    "comments": [
+      {
+        "author_login": "ghost",
+        "body": "git bisect points to 098ea0c8ca3b2f3c6715b1048bec6a42db6298e1\n\nedit: oh i see you're already on it, thanks!\n",
+        "created_at": "2016-09-06T12:31:00+00:00",
+        "url": "https://github.com/pallets/flask/issues/2005#issuecomment-244935359"
+      }
+    ]
+  },
+  {
+    "number": 2023,
+    "title": "How should logging in Flask look like?",
+    "body": "Flask started to ship with a default, hardcoded logging handler. Unfortunately this setup makes it harder to install custom logging setups, because then you'll have to undo all the things Flask did to the app logger, or replace the `app.logger` entirely. A symptom of this is #1993, where Flask's own logger had to be tweaked yet again such that messages didn't get logged twice (once via Flask's setup, once via the custom one).\n\nMy question is: **Do we even want Flask to do any logging setup?** It appears that this sort of default logging is only useful during development, so maybe it makes sense to set up a default logging handler in the new Flask CLI instead of from within the application.\n",
+    "state": "closed",
+    "created_at": "2016-09-12T20:15:42+00:00",
+    "closed_at": "2017-07-31T20:24:59+00:00",
+    "author_login": "untitaker",
+    "url": "https://github.com/pallets/flask/issues/2023",
+    "comments": [
+      {
+        "author_login": "jaapz",
+        "body": "What would happen to the log messages in production, when the current flask logger would be moved to development only?\n",
+        "created_at": "2016-09-13T08:49:13+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246616673"
+      },
+      {
+        "author_login": "davidism",
+        "body": "The same thing that already happens: you need to add your own logging handler in order to see messages and exceptions generated in production.\n",
+        "created_at": "2016-09-13T08:56:41+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246618501"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Why does that already happen?\n\nOn 13 September 2016 10:56:52 CEST, David Lord notifications@github.com wrote:\n\n> The same thing that already happens: you need to add your own logging\n> handler in order to see messages and exceptions generated in\n> production.\n> \n> ## \n> \n> You are receiving this because you authored the thread.\n> Reply to this email directly or view it on GitHub:\n> https://github.com/pallets/flask/issues/2023#issuecomment-246618501\n\n## \n\nSent from my Android device with K-9 Mail. Please excuse my brevity.\n",
+        "created_at": "2016-09-13T09:22:41+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246624891"
+      },
+      {
+        "author_login": "davidism",
+        "body": "`flask.logging` [_seems_](https://github.com/pallets/flask/blob/0.11.1/flask/logging.py#L70) to configure a log handler for outside debug mode, but I and [many others](https://stackoverflow.com/q/32722143/400617) don't see logs unless a handler is explicitly set.\r\n",
+        "created_at": "2016-09-13T16:08:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246734269"
+      },
+      {
+        "author_login": "Rdbaker",
+        "body": "Python takes a modular approach to its logging by separating the concerns into [loggers, handlers, filters, and formatters](https://docs.python.org/2/howto/logging.html#advanced-logging-tutorial). Maybe it would be good to have a very simple, yet explicit, default setup for each of these classes with some documentation on how to easily override it, just as flask does for the request and response classes.\n",
+        "created_at": "2016-09-14T01:44:39+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246880948"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "That is actually the current state. The problem arises when people use `logging.defaultConfig()` and messages get logged twice, once with Flask's handler, once with the just configured one.\n\nThe question is whether it's a good idea to even have any logging setup by default as it may interfere with the plans of the app developer.\n\nOn 14 September 2016 03:44:50 CEST, Ryan Baker notifications@github.com wrote:\n\n> Python takes a modular approach to its logging by separating the\n> concerns into [loggers, handlers, filters, and\n> formatters](https://docs.python.org/2/howto/logging.html#advanced-logging-tutorial).\n> Maybe it would be good to have a very simple, yet explicit, default\n> setup for each of these classes with some documentation on how to\n> easily override it, just as flask does for the request and response\n> classes.\n> \n> ## \n> \n> You are receiving this because you were mentioned.\n> Reply to this email directly or view it on GitHub:\n> https://github.com/pallets/flask/issues/2023#issuecomment-246880948\n\n## \n\nSent from my Android device with K-9 Mail. Please excuse my brevity.\n",
+        "created_at": "2016-09-14T01:48:26+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246881506"
+      },
+      {
+        "author_login": "Rdbaker",
+        "body": "Er, my suggestion was a little different than the current state, actually.\n\nI was suggesting that, much like [the app has a `request_class`](https://github.com/pallets/flask/blob/3bd12b38a80362f6656b834ec04c95f1ba4d83e0/flask/app.py#L159), it could also have a `logger_class`, `handler_class`, etc. as opposed to creating the classes inside the of a logging initialization function. So yes, this would set up logging by default.\n\nAre you talking about any logging that a developer might want to do _outside_ of the context of their flask app?\nI would probably argue that if the developer is using flask, that's the primary runtime in their environment and logging (even if by default) would probably be desired, and should be easily overridable.\n",
+        "created_at": "2016-09-14T02:04:23+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-246883904"
+      },
+      {
+        "author_login": "dwlocks",
+        "body": "I hope I'm not polluting the conversation by adding https://www.bountysource.com/issues/85851-design-issue-with-flask-logger-create_logger",
+        "created_at": "2016-12-13T00:16:23+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-266595831"
+      },
+      {
+        "author_login": "mtvx",
+        "body": "> Do we even want Flask to do any logging setup?\r\n\r\nNo. Why should it? If I want to enable logging, I can just `logging.defaultConfig()` or rather customize it however I want. Why should flask do anything else except the usual:\r\n\r\n    log = logging.getLogger(__name__)\r\n    \r\n    # then in the code: log.info(...) etc.\r\n\r\nWouldn't it be enough to just mention in the docs that you must initialize logging yourself, as usual, be it through `logging.defaultConfig()` or `logging.config.dictConfig()` or however?",
+        "created_at": "2016-12-13T11:12:15+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-266711783"
+      },
+      {
+        "author_login": "tinproject",
+        "body": "I spend some days around this, trying to figure out how to implement logging on a Flask app. At the end I decide that, at the current state, the best is to avoid the use of the Flask logger.\r\n\r\n\r\nSome problems I've found wit the custom Flask's logger:\r\n- You can't configure the logger in advance because it delete the existing handlers for the logger.\r\n- It always inserts it's handlers by default, no option to avoid them, so you can get duplicated logs.\r\n- Too much dependent of the app state, the handlers emit records dependent of the app state so, independently on how you configure the logging hierarchy, the log records could appear or not.\r\n- Also the Flask logger name could be changed (is a config option), so if it changed a new logger is created and if you have custom configuration it the config must be redone. This is also tricky to detect.\r\n- It don't play well with the Python's logging system.\r\n- Some of the Flask's log messages are really werkzeug's ones.\r\n\r\n\r\n**How should logging in Flask look like? Do we even want Flask to do any logging setup?**\r\n\r\nFrom my point of view, there should be to parts for logging in Flask:\r\n\r\nOne part for the library/framework, with a high-level logger node hardcoded to \"flask\" or \"pallets.flask\" and child loggers. This will allow 'instrument' the library as #1572 suggests, and also be used by third party libraries like flask-login, flask-wtf, etc.\r\nThis part should have no logging configuration at all, perhaps only set the logging level of the high-level node to avoid noise, but no handlers or other setup, and should propagate by default.\r\n\r\nOther part, for the Flask app, with a configurable name. To avoid that the reference to the logger could change the name should be pass as an argument to Flask() constructor, e.g.: `Flask(..., logger_name=\"flaskr\"`. This also allows to obtain the logger from the logging module directly and to get child loggers for specific parts of your app.\r\nThis part needed some logging setup, if it's not previously done a default handler must be setup, users and servers expect some info about what's happening. To avoid duplication of logs and allow complete logging customization the default handler has to be optional, setted by an argument to Flask() constructor o by inspection the logger hierarchy to find if a proper handler is configured upstream. To log accordingly to app state a **filter** should be used instead of the two current handlers.\r\n\r\nThis should be reflected in the docs stating that the preferred way is that the developer configure the logging system and the default config should only be used as a last resort. To allow this the custom formatters and handlers/filters should be exposed to allow import when configuring logging, as @Rdbaker suggests above.\r\n\r\n\r\nI think that find a way that the Flask's log system goes along with the [_Logging facility for Python_](https://docs.python.org/3/library/logging.html), and not against, is important enough to try to target this discussion to 1.0. \r\n\r\nI could help with some code or docs when decisions are made.\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+        "created_at": "2016-12-16T18:42:47+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-267665939"
+      },
+      {
+        "author_login": "tinproject",
+        "body": "Trying to learn more about logging I've come across this: http://plumberjack.blogspot.com.es/2010/09/python-logging-functionality-facts-vs.html and I realize why Flask want to pass the logger object around.\r\n\r\nPerhaps the first question to make is what logging library is wanted to use by Flask and use it properly. Any option is perfectly fine, but using the stdlib logging as if it was other thing only leads to confusion.",
+        "created_at": "2016-12-21T17:08:21+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-268578137"
+      },
+      {
+        "author_login": "mscheper",
+        "body": "For one thing, Flask should log chained exceptions. Maybe somebody here would be kind enough to answer my [StackOverflow question](http://stackoverflow.com/questions/43881266/how-to-make-flask-log-chained-exceptions) asking how to get Flask to do this?\r\n\r\n@tinproject: Your comment didn't 'confuse' me; I just used the ☹ emoji because it's sad that configuring Flask's logs is apparently difficult. Changing the log format is the first thing I'll want do after My App Works Well Enough, mostly for the above reason, and also to get rid of all the dashes and `\\n`s that clutter up my terminal. I'm glad I found this post; hopefully it'll save me some frustration.\r\n\r\nBut apparently some people like them, which is fair enough, and a reason logs should be easily configurable. My personal preference would be for a blank line and maybe some dashes each time Flask reloads the app, and for log lines to be timestamped.",
+        "created_at": "2017-05-15T14:31:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-301493159"
+      },
+      {
+        "author_login": "mixmastamyk",
+        "body": "Libraries should not configure logging, they should just log and let the application author configure destinations to their liking.  That's best practice for python logging:\r\n\r\n- https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library\r\n- http://docs.python-guide.org/en/latest/writing/logging/\r\n\r\n> Note\r\n> \r\n> It is strongly advised that you do not add any handlers other than NullHandler to your library’s loggers. This is because the configuration of handlers is the prerogative of the application developer who uses your library. The application developer knows their target audience and what handlers are most appropriate for their application: if you add handlers ‘under the hood’, you might well interfere with their ability to carry out unit tests and deliver logs which suit their requirements. ",
+        "created_at": "2017-06-12T17:24:35+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-307858016"
+      },
+      {
+        "author_login": "Rdbaker",
+        "body": "It'd be important to note that if the recommended practice was the path taken (i.e. add a `NullHandler` to flask's logger) then Flask would have to drop support for 2.6 (as `NullHandler` was added in 2.7+ and 3.1+), or else conditionally check whether it _can_ configure a `NullHandler`",
+        "created_at": "2017-06-12T20:17:12+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-307911571"
+      },
+      {
+        "author_login": "mixmastamyk",
+        "body": "I believe NullHandler is just an optional convenience, not necessary.  \r\n\r\nPy 2.6 was EOL'd 5 years ago.  Though I'm not in a hurry to break it, so checking beforehand couldn't hurt.\r\n\r\nBTW, this should be straightened out before a 1.0 release, is there a tag for that?",
+        "created_at": "2017-06-14T21:03:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-308557420"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "I wouldn't mind seeing 2.6 support go away once Flask reaches v1.0 ;)",
+        "created_at": "2017-06-14T21:03:57+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-308557612"
+      },
+      {
+        "author_login": "rainiera",
+        "body": "+1 to following the best practice for Python logging. I don't mind what Flask logs per se but would prefer I had control of the handlers myself since `PROD_LOG_FORMAT` and `DEBUG_LOG_FORMAT` in logging.py are distracting for some. Fwiw, I usually call `del app.logger.handlers[:]` before I add my own loggers in my personal boilerplate.",
+        "created_at": "2017-07-25T07:09:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-317649983"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I've been looking at this, and \"follow best practice\" is not as straightforward as it sounds, unfortunately.\r\n\r\n* We're a library, so we shouldn't configure logging. But a lot of people don't think about logging, and we want to show logging messages while running.\r\n* If we only add handlers when using the `flask` command, people will be confused when it's not logged in production. This can be solved with documentation, probably.\r\n* Difficulty arises due to the handlers deciding what to log based on the current state of the app, which can change for various reasons before it starts handling requests. The logger can be accessed before, or after, configuration is loaded. Debug mode can be changed by the `run` command after configuration is loaded.\r\n* A similar difficulty occurs with the logger, which uses a custom `getEffectiveLevel`. Setting the level directly would mean we couldn't reconfigure if debug mode changes, since we wouldn't know at that point if we or the user set the level.\r\n* We want to log to `environ['wsgi.errors']` when in a request.\r\n* We don't want to log things twice if the user adds a root handler without also configuring the app logger specifically. So `propagate` needs to be disabled outside of configuration.\r\n\r\nThings I've been experimenting with:\r\n\r\n* Add a default config to be passed to `dictConfig`. Difficult because the config could be changed *after* the logger is accessed for the first time and the interactions between multiple configs at that point is unclear.\r\n* Make the default logger name \"flask-{import_name}\" instead of \"{import_name}\". However, anything with `logger_name` makes using `dictConfig` difficult.\r\n* Only add one handler, and remove the debug format, just to simplify the story.\r\n* Add importable logging subclasses that users can use in their own `dictConfig`. These wouldn't know what app they were configured for though, so would have to use `current_app`, which means they wouldn't work for logging during setup unless the user knew to push an app context. Or we could use a custom `logging.DictConfigurator` subclass that injects the app, but that would make it impossible for users to configure logging themselves outside of the Flask app.",
+        "created_at": "2017-07-25T12:53:52+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-317727956"
+      },
+      {
+        "author_login": "mixmastamyk",
+        "body": "@davidism, these complex use cases may not be 100% solvable as you are noticing.  That's the main reason to leave it up to the (end) developer rather than trying to outsmart them.\r\n\r\n(Ask me how I know, haha.  I have a kivy app where a non-insignificant amount of code is there to defeat and disable their mandatory logging configuration meant for my own good.)\r\n\r\nBy all means have a document detailing how to log this and configure that with a list of provided logger names.  But when the developer googles \"enable logging in a python app\" let the standard answer suffice.\r\n\r\nI think a \"hands off\" approach fits better with Flask's breezy design as well.",
+        "created_at": "2017-07-27T04:04:24+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-318252636"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I've created #2436 that hopefully simplifies Flask's logging configuration. It also splits out and updates the documentation to help clarify how everything works. If anyone here wants to take a look and make sure it addresses the points brought up here, I'd appreciate it.",
+        "created_at": "2017-07-28T22:27:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/2023#issuecomment-318776261"
+      }
+    ]
+  },
+  {
+    "number": 2027,
+    "title": "Update app factory docs for Flask's CLI",
+    "body": "see https://github.com/pallets/flask/pull/1536\n",
+    "state": "closed",
+    "created_at": "2016-09-18T12:17:46+00:00",
+    "closed_at": "2017-10-10T18:59:29+00:00",
+    "author_login": "untitaker",
+    "url": "https://github.com/pallets/flask/issues/2027",
+    "comments": [
+      {
+        "author_login": "wgwz",
+        "body": "So would best practice be to create a runner/instantiation script? (For using the development server)\n",
+        "created_at": "2016-09-18T12:56:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247846173"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Yeah. Also I'm not sure why \"multiple instances\" is mentioned as usecase, since we already use locks in Flask to ensure that one app object can be used with more than one server in one process.\n",
+        "created_at": "2016-09-18T13:01:01+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247846401"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I create a `FlaskGroup` and add an entry point for it, then use that entry point instead of `flask` to call any commands.\n\n`my_app/app.py`\n\n``` python\nfrom flask import Flask\nfrom flask.cli import FlaskGroup\n\ndef create_app(info=None):\n    app = Flask('my_app')\n    ...\n    return app\n\ncli = FlaskGroup(create_app=create_app)\n```\n\n`setup.py`\n\n``` python\nsetup(\n    ...,\n    entry_points={\n        'console_scripts': [\n            'my_app=my_app:cli.main',\n        ],\n    },\n)\n```\n\n```\npip install -e .\nFLASK_DEBUG=1 my_app run\n```\n\nYou can of course adapt this to use a separate file for the cli so it can be called without installing too, but I'd rather encourage the install pattern.\n",
+        "created_at": "2016-09-18T16:32:37+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247857920"
+      },
+      {
+        "author_login": "wgwz",
+        "body": "@davidism how do you make use of the kwarg \"info\"?\n",
+        "created_at": "2016-09-19T00:25:56+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247893820"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I don't, but it has to be there to make Click happy.  I think it can be used to pass data around within Click.\n",
+        "created_at": "2016-09-19T01:01:09+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247895764"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "I think the factory function should be coded in a way that it is straightforward to call directly. I do not like the idea of adding the `ScriptInfo` argument, just because the Click integration code requires it.\n\nI honestly haven't found a way to use an app factory with Click that matches what you can do with Flask-Script. This is how I typically code my app factory functions:\n\n``` python\ndef create_app(config_name=None):\n    if config_name is None:\n        config_name = os.environ.get('FLASK_CONFIG', 'development')\n    app = Flask(__name__)\n    ...\n    return app\n```\n\nWith this structure, Flask-Script can be given the app factory and it will call it without arguments, which runs the `development` configuration unless the `FLASK_CONFIG` environment variable is set to some other configuration. In unit tests, you just call `create_app('testing')` and you get a test ready app. In my opinion this is very handy. Depending on the application, I can add additional arguments to `create_app`, as long as all the arguments have defaults for when Flask-Scripts invokes it.\n\nThe closest I have achieved with Click requires the use of a `wsgi.py` file in which `create_app()` is called explicitly. Obviously Flask never sees the factory function, it gets the app created in wsgi.py, but at least I can write my app factory function with the arguments that I need/want.\n",
+        "created_at": "2016-09-19T01:24:42+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247897066"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "I hadn't considered optional arguments even though @mbr pointed that out repeatedly. On that basis we might actually include a basic way to use factories.\n\nOn 19 September 2016 03:24:52 CEST, Miguel Grinberg notifications@github.com wrote:\n\n> I think the factory function should be coded in a way that it is\n> straightforward to call directly. I do not like the idea of adding the\n> `ScriptInfo` argument, just because the Click integration code requires\n> it.\n> \n> I honestly haven't found a way to use an app factory with Click that\n> matches what you can do with Flask-Script. This is how I typically code\n> my app factory functions:\n> \n> ``` python\n> def create_app(config_name=None):\n>    if config_name is None:\n>        config_name = os.environ.get('FLASK_CONFIG', 'development')\n>    app = Flask(__name__)\n>    ...\n>    return app\n> ```\n> \n> With this structure, Flask-Script can be given the app factory and it\n> will call it without arguments, which runs the `development`\n> configuration unless the `FLASK_CONFIG` environment variable is set to\n> some other configuration. In unit tests, you just call\n> `create_app('testing')` and you get a test ready app. In my opinion\n> this is very handy. Depending on the application, I can add additional\n> arguments to `create_app`, as long as all the arguments have defaults\n> for when Flask-Scripts invokes it.\n> \n> The closest I have achieved with Click requires the use of a `wsgi.py`\n> file in which `create_app()` is called explicitly. Obviously Flask\n> never sees the factory function, it gets the app created in wsgi.py,\n> but at least I can write my app factory function with the arguments\n> that I need/want.\n> \n> ## \n> \n> You are receiving this because you authored the thread.\n> Reply to this email directly or view it on GitHub:\n> https://github.com/pallets/flask/issues/2027#issuecomment-247897066\n\n## \n\nSent from my Android device with K-9 Mail. Please excuse my brevity.\n",
+        "created_at": "2016-09-19T09:17:54+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-247945526"
+      },
+      {
+        "author_login": "wgwz",
+        "body": "@davidism what kind of package structure do you use to add commands to the `cli`? (using the method you outlined above) i.e. do you import the `cli` object from *my_app/app.py* into a separate module and add commands using `@cli`? ",
+        "created_at": "2016-12-27T15:43:55+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-269342478"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Cross posting from the .env discussion:\r\n\r\nOne option for making this play nicer with the factory pattern is to allow making a call in the `FLASK_APP` var. Gunicorn and uWSGI allow this. `gunicorn bwportal.app:create_app(where='dev')`",
+        "created_at": "2017-01-30T14:06:20+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-276070456"
+      },
+      {
+        "author_login": "wgwz",
+        "body": "I would like to be able to do the same with the flask cli:\r\n\r\n    gunicorn -c \"python:config.gunicorn\" --reload \"myapp.app:create_app()\"\r\n\r\n(Not necessarily the config loading, but definitely invoking the app factory)",
+        "created_at": "2017-01-30T17:34:30+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-276130047"
+      },
+      {
+        "author_login": "bovarysme",
+        "body": "After reading this thread and mixing @davidism and @miguelgrinberg ideas, I have been using the following structure which allows to:\r\n- write an app factory function without the `ScriptInfo` argument,\r\n- load the correct app config via `FLASK_CONFIG`,\r\n- write as many CLI commands as needed,\r\n- and run in debug mode with `app --debug run`.\r\n\r\nThat way, I don't have to ever set `FLASK_APP` or `FLASK_DEBUG`.\r\n\r\n`app/__init__.py`:\r\n```python\r\ndef create_app(config_name=None):\r\n    if not config_name:\r\n        config_name = os.environ.get('FLASK_CONFIG', 'development')\r\n    app = Flask(__name__)\r\n    # …\r\n    return app\r\n```\r\n\r\n`app/commands.py`:\r\n```python\r\ndef create_cli_app(info):\r\n    return create_app()\r\n\r\n\r\n@click.group(cls=FlaskGroup, create_app=create_cli_app)\r\n@click.option('--debug', is_flag=True, default=False)\r\ndef cli(debug):\r\n    if debug:\r\n        os.environ['FLASK_DEBUG'] = '1'\r\n\r\n\r\n@cli.command()\r\ndef initdb():\r\n    \"\"\"Initialize the database.\"\"\"\r\n    db.create_all()\r\n\r\n# …\r\n\r\nif __name__ == '__main__':\r\n    cli()\r\n```\r\n\r\n`setup.py`:\r\n```python\r\nsetup(\r\n    # …\r\n    entry_points={\r\n        'console_scripts': [\r\n            'app=app.commands:cli',\r\n        ],\r\n    },\r\n)\r\n```",
+        "created_at": "2017-07-10T15:26:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/2027#issuecomment-314141002"
+      }
+    ]
+  },
+  {
+    "number": 2266,
+    "title": "Support create_app that doesn't take ScriptInfo as first argument",
+    "body": "Use `inspect` to check if the factory takes an argument before passing the script info instance to it.\r\n\r\nPreferably pass the info as a keyword instead of positional argument, so that the developer could do something like `def create_app(config=None, script_info=None)`. Still check if the function takes a `script_info` argument before passing it.\r\n\r\nAlternatively (or additionally), show how to pass arguments to the factory through the info. I *think* this can be done by overriding `run`, adding an option like `--config`, and setting `info.data['config']` before invoking the built-in run command.",
+    "state": "closed",
+    "created_at": "2017-05-01T14:20:57+00:00",
+    "closed_at": "2017-05-24T00:22:04+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/issues/2266",
+    "comments": []
+  },
+  {
+    "number": 2267,
+    "title": "Flask error handler caching leads to inconsistent behavior",
+    "body": "When Flask finds an error handler for a given exception, it caches it in the handler map.  This can lead to incorrect behavior for subclasses of the exception.\r\n\r\nHere is some code demonstrating the problem:\r\n```\r\nfrom flask import Flask\r\nfrom werkzeug.exceptions import InternalServerError\r\n\r\n\r\nclass E1(Exception):\r\n    pass\r\n\r\n\r\nclass E2(Exception):\r\n    pass\r\n\r\n\r\nclass E(E1, E2):\r\n    pass\r\n\r\n\r\napp = Flask(__name__)\r\n\r\n\r\n@app.errorhandler(E2)\r\ndef handle_e2(e):\r\n    return \"E2\", 500\r\n\r\n\r\n@app.errorhandler(Exception)\r\ndef handle_exception(e):\r\n    return \"Exception\", 500\r\n\r\n\r\n@app.route(\"/<exception>\", methods=['POST'])\r\ndef raise_exception(exception):\r\n    exc = globals()[exception]\r\n    raise exc\r\n\r\n\r\ndef test_errorhandler_precedence():\r\n    client = app.test_client()\r\n\r\n    response1 = client.post('/E1')\r\n    assert response1.data == \"Exception\"\r\n\r\n    response2 = client.post('/E')\r\n    assert response2.data == \"E2\"\r\n```\r\n\r\nIn this example, we have two exception classes, `E1` and `E2`, and a third exception `E` that inherits from both.  We register error handlers for `E2` and `Exception`.  When `E` is raised, Flask should invoke the `E2` error handler as `E2` comes before `Exception` in the MRO of `E`.  But if `E1` has been raised in the past, then the `Exception` error handler will be \"cached\" as the handler for `E1`, so that handler will be invoked instead.",
+    "state": "closed",
+    "created_at": "2017-05-02T01:20:27+00:00",
+    "closed_at": "2017-06-05T13:34:49+00:00",
+    "author_login": "ngaya-ll",
+    "url": "https://github.com/pallets/flask/issues/2267",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "Related to #1433 ",
+        "created_at": "2017-05-16T00:22:22+00:00",
+        "url": "https://github.com/pallets/flask/issues/2267#issuecomment-301640431"
+      }
+    ]
+  },
+  {
+    "number": 2375,
+    "title": "Add .env support, take 2",
+    "body": "Setting the `FLASK_APP` and `FLASK_DEBUG` for every new terminal session is inconvenient. The CLI could load a `.env` file that contained these values instead. Since Heroku is a popular deployment option, this would also help developers who want the same scheme locally.\r\n\r\nInstead of writing our own parser, we should use [python-dotenv](https://github.com/theskumar/python-dotenv). This reduces maintenance burden on us and can be an optional dependency. If it is installed, the CLI will load the `.env`, otherwise it will skip it.\r\n\r\nPreviously discussed in #2164.\r\n\r\n---\r\n\r\n@miguelgrinberg raised a good point in the previous thread. `.env` is typically used to store sensitive configuration. The convenience of setting `FLASK_APP=` there could encourage users to commit the file publicly, which would be bad.\r\n\r\nA solution would be to load two files, `.flask-env` and `.env`, and prominently document that `.flask-env` can be committed but should not contain secrets.",
+    "state": "closed",
+    "created_at": "2017-06-14T20:18:30+00:00",
+    "closed_at": "2017-07-16T20:55:19+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/issues/2375",
+    "comments": [
+      {
+        "author_login": "ThiefMaster",
+        "body": "i'd prefer `.flaskenv` similar to `.foorc` (and not `.foo-rc`)",
+        "created_at": "2017-06-14T20:20:05+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308546545"
+      },
+      {
+        "author_login": "davidism",
+        "body": "That makes sense, I have no strong opinion on the name.",
+        "created_at": "2017-06-14T20:26:50+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308548242"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "I'm in favor of using python-dotenv. I have started using it on my projects, in place of my own less robust implementation. I'm also in favor of having Flask import a `.env` file, that is not supposed to be in source control. I think this would be a great addition regardless of the main point of this discussion.\r\n\r\nI think using a `.flaskenv` for the Flask env vars is a better idea than what we discussed in #2164. But I keep thinking that for people that use app factory functions now need to add two files: a `wsgi.py` that calls the factory function, and then this new `.flaskenv` that points to it.\r\n\r\nImplementing support for referencing a factory function in `FLASK_APP` is, in my opinion, not a great idea because the function might need custom arguments. So I see no way to avoid the need for a `wsgi.py` file.\r\n\r\nOn the other side, the Flask CLI is perfectly happy to look for `app` or `application` in the module referenced by `FLASK_APP` if you don't give it a specific app name. So what if we also add sensible defaults for module name? For example, if `FLASK_APP` is not defined, we look for `wsgi.py` and `flaskapp.py` and use those. So then we have the following options:\r\n\r\n- `FLASK_APP` is not defined: look for `app` or `application` in `wsgi.py` or `flaskapp.py`.\r\n- `FLASK_APP=module.py`: look for `app` or `application` in`module.py`\r\n- `FLASK_APP=:myapp`: look for `myapp` in `wsgi.py` or `flaskapp.py`\r\n- `FLASK_APP=module.py:myapp`: look for `myapp` in `module.py`",
+        "created_at": "2017-06-14T20:47:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308553311"
+      },
+      {
+        "author_login": "davidism",
+        "body": "@miguelgrinberg at the PyCon sprints, @HndrkMkt merged in a set of patches that allows the `flask` command to autodetect factories and `FLASK_APP` to specify them, optionally with arguments. So no wrapper file will be required in the next version. For example, `FLASK_APP=myapp:create_app('dev') flask run`. #2297, #2319, #2326",
+        "created_at": "2017-06-14T20:55:11+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308555376"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I'm not sure about autodetecting the module, that seems a bit too magical. (Yes, I realize this is weird given the rest of the autodetection.) It would only benefit single-file apps, and devs like to choose all sorts of file names whether their app is a module or a package. They would also still use `FLASK_DEBUG`.\r\n\r\nAnyway, that's sort of tangential to the dotenv support. We should discuss that in a separate issue.",
+        "created_at": "2017-06-14T21:06:36+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308558261"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "In my opinion, `FLASK_APP` is not in the same category as `FLASK_DEBUG`. The former can be considered static and universal. Needs to be set regardless of environment (dev, prod or test). The latter is a configuration setting that only applies to specific cases. And it's a setting that you can also set via the Flask config object, or the `--debug` CLI option.\r\n\r\nThe reason I brought up the defaults for module names is that if we agree to implement them, then you have a way to not need to use `FLASK_APP`.\r\n\r\nRegarding the factory support for `FLASK_APP`, it looks pretty good, but it does not seem to cover all the possible cases. Basically I would need to do something like this:\r\n\r\n    FLASK_APP=app:create_app(os.getenv('FLASK_CONFIG') or 'default')\r\n\r\nThe `create_app` function is in the `app/__init__.py` module. I need to debug this, but Flask master fails to import `app` as given above, for some reason. If I move `create_app` to a top-level module then that part works, but the expression I need for the function's single argument does not seem to be accepted, the factory function gets `script_info` as this configuration argument.",
+        "created_at": "2017-06-14T21:26:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308562882"
+      },
+      {
+        "author_login": "hendrikmakait",
+        "body": "@miguelgrinberg, that it fails to evaluate your argument expression is due to the fact that @davidism and I decided to limit the argument support to literals. (See https://github.com/pallets/flask/pull/2326/files#diff-61bbd5ac9238364564a7315cc6bc2156R114 for the evaluation).\r\n\r\nI'll prepare a PR later that updates docs and tests to point out this limitation.",
+        "created_at": "2017-06-15T08:44:25+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308668602"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Entering quotes in an env var is unfortunately not straightforward. We should document that. Also, it's possible to reference a var or default.",
+        "created_at": "2017-06-15T11:49:33+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308708095"
+      },
+      {
+        "author_login": "davidism",
+        "body": "```bash\r\n# need nested quotes to get \"string\" in arg list\r\nFLASK_APP=hello:create_app(\"'dev'\") flask run\r\n# can get var or default\r\nFLASK_CONFIG=\"'dev'\" FLASK_APP=hello:create_app(${FLASK_CONFIG:-\"'default'\"}) flask run\r\n```\r\n\r\nAlthough in the second one, while it works, I'd rather do it in Python instead.\r\n\r\n```python\r\ndef create_app(config=None):\r\n    if config is None:\r\n        config = os.environ.get('FLASK_CONFIG', 'default')\r\n    ...\r\n```\r\n\r\n```bash\r\n# all equivalent\r\nFLASK_APP=hello flask run\r\nFLASK_CONFIG='dev' FLASK_APP=hello flask run\r\nFLASK_APP=hello:create_app(\"'dev'\") flask run\r\n```\r\n\r\nAlso, python-dotenv says it doesn't support variable defaults yet.",
+        "created_at": "2017-06-15T13:51:04+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308734983"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "Regarding quotes, looks like I did not do it above in my example, but for bash, the easiest is to enclose the whole thing in doble quotes, and only use single quotes for your literals. This is actually what I tried yesterday and failed to correctly copy here:\r\n\r\n    FLASK_APP=\"app:create_app(os.getenv('FLASK_CONFIG') or 'default')\"\r\n\r\nBut of course, this works in bash/zsh/etc only. I suspect you are going to have a lot more trouble to get something like this to work on Windows.\r\n\r\nYour suggested solution of letting the shell do the env var replacement should work, but again, it is a bash only solution.\r\n\r\nMoving this logic into the factory function, as you also suggested above, is not ideal. The default could be context based, so it is better handled by the caller. When you are running unit tests, for example, you will probably want the default configuration to be `'test'` instead of `'default'`. If you are starting a Celery worker for your app, for example, you'll probably want yet another configuration to be the default.\r\n\r\nI would personally not go through all these troubles to define `FLASK_APP`. Adding a `wsgi.py` file (which is already covered in the docs) is way more simple, and allows you to work in Python, regardless of the OS and shell that you use. So what I'm wondering is if we can agree that having a default for module name thus making `FLASK_APP` optional makes sense or not, maybe in addition to the .flaskenv effort which you seem to prefer.",
+        "created_at": "2017-06-15T14:47:43+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308756209"
+      },
+      {
+        "author_login": "davidism",
+        "body": "If the default changes per context, then it's not a default. Isn't that the whole point of changing the env var or the argument to the factory?\r\n\r\nAnyway, I understand that the wrapper file can still be useful for complex situations. Recognizing `wsgi.py` as a standard wrapper name, and `app.py` to support quick demo apps, seems fine.\r\n",
+        "created_at": "2017-06-15T16:14:56+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308791246"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I've moved detecting `wsgi.py` to a separate issue, #2376. Discussion here should be about the logistics of `.env` support itself.",
+        "created_at": "2017-06-15T16:22:02+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308793239"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "Thanks. I'll see if I can come up with something for #2376.\r\n\r\nCircling back to the `.flaskenv` support. One thing that I think we need to clarify is its use for FLASK_DEBUG, which can be confusing. You obviously don't want to store `FLASK_DEBUG=1` in `.flaskenv` and then commit the file to source control. If we are going to have `.env` and `.flaskenv` with only the latter on source control, it seems to me debug settings should go on the former.",
+        "created_at": "2017-06-15T16:25:30+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308794142"
+      },
+      {
+        "author_login": "bovarysme",
+        "body": "Repeating an issue that was brought up in the previous thread: if `.env` is used to store secrets and is only loaded when Flask's CLI is invoked, it might have a limited use on production environments that use a WSGI server to run the application.\r\n\r\nOn the contrary, if `.env` is loaded on app instanciation, does it deprecate instance relative configurations? It seems to me these features both solve the same problem (having different secrets on different environments). For example one could write multiple `.env` files (`.env.production`, `.env.staging`, `.env.development`), not checked in version control, and push the correct file on each environment using a configuration management tool.",
+        "created_at": "2017-06-15T20:50:19+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308862008"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Instance folders don't work on services like Heroku that place their configuration in env vars and don't have persistent storage. This helps mirror that locally for developers using those services. They still have to do extra work to convert env vars to proper config values, which we recently documented. This shouldn't replace instance folders.\r\n\r\nI see this as a convenience during development. In production, there's probably something else like Systemd or Docker setting env vars. If a developer still wants to use a `.env` file they can use python-dotenv manually during `create_app` or in `wsgi.py`.",
+        "created_at": "2017-06-15T21:04:21+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308865376"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "I am going to side with @bovarysme. If the `.env` file is going to be imported, it needs to be imported regardless of how the application is started. It's too confusing and error prone to have this work only when you run the application via the flask cli.\r\n\r\nI agree that it is a feature designed to help development, but what if I want to do a quick test running gunicorn or uwsgi? Maybe I won't even realize that I'm running a completely different configuration.\r\n\r\nBesides, having a unified way to import environment is nice. I don't see a reason not to do this in all cases. If you don't want to do it, don't write a .env file.",
+        "created_at": "2017-06-15T21:07:29+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308866103"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Where should it be loaded then? `Flask.__init__`? It needs to be loaded before that for the CLI, but shouldn't hurt to load it in both places.",
+        "created_at": "2017-06-15T21:19:45+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308868855"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "Right, that sounds tricky. Would it make sense to do it in `flask/__init__.py`? This is the main `flask` package, not the `Flask` class.",
+        "created_at": "2017-06-15T21:28:54+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308870977"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I'm not sure if I'm comfortable with import side effects, although I can't think why it would hurt in this case.",
+        "created_at": "2017-06-15T21:42:27+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308873898"
+      },
+      {
+        "author_login": "justanr",
+        "body": "I think loading in any sort of init should be avoided if at all reasonably possible, having  dealt with packages that do that it's an absolute nightmare, not just in testing but sometimes in just running the thing.\r\n\r\nWhat value does this env file serve over a cfg file that's loaded at run time? And will this open the door to people asking for other config options - do we then debate loading from redis or consul? The answer is hopefully no, but this does set the precedent for considering those if accepted.\r\n\r\nIf this is accepted as something we want, would a new method on the config object be more appropriate? Say one that accepted an env file and how to handle it?  ",
+        "created_at": "2017-06-15T21:42:48+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308873967"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "I'm also very much against having this code run at import time.\r\n\r\nHow about making it a normal function e.g. in `flask.util` and then call it from both the CLI code and from `Flask.__init__`?\r\n\r\n`Flask.__init__` and `FlaskGroup` (for custom CLIs) should probably also have kwargs to disable this completely.",
+        "created_at": "2017-06-15T21:49:27+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308875399"
+      },
+      {
+        "author_login": "davidism",
+        "body": "The immediate problem this was proposed to solve was setting the env vars for the cli, which has to happen before the app is available. The discussion is around keeping the behavior when not using the cli.\r\n\r\nNote that this will all be optional however it ends up working. If dotenv is not installed it will be skipped.\r\n\r\nI think loading in `Flask.__init__` with an argument to disable would be acceptable. In addition to loading early in the cli.",
+        "created_at": "2017-06-15T21:52:44+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-308876108"
+      },
+      {
+        "author_login": "lepture",
+        "body": "> Setting the FLASK_APP and FLASK_DEBUG for every new terminal session is inconvenient.\r\n\r\nIs this the problem that we should solve? `.env` may be a solution, but it is not the only solution. I prefer the flask-script way.\r\n\r\ne.g. here is the `app.py`:\r\n\r\n```python\r\napp = create_app()\r\n\r\nif __name__ == '__main__':\r\n    app.create_cli()\r\n```\r\n\r\nAnd then, we can call `python app.py run`.",
+        "created_at": "2017-06-21T02:52:47+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-309948275"
+      },
+      {
+        "author_login": "davidism",
+        "body": "@lepture you can still do that:\r\n\r\n```python\r\ncli = FlaskGroup(create_app=create_app)\r\n\r\nif __name__ == '__main__':\r\n    cli()\r\n```\r\n\r\nYou can also add an entry point for it:\r\n\r\n```python\r\nsetup(\r\n    ...,\r\n    entry_points={\r\n        'console_scripts': [\r\n            'myapp=myapp:cli',\r\n        ],\r\n    },\r\n)\r\n```\r\n\r\n```\r\nmyapp run\r\n```\r\n\r\nThis still doesn't replace the `FLASK_DEBUG` env var though.",
+        "created_at": "2017-06-28T15:51:48+00:00",
+        "url": "https://github.com/pallets/flask/issues/2375#issuecomment-311703343"
+      }
+    ]
+  },
+  {
+    "number": 2383,
+    "title": "Don't require FLASK_APP to have .py extension",
+    "body": "Addresses #2377. The simplest way that I found to do this was to just patch the `find_default_import_path` method to check if there's a file with the `.py` extension.\r\n\r\nWorked in all of my testing. 🙂 \r\n<!--\r\nCommit checklist:\r\n\r\n* add tests that fail without the patch\r\n* ensure all tests pass with ``pytest``\r\n* add documentation to the relevant docstrings or pages\r\n* add ``versionadded`` or ``versionchanged`` directives to relevant docstrings\r\n* add a changelog entry if this patch changes code\r\n\r\nTests, coverage, and docs will be run automatically when you submit the pull\r\nrequest, but running them yourself can save time.\r\n-->\r\n",
+    "state": "closed",
+    "created_at": "2017-06-18T20:48:26+00:00",
+    "closed_at": "2017-07-15T02:53:52+00:00",
+    "author_login": "bcongdon",
+    "url": "https://github.com/pallets/flask/pull/2383",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "Thanks! This is sort of the opposite direction of what I was imagining though. For example, a package that's not installed still requires `FLASK_APP=myapp/__init__` when it should be importable as `myapp` because the current directory is on the `PYTHONPATH`.",
+        "created_at": "2017-06-18T21:10:10+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-309303158"
+      },
+      {
+        "author_login": "bcongdon",
+        "body": "Ah, I see. I updated the method to append the sys path if the referenced `FLASK_APP` is a directory. That should cover both the case where `FLASK_APP=myapp` and `FLASK_APP=/path/to/myapp` (where `myapp` is a module that contains a Flask app)",
+        "created_at": "2017-06-18T22:00:09+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-309305780"
+      },
+      {
+        "author_login": "davidism",
+        "body": "A friend pointed out that `FLASK_APP=module flask run` already works without the `.py`. So now I'm trying to figure out why that's importable but `FLASK_APP=package` isn't.",
+        "created_at": "2017-06-27T13:44:56+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-311362590"
+      },
+      {
+        "author_login": "pachewise",
+        "body": "@davidism wouldn't it hinge on os.path.isfile() behavior? In that case, don't see how `FLASK_APP=module` would work unless os.path doesn't care about file extensions...",
+        "created_at": "2017-06-27T15:49:15+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-311400879"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Because the current directory is already inserted into `sys.path`.",
+        "created_at": "2017-06-27T16:33:16+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-311413413"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Thanks for working on this. I ended up fixing this in #2414 by dropping the `.py` requirement rather than handling directories differently.",
+        "created_at": "2017-07-15T02:53:51+00:00",
+        "url": "https://github.com/pallets/flask/pull/2383#issuecomment-315504560"
+      }
+    ]
+  },
+  {
+    "number": 2385,
+    "title": "Remove deprecated code",
+    "body": "Remove old code that has deprecation warnings:\r\n\r\n- [x] **`Flask.ext`**\r\n- [x] `Flask.init_jinja_globals`\r\n- [x] `Flask.error_handlers`\r\n- [x] `Flask.request_globals_class`\r\n- [x] `Flask.static_path`\r\n- [x] ~`send_file` mimetype guessing~ removed in 0.12 #1849\r\n- [x] `Request.module`\r\n- [x] `scripts/flask-07-upgrade.py`",
+    "state": "closed",
+    "created_at": "2017-06-21T19:11:14+00:00",
+    "closed_at": "2017-06-26T16:23:20+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/issues/2385",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "The only one I'm slightly worried about is `flask.ext`, but it's been deprecated almost a year now and there's plenty of information out there about what to change. We had a push to correct the use in a lot of extensions and docs, and I haven't seen it pop up for a long time on Stack Overflow. I'd rather not have it in 1.0.",
+        "created_at": "2017-06-21T19:13:00+00:00",
+        "url": "https://github.com/pallets/flask/issues/2385#issuecomment-310177227"
+      }
+    ]
+  },
+  {
+    "number": 2411,
+    "title": "TestClient: EnvironBuilder cannot be passed in",
+    "body": "In a normal test client from werkzeug you can pass the environment builder in. With Flask that is currently not possible. In some situations people might want to interface with the builder directly.",
+    "state": "closed",
+    "created_at": "2017-07-11T12:38:44+00:00",
+    "closed_at": "2017-07-13T15:42:53+00:00",
+    "author_login": "mitsuhiko",
+    "url": "https://github.com/pallets/flask/issues/2411",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "I'm assuming you mean passing an `EnvironBuilder` to `FlaskClient.open`?",
+        "created_at": "2017-07-11T13:39:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/2411#issuecomment-314446446"
+      },
+      {
+        "author_login": "pachewise",
+        "body": "would `FlaskClient.open` simply use the `EnvironBuilder` passed in (without the defaults in `make_test_environ_builder`)?",
+        "created_at": "2017-07-12T07:29:10+00:00",
+        "url": "https://github.com/pallets/flask/issues/2411#issuecomment-314679968"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "@davidism yeah. or at least have an option to play with the builder before its being used to create the environment.",
+        "created_at": "2017-07-12T11:24:55+00:00",
+        "url": "https://github.com/pallets/flask/issues/2411#issuecomment-314740805"
+      },
+      {
+        "author_login": "davidism",
+        "body": "What happens if they've overridden `client.environ_base`? Does that get ignored? Or ignored for for `EnvironBuilder` but not `dict` instances?\r\n\r\nHow should `environ.environ_overrides['flask._preserve_context']` be handled? It's required for keeping the behavior of the test client, but setting it would mutate the passed environ.",
+        "created_at": "2017-07-12T19:57:43+00:00",
+        "url": "https://github.com/pallets/flask/issues/2411#issuecomment-314879339"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "A crude way could be to pass in a function that is called with the builder so you can modify it before open takes place.",
+        "created_at": "2017-07-13T09:41:13+00:00",
+        "url": "https://github.com/pallets/flask/issues/2411#issuecomment-315027828"
+      }
+    ]
+  },
+  {
+    "number": 2594,
+    "title": "add ssl_context option to `flask run`",
+    "body": "### Expected Behaviour\r\n\r\nI expect to be able to pass the `flask run` command any of the options which are valid for the `Flask.run()` method:\r\n\r\n```sh\r\n$ FLASK_APP=myapp/run.py FLASK_DEBUG=1 flask run --host=0.0.0.0 --ssl_context=adhoc\r\n* Running on https://0.0.0.0:5000/ (Press CTRL+C to quit)\r\n```\r\n\r\nSpecifically, I want to pass `ssl_context=adhoc`, but it seems sensible to extend the command to accept all valid keyword arguments for `Flask.run()` / `werkzeug.serving.run_simple()`.\r\n\r\n### Actual Behaviour\r\n```\r\nError: no such option: --ssl_context\r\nflask run --host=0.0.0.0 --ssl_context=adhoc exited with code 2\r\n```\r\n\r\n### Environment\r\n\r\n* Python version: 3.5.2\r\n* Flask version: 0.12.2\r\n* Werkzeug version: 0.12.2\r\n",
+    "state": "closed",
+    "created_at": "2018-01-11T02:48:48+00:00",
+    "closed_at": "2018-01-23T18:09:43+00:00",
+    "author_login": "jscn",
+    "url": "https://github.com/pallets/flask/issues/2594",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "There are three behaviors:\r\n\r\n- \"adhoc\" generates a new self-signed cert each time\r\n- paths to a cert and key file\r\n- an `SSLContext` object\r\n\r\nI'm not sure how far to go with the last one. I can accept a string then call `werkzeug.import_string`, but that's more limited than how the CLI imports the Flask object itself. It wouldn't support callables and would dump a stack trace on errors instead of showing it in the interactive debugger.\r\n\r\nWerkzeug has a `make_dev_cert` method to generate permanent files instead of the temporary ones with \"adhoc\". I'm wondering if I should expose this as a `flask make_local_cert` command.",
+        "created_at": "2018-01-13T20:21:42+00:00",
+        "url": "https://github.com/pallets/flask/issues/2594#issuecomment-357464620"
+      },
+      {
+        "author_login": "jscn",
+        "body": "I'm not particularly familiar with the internals of Flask, or the Flask way of doing things, so take this with a grain of salt. Personally I'd not cover the last case at all. It doesn't really feel to me like a good option for a CLI. I'd suggest the user write their own command or app instance that uses their custom `SSLContext` instead.",
+        "created_at": "2018-01-15T20:52:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/2594#issuecomment-357786625"
+      },
+      {
+        "author_login": "ayrusme",
+        "body": "The paths to a cert file and key file seem to be logical, since that's the behavior in Flask.run(). We pass a SSLContext object with the load_cert_chain function to load the cert and key.",
+        "created_at": "2018-01-16T01:20:37+00:00",
+        "url": "https://github.com/pallets/flask/issues/2594#issuecomment-357826214"
+      },
+      {
+        "author_login": "jscn",
+        "body": "Thanks @davidism !",
+        "created_at": "2018-01-23T20:39:49+00:00",
+        "url": "https://github.com/pallets/flask/issues/2594#issuecomment-359922972"
+      },
+      {
+        "author_login": "Oisins",
+        "body": "I hope I don't sound too rude with this, but I was wondering when we can expect to see this in a release? Or on a more constructive note, how could I contribute best to making it happen?",
+        "created_at": "2018-04-04T20:19:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/2594#issuecomment-378731784"
+      }
+    ]
+  },
+  {
+    "number": 2776,
+    "title": "cannot call app.run() from custom cli command",
+    "body": "### Expected Behavior\r\n\r\nThere are situations in which you may want to implement a custom application runner. Two examples that I can think of are running the application under the Werkzeug profiler, and starting the application in a background thread to perform integration tests against it.\r\n\r\nIn these situations, most people would want to create a custom CLI command that calls `app.run()` to start the application after applying any necessary changes, such as enabling profiling, etc.\r\n\r\nExample `bug.py`:\r\n\r\n```python\r\nfrom flask import Flask\r\n\r\napp = Flask(__name__)\r\n\r\n@app.cli.command()\r\ndef custom_run():\r\n    app.run()\r\n```\r\n\r\nWhat I expect with the above example is that running `flask custom_run` starts the development web server.\r\n\r\n### Actual Behavior\r\n\r\n```\r\n(venv) $ FLASK_APP=bug.py flask custom_run\r\n/home/miguel/bug.py:7: Warning: Silently ignoring app.run() because the application is run from the flask command line executable.  Consider putting app.run() behind an if __name__ == \"__main__\" guard to silence this warning.\r\n```\r\n\r\nI think this warning should only appear when `app.run()` is called from the global scope of the main module. This can be determined from the number of frames in the call stack. The warning should be issued only if the call stack has two frames, but should not if there are more than two. Thoughts?",
+    "state": "closed",
+    "created_at": "2018-05-13T01:57:03+00:00",
+    "closed_at": "2022-06-15T19:17:09+00:00",
+    "author_login": "miguelgrinberg",
+    "url": "https://github.com/pallets/flask/issues/2776",
+    "comments": [
+      {
+        "author_login": "miguelgrinberg",
+        "body": "FYI, I included a fix for this problem in #2781.",
+        "created_at": "2018-05-24T05:02:36+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-391589017"
+      },
+      {
+        "author_login": "sktzofrenic",
+        "body": "I've found a solution to this that works in my case. I needed to have a separate flask app as a click command which failed when upgrading to 1.0. \r\n\r\nIn my situation, I created `autoapp.py` and `autoapp_proxy.py` and changed out the environment variable for `FLASK_APP=<app>` depending on which version I needed to run so that `flask run` would pull the correct app. \r\n\r\nI think I prefer the fix in your PR but wanted to throw this out there as an option that may work for some people's use case. ",
+        "created_at": "2019-07-12T11:48:14+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-510857188"
+      },
+      {
+        "author_login": "FrostDescent",
+        "body": "However, I still can not understand what's your means. You said that this warning should only appear when app.run() is called from the global scope of the main module, but the app.run() is call from a function decorated by cli. Could you please tell me how to do more exhaustively？ Thank you very much.",
+        "created_at": "2020-07-04T13:51:28+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-653768950"
+      },
+      {
+        "author_login": "RgnDunes",
+        "body": "I think importing `click` and `with_appcontext` might solve the issue. You can create custom command and maybe then you can try app.run() as shown below.\r\n\r\n`\r\n@click.command(name='execute')\r\n@with_appcontext\r\ndef execute():\r\n    app.run()\r\n\r\napp.cli.add_command(execute)\r\n`",
+        "created_at": "2020-12-04T09:55:18+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-738688676"
+      },
+      {
+        "author_login": "uselessscat",
+        "body": "I have this case.\r\n\r\nI want to run tests through `flask test`. So i made a cli command like:\r\n\r\n```\r\n@app.cli.command()\r\ndef test():\r\n    import pytest\r\n\r\n    return pytest.main(['project/tests'])\r\n```\r\n\r\nBut i some test i need to connect to external api, so I want to mock an application this way ([full example](https://gist.github.com/eruvanos/f6f62edb368a20aaa880e12976620db8)):\r\n\r\n```\r\nfrom flask import Flask\r\nfrom threading import Thread\r\n\r\nclass MockServer(Thread):\r\n    def __init__(self, port=5000):\r\n        super().__init__()\r\n\r\n        self.app = Flask(__name__)\r\n        \r\n    def run(self):\r\n        self.app.run(port=5999)\r\n```\r\n\r\nbut if i want to run the tests using `flask test` the server would not be created and then the tests fails.\r\n\r\nFlask just check that if an environment variable is set (`FLASK_RUN_FROM_CLI`), and then show the error `Warning: Silently ignoring app.run() ......`\r\n\r\nI don't know if i am missing something? I thought that if i run a server from another thread it would works, but it is not.",
+        "created_at": "2021-02-02T18:28:38+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-771868933"
+      },
+      {
+        "author_login": "davidism",
+        "body": "@uselessscat Using the `flask` command to run `pytest` is not an intended use case. Use the `pytest` command to run pytest, you're just making things complicated for no benefit otherwise.",
+        "created_at": "2021-02-02T18:32:51+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-771872350"
+      },
+      {
+        "author_login": "kajolmishraburke",
+        "body": "Warning: Silently ignoring app.run() because the application is run from the flask command line executable.  Consider putting app.run() behind an if __name__ == \"__main__\" guard to silence this warning. I am getting this error, I dont know how to solve it, as I am new to flask",
+        "created_at": "2021-06-11T17:25:40+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-859731290"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Do what the error message says and guard (or don't call at all) `app.run()`.",
+        "created_at": "2021-06-11T17:37:17+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-859737108"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I think the most I want to do here is to move the `FLASK_RUN_FROM_CLI` var to only be set from the `flask run` command, and not by _any_ `flask` command. That way, a custom `run` command can decide to call `app.run()` successfully. However, that comes with the standard issue with `app.run()`, that calling it necessarily imports it, which means any errors during import will crash the command instead of being handled by the debugger and reloader.",
+        "created_at": "2022-06-15T16:54:56+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-1156712621"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Actually, I don't think it would be good to only set that from `flask run`. Presumably, an unguarded call shouldn't interrupt _any_ command, not only the `run` command. You wouldn't want a server accidentally starting when you called `flask shell` or `flask db upgrade`.\r\n\r\nDisabling this check is a pretty uncommon requirement, it would only come up if you're writing a custom `run` command that works by calling `app.run`, as opposed to `make_server`, etc. If you really want to, I think it's reasonable to unset the env var in the command.\r\n\r\n```python\r\ndef custom_run():\r\n    del os.environ[\"FLASK_RUN_FROM_CLI\"]\r\n    app.run()\r\n```\r\n\r\nI'm doing some other work on the CLI, I might think of a more \"official\" way to turn off this check. For now the env var is fine, even though it's not really a public API. Just pay attention to our changelog if unsetting it is something your library depends on.",
+        "created_at": "2022-06-15T19:17:09+00:00",
+        "url": "https://github.com/pallets/flask/issues/2776#issuecomment-1156834830"
+      }
+    ]
+  },
+  {
+    "number": 2790,
+    "title": "Blueprint view function name should not contain dots",
+    "body": "I've done some homework and read up on #2450. I don't really understand the rationale behind that PR, and I don't think it really helps with Flask usage overall. To explain a bit...\r\n\r\nI maintain a [relatively complex project](https://github.com/discord-python/site) that builds its own API on top of Flask. This change heavily breaks our application structure, as we currently use dots as separators for view classes under our blueprints. Consider the following:\r\n\r\n* You have sets of blueprints - we use one for each subdomain\r\n* Each blueprint has a name - for example, `main`\r\n* Under a blueprint might be a logical section - for example, there might be an \"about\" section, so let's call this `main.about`\r\n* The logical section will have pages under it - to me, the logical thing to do is use more dots as separators, so `main.about.privacy` for example\r\n\r\nNow, one solution would be to use some other separator. Why not `about/privacy`? `about-privacy`? The thing is, regardless of what separator you decide to use there, blueprints must always be separated from the view name using a `.`. So in, `url_for()` for example, we would have to use `url_for(\"main.about/privacy\")`, which just looks plain ugly.\r\n\r\n<details>\r\n<summary>Some sample code</summary>\r\nA sample route:\r\n\r\n```py\r\nfrom pysite.base_route import TemplateView\r\n\r\nclass PrivacyView(TemplateView):\r\n    path = \"/about/privacy\"\r\n    name = \"about.privacy\"\r\n    template = \"main/about/privacy.html\"\r\n```\r\n\r\nHow we register this route:\r\n\r\n```py\r\nclass TemplateView(RouteView):\r\n    name = None  # type: str\r\n    path = None  # type: str\r\n\r\n    # We have a bunch of inheritance, but here's the relevant method from the superclass.\r\n    # RouteView inherits from MethodView and we dynamically load all our routes on startup.\r\n\r\n    @classmethod\r\n    def setup(cls: \"RouteView\", manager: \"pysite.route_manager.RouteManager\", blueprint: Blueprint):\r\n        \"\"\"\r\n        Set up the view by adding it to the blueprint passed in - this will also deal with multiple inheritance by\r\n        calling `super().setup()` as appropriate.\r\n\r\n        This is for a standard route view. Nothing special here.\r\n\r\n        :param manager: Instance of the current RouteManager\r\n        :param blueprint: Current Flask blueprint to register this route to\r\n        \"\"\"\r\n\r\n        # ... misc code\r\n\r\n        blueprint.add_url_rule(cls.path, view_func=cls.as_view(cls.name))\r\n```\r\n\r\nThis seems like the correct way to be doing this, right?\r\n</details>\r\n\r\n---\r\n\r\nSo, to summarize, here's what I'm asking:\r\n\r\n1. Why exactly was this change made in the first place?\r\n2. What should we be doing otherwise?",
+    "state": "closed",
+    "created_at": "2018-05-17T15:34:13+00:00",
+    "closed_at": "2018-05-24T14:10:08+00:00",
+    "author_login": "gdude2002",
+    "url": "https://github.com/pallets/flask/issues/2790",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "> looks plain ugly\r\n\r\nLooks fine to me, although personally I'd go with `-`.\r\n\r\nThe linked issue explains what's wrong with dots in endpoint names: you can't tell which part is the blueprint vs the endpoint. Dots are for separating blueprints and endpoints. When we implement nestable blueprints (#593, #1548) it would be even more important that dots only separate full names (and would also probably make what you're doing now easier).\r\n\r\nFor now, the easiest solution is to refactor the names to use another separator. Sorry for the trouble caused!",
+        "created_at": "2018-05-24T14:10:07+00:00",
+        "url": "https://github.com/pallets/flask/issues/2790#issuecomment-391729061"
+      },
+      {
+        "author_login": "gdude2002",
+        "body": "Well if you don't have nestable blueprints, then the part before the first `.` is the blueprint, isn't it? Unless you're not using blueprints at all, I suppose.\r\n\r\n`-` does look marginally better I think, yeah. Still not a great situation for us, since we'll have to do a huge amount of replacing, but I guess that can't be helped.\r\n\r\nThanks for the response anyway.",
+        "created_at": "2018-05-24T14:14:50+00:00",
+        "url": "https://github.com/pallets/flask/issues/2790#issuecomment-391730701"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1 @@
+"""CodeArchaeologist application package."""

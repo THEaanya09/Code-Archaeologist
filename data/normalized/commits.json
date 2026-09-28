@@ -1,0 +1,736 @@
+[
+  {
+    "sha": "2ef2000a39541d8424f3163ef5feeabacc81e681",
+    "message": "Enable threads by default for the dev server (#2529)\n\nEnable threads by default for dev server",
+    "date": "2017-11-24T23:17:09+00:00",
+    "author_login": "mitsuhiko",
+    "url": "https://github.com/pallets/flask/commit/2ef2000a39541d8424f3163ef5feeabacc81e681",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "changes": 1
+      },
+      {
+        "path": "flask/cli.py",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "changes": 2
+      }
+    ]
+  },
+  {
+    "sha": "39f7aaa41678bbd110365a55453dd5e395655bb8",
+    "message": "Merge pull request #2319 from HndrkMkt/#2266-support-create-app-without-script-info\n\nSupport `create_app` without script_info or with script_info as named argument",
+    "date": "2017-05-23T23:24:29+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/39f7aaa41678bbd110365a55453dd5e395655bb8",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 0,
+        "changes": 5
+      },
+      {
+        "path": "flask/_compat.py",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": "flask/cli.py",
+        "status": "modified",
+        "additions": 21,
+        "deletions": 7,
+        "changes": 28
+      },
+      {
+        "path": "tests/test_cli.py",
+        "status": "modified",
+        "additions": 41,
+        "deletions": 21,
+        "changes": 62
+      }
+    ]
+  },
+  {
+    "sha": "3b678b7927e38af1f50cfaa60e1c2fdeaf391325",
+    "message": "Merge pull request #2354 from davidism/stream-session\n\nOnly open session if request does not have open session",
+    "date": "2017-06-03T19:26:15+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/3b678b7927e38af1f50cfaa60e1c2fdeaf391325",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 0,
+        "changes": 4
+      },
+      {
+        "path": "flask/ctx.py",
+        "status": "modified",
+        "additions": 11,
+        "deletions": 8,
+        "changes": 19
+      },
+      {
+        "path": "tests/test_helpers.py",
+        "status": "modified",
+        "additions": 14,
+        "deletions": 0,
+        "changes": 14
+      }
+    ]
+  },
+  {
+    "sha": "59f7966e3192bcf478a213ba0aa9cd3bda7da4e4",
+    "message": "support passing environ to test client (#2412)\n\ncloses #2411",
+    "date": "2017-07-13T15:42:53+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/59f7966e3192bcf478a213ba0aa9cd3bda7da4e4",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/testing.py",
+        "status": "modified",
+        "additions": 31,
+        "deletions": 9,
+        "changes": 40
+      },
+      {
+        "path": "tests/test_testing.py",
+        "status": "modified",
+        "additions": 18,
+        "deletions": 0,
+        "changes": 18
+      }
+    ]
+  },
+  {
+    "sha": "62406e667c8004cf0367a3ec5bcbed980cbc32bb",
+    "message": "Merge pull request #2352 from davidism/json-object-hook\n\nMake session serializer extensible",
+    "date": "2017-06-02T17:07:57+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/62406e667c8004cf0367a3ec5bcbed980cbc32bb",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "docs/api.rst",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 12,
+        "changes": 14
+      },
+      {
+        "path": "flask/json/__init__.py",
+        "status": "renamed",
+        "additions": 2,
+        "deletions": 11,
+        "changes": 13
+      },
+      {
+        "path": "flask/json/tag.py",
+        "status": "added",
+        "additions": 297,
+        "deletions": 0,
+        "changes": 297
+      },
+      {
+        "path": "flask/sessions.py",
+        "status": "modified",
+        "additions": 8,
+        "deletions": 70,
+        "changes": 78
+      },
+      {
+        "path": "tests/test_basic.py",
+        "status": "modified",
+        "additions": 22,
+        "deletions": 19,
+        "changes": 41
+      },
+      {
+        "path": "tests/test_json_tag.py",
+        "status": "added",
+        "additions": 65,
+        "deletions": 0,
+        "changes": 65
+      }
+    ]
+  },
+  {
+    "sha": "8020d5eac9e4bb0e40a47b82ca95713ee78fc73c",
+    "message": "Merge pull request #2450 from Caratpine/master\n\nBlueprint view function name should not contain dots",
+    "date": "2017-10-09T15:18:34+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/8020d5eac9e4bb0e40a47b82ca95713ee78fc73c",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": "flask/blueprints.py",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": "tests/test_blueprints.py",
+        "status": "modified",
+        "additions": 9,
+        "deletions": 0,
+        "changes": 9
+      }
+    ]
+  },
+  {
+    "sha": "851eaa4db7cef513dae35286d816867d68a72049",
+    "message": "Merge pull request #2416 from davidism/dotenv\n\nAdd .env support",
+    "date": "2017-07-16T20:55:18+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/851eaa4db7cef513dae35286d816867d68a72049",
+    "files": [
+      {
+        "path": ".gitignore",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": ".travis.yml",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 0,
+        "changes": 5
+      },
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 0,
+        "changes": 4
+      },
+      {
+        "path": "docs/api.rst",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": "docs/cli.rst",
+        "status": "modified",
+        "additions": 31,
+        "deletions": 3,
+        "changes": 34
+      },
+      {
+        "path": "docs/installation.rst",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 27,
+        "deletions": 15,
+        "changes": 42
+      },
+      {
+        "path": "flask/cli.py",
+        "status": "modified",
+        "additions": 86,
+        "deletions": 15,
+        "changes": 101
+      },
+      {
+        "path": "setup.py",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      },
+      {
+        "path": "tests/test_apps/.env",
+        "status": "added",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "tests/test_apps/.flaskenv",
+        "status": "added",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "tests/test_cli.py",
+        "status": "modified",
+        "additions": 65,
+        "deletions": 8,
+        "changes": 73
+      },
+      {
+        "path": "tox.ini",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 1,
+        "changes": 3
+      }
+    ]
+  },
+  {
+    "sha": "8d515a644f4d1a508e5de85d1ab991194fc6394a",
+    "message": "Merge pull request #2254 from davidism/pop-context-on-session-error\n\nEnsure error while opening session pops context",
+    "date": "2017-04-22T21:43:21+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/8d515a644f4d1a508e5de85d1ab991194fc6394a",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "changes": 2
+      },
+      {
+        "path": "tests/test_reqctx.py",
+        "status": "modified",
+        "additions": 25,
+        "deletions": 0,
+        "changes": 25
+      }
+    ]
+  },
+  {
+    "sha": "8ff0cef6b9ecee2c0bc31774b33cb88632dc79db",
+    "message": "Merge pull request #2606 from pallets/run-ssl\n\nadd HTTPS support for flask run command",
+    "date": "2018-01-23T18:09:42+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/8ff0cef6b9ecee2c0bc31774b33cb88632dc79db",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/cli.py",
+        "status": "modified",
+        "additions": 93,
+        "deletions": 6,
+        "changes": 99
+      },
+      {
+        "path": "tests/test_cli.py",
+        "status": "modified",
+        "additions": 63,
+        "deletions": 2,
+        "changes": 65
+      }
+    ]
+  },
+  {
+    "sha": "9049755e3fac192d5c0cca5092a74a67e562cdc6",
+    "message": "Merge pull request #2348 from davidism/bad-request\n\nmake debugging bad key errors easier",
+    "date": "2017-05-30T02:53:18+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/9049755e3fac192d5c0cca5092a74a67e562cdc6",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 1,
+        "changes": 6
+      },
+      {
+        "path": "docs/config.rst",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 2,
+        "changes": 5
+      },
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 27,
+        "deletions": 4,
+        "changes": 31
+      },
+      {
+        "path": "tests/test_basic.py",
+        "status": "modified",
+        "additions": 6,
+        "deletions": 1,
+        "changes": 7
+      },
+      {
+        "path": "tests/test_helpers.py",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "changes": 2
+      }
+    ]
+  },
+  {
+    "sha": "a4e440b5602b6661cee46192f1750152148d9823",
+    "message": "Merge daceb3e3a028b4b408c4bbdbdef0047f1de3a7c9 into f17e6061fcffdc290f615d3fdc9d949e9e719574",
+    "date": "2016-01-13T21:20:18+00:00",
+    "author_login": "jeffwidman",
+    "url": "https://github.com/pallets/flask/commit/a4e440b5602b6661cee46192f1750152148d9823",
+    "files": [
+      {
+        "path": "AUTHORS",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 1,
+        "changes": 3
+      },
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "docs/security.rst",
+        "status": "modified",
+        "additions": 9,
+        "deletions": 78,
+        "changes": 87
+      },
+      {
+        "path": "flask/json.py",
+        "status": "modified",
+        "additions": 32,
+        "deletions": 8,
+        "changes": 40
+      },
+      {
+        "path": "tests/test_helpers.py",
+        "status": "modified",
+        "additions": 69,
+        "deletions": 29,
+        "changes": 98
+      }
+    ]
+  },
+  {
+    "sha": "b16592aba0e9c60c9b3329c884bd9236a35168c0",
+    "message": "Merge pull request #2629 from zcchen/master\n\nprevent double slash /a//b when blueprint prefix ends with slash",
+    "date": "2018-02-24T00:00:30+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/b16592aba0e9c60c9b3329c884bd9236a35168c0",
+    "files": [
+      {
+        "path": "CHANGES.rst",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/blueprints.py",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 1,
+        "changes": 4
+      },
+      {
+        "path": "tests/test_blueprints.py",
+        "status": "modified",
+        "additions": 14,
+        "deletions": 1,
+        "changes": 15
+      }
+    ]
+  },
+  {
+    "sha": "b80cf057fc2b41a5f642c222dbcb79ce28d3fe0e",
+    "message": "Merge pull request #2362 from davidism/remove-error-handler-cache\n\nRemove error handler cache",
+    "date": "2017-06-05T13:34:49+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/b80cf057fc2b41a5f642c222dbcb79ce28d3fe0e",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 0,
+        "changes": 4
+      },
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 11,
+        "deletions": 15,
+        "changes": 26
+      },
+      {
+        "path": "tests/test_basic.py",
+        "status": "modified",
+        "additions": 33,
+        "deletions": 0,
+        "changes": 33
+      }
+    ]
+  },
+  {
+    "sha": "bce8ec75ebde8a7f49fbc3a9825e667d7327c64d",
+    "message": "Merge pull request #2395 from davidism/remove-ext\n\nRemove deprecated flask.ext",
+    "date": "2017-06-26T16:18:21+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/bce8ec75ebde8a7f49fbc3a9825e667d7327c64d",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 0,
+        "changes": 3
+      },
+      {
+        "path": "flask/ext/__init__.py",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 29,
+        "changes": 29
+      },
+      {
+        "path": "flask/exthook.py",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 143,
+        "changes": 143
+      },
+      {
+        "path": "scripts/flaskext_compat.py",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 125,
+        "changes": 125
+      },
+      {
+        "path": "setup.py",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "changes": 2
+      },
+      {
+        "path": "tests/test_ext.py",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 197,
+        "changes": 197
+      }
+    ]
+  },
+  {
+    "sha": "c4ec6954e57b1ab3cb5a0d178e6030f8bab6c149",
+    "message": "Don't passthrough_errors unless instructed. (#2006)\n\nFix #2005\r\n\r\nRevert #1679 and #1996",
+    "date": "2016-09-06T20:32:34+00:00",
+    "author_login": "untitaker",
+    "url": "https://github.com/pallets/flask/commit/c4ec6954e57b1ab3cb5a0d178e6030f8bab6c149",
+    "files": [
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 2,
+        "changes": 2
+      },
+      {
+        "path": "flask/cli.py",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 2,
+        "changes": 3
+      },
+      {
+        "path": "tests/test_basic.py",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 2,
+        "changes": 2
+      }
+    ]
+  },
+  {
+    "sha": "c74f46979a8b8358437bd7f76e478d04248a9c72",
+    "message": "Merge pull request #2436 from davidism/logging\n\nSimplify logging",
+    "date": "2017-07-31T20:23:45+00:00",
+    "author_login": "davidism",
+    "url": "https://github.com/pallets/flask/commit/c74f46979a8b8358437bd7f76e478d04248a9c72",
+    "files": [
+      {
+        "path": "CHANGES",
+        "status": "modified",
+        "additions": 6,
+        "deletions": 0,
+        "changes": 6
+      },
+      {
+        "path": "docs/config.rst",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 15,
+        "changes": 20
+      },
+      {
+        "path": "docs/contents.rst.inc",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "changes": 1
+      },
+      {
+        "path": "docs/errorhandling.rst",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 207,
+        "changes": 212
+      },
+      {
+        "path": "docs/logging.rst",
+        "status": "added",
+        "additions": 175,
+        "deletions": 0,
+        "changes": 175
+      },
+      {
+        "path": "flask/app.py",
+        "status": "modified",
+        "additions": 21,
+        "deletions": 35,
+        "changes": 56
+      },
+      {
+        "path": "flask/logging.py",
+        "status": "modified",
+        "additions": 50,
+        "deletions": 75,
+        "changes": 125
+      },
+      {
+        "path": "tests/test_basic.py",
+        "status": "modified",
+        "additions": 28,
+        "deletions": 5,
+        "changes": 33
+      },
+      {
+        "path": "tests/test_helpers.py",
+        "status": "modified",
+        "additions": 8,
+        "deletions": 96,
+        "changes": 104
+      },
+      {
+        "path": "tests/test_logging.py",
+        "status": "added",
+        "additions": 91,
+        "deletions": 0,
+        "changes": 91
+      },
+      {
+        "path": "tests/test_subclassing.py",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 8,
+        "changes": 12
+      },
+      {
+        "path": "tests/test_templating.py",
+        "status": "modified",
+        "additions": 10,
+        "deletions": 14,
+        "changes": 24
+      },
+      {
+        "path": "tests/test_testing.py",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 1,
+        "changes": 1
+      }
+    ]
+  },
+  {
+    "sha": "d3d8a4694a9c1601e213d6b5f27fab34615609b7",
+    "message": "Deprecate flask.ext\n\n* Add deprecation warning to ext pkg\r\n\r\n* Add docs on deprecation of flask.ext\r\n\r\n* Improve deprecation warnings\r\n\r\n* Add headers for better distinction, fix ordering issue of paragraphs",
+    "date": "2016-04-02T19:06:30+00:00",
+    "author_login": "untitaker",
+    "url": "https://github.com/pallets/flask/commit/d3d8a4694a9c1601e213d6b5f27fab34615609b7",
+    "files": [
+      {
+        "path": "docs/extensiondev.rst",
+        "status": "modified",
+        "additions": 12,
+        "deletions": 14,
+        "changes": 26
+      },
+      {
+        "path": "docs/extensions.rst",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 3,
+        "changes": 7
+      },
+      {
+        "path": "docs/upgrading.rst",
+        "status": "modified",
+        "additions": 25,
+        "deletions": 4,
+        "changes": 29
+      },
+      {
+        "path": "flask/exthook.py",
+        "status": "modified",
+        "additions": 24,
+        "deletions": 1,
+        "changes": 25
+      }
+    ]
+  }
+]

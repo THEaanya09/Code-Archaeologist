@@ -1,0 +1,493 @@
+[
+  {
+    "id": "golden-1",
+    "summary": "Why did Flask 1.0 remove the deprecated flask.ext import namespace instead of keeping it as a compatibility shim?",
+    "rationale": "It was deprecated a year earlier in 0.12; extensions were contacted to fix docs and examples and new usage had mostly stopped, so removal was considered safe for 1.0.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2395,
+    "source_url": "https://github.com/pallets/flask/pull/2395",
+    "evidence_snippet": "It was deprecated a year earlier in 0.12; extensions were contacted to fix docs and examples and new usage had mostly stopped, so removal was considered safe for 1.0.",
+    "people": [
+      "davidism"
+    ],
+    "dates": [
+      "2017-06-26",
+      "2017-06-21"
+    ],
+    "golden_id": 1
+  },
+  {
+    "id": "golden-2",
+    "summary": "Why did Flask 1.0 make the session serializer extensible through TaggedJSONSerializer.register even though it made session serialization about 30 microseconds slower per request?",
+    "rationale": "The refactor into flask.json.tag with a JSONTag interface let users register new tag types, or override existing ones such as dict to support non-string keys (issue 1908). The maintainer accepted the slowdown (about 70.7 to 96.3 microseconds) because it would take roughly 2,000,000 requests to waste one extra minute, and server-side session extensions that use pickle are much faster anyway.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2352,
+    "source_url": "https://github.com/pallets/flask/pull/2352",
+    "evidence_snippet": "The refactor into flask.json.tag with a JSONTag interface let users register new tag types, or override existing ones such as dict to support non-string keys (issue 1908). The maintainer accepted the slowdown (about 70.7 to 96.3 microseconds) because it would take roughly 2,000,000 requests to waste one extra minute, and server-side session extensions that use pickle are much faster anyway.",
+    "people": [
+      "davidism",
+      "ThiefMaster"
+    ],
+    "dates": [
+      "2017-06-02",
+      "2016-06-13"
+    ],
+    "golden_id": 2
+  },
+  {
+    "id": "golden-3",
+    "summary": "Why did Flask 1.0 remove the error handler cache instead of keeping it for performance?",
+    "rationale": "Caching handlers for the exception MRO caused issues with some inheritance setups. The author did not expect hierarchies to be deep enough for the lost caching to matter in most cases, and said that if performance is an issue, handlers should be registered explicitly for each exception class they apply to.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2362,
+    "source_url": "https://github.com/pallets/flask/pull/2362",
+    "evidence_snippet": "Caching handlers for the exception MRO caused issues with some inheritance setups. The author did not expect hierarchies to be deep enough for the lost caching to matter in most cases, and said that if performance is an issue, handlers should be registered explicitly for each exception class they apply to.",
+    "people": [
+      "davidism",
+      "ngaya-ll"
+    ],
+    "dates": [
+      "2017-06-05",
+      "2017-05-02"
+    ],
+    "golden_id": 3
+  },
+  {
+    "id": "golden-4",
+    "summary": "Why did Flask 1.0 move ctx.push() inside the try block in wsgi_app instead of adopting the more involved fix proposed in #1538 for errors raised while opening the session?",
+    "rationale": "#1538 provided a solution to the problem reported in #1528, but it could be simplified by only moving ctx.push() into the try block. Errors raised by SessionInterface.open_session and make_null_session are then handled by the normal app error handling mechanism, and the context is popped at the end of the request.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2254,
+    "source_url": "https://github.com/pallets/flask/pull/2254",
+    "evidence_snippet": "#1538 provided a solution to the problem reported in #1528, but it could be simplified by only moving ctx.push() into the try block. Errors raised by SessionInterface.open_session and make_null_session are then handled by the normal app error handling mechanism, and the context is popped at the end of the request.",
+    "people": [
+      "davidism",
+      "WeirdCarrotMonster"
+    ],
+    "dates": [
+      "2017-04-22",
+      "2015-07-12"
+    ],
+    "golden_id": 4
+  },
+  {
+    "id": "golden-5",
+    "summary": "Why did Flask 1.0 enable threading by default for the development server?",
+    "rationale": "The author said it was far too easy to deadlock the single-threaded dev server, for example with background resource fetching, and that threads should be on by default. In the discussion, maintainers said the Werkzeug debugger is threadsafe, so the change should be fine.",
+    "tradeoffs": "",
+    "confidence": "medium",
+    "source_type": "github_pr",
+    "source_id": 2529,
+    "source_url": "https://github.com/pallets/flask/pull/2529",
+    "evidence_snippet": "The author said it was far too easy to deadlock the single-threaded dev server, for example with background resource fetching, and that threads should be on by default. In the discussion, maintainers said the Werkzeug debugger is threadsafe, so the change should be fine.",
+    "people": [
+      "mitsuhiko"
+    ],
+    "dates": [
+      "2017-11-24"
+    ],
+    "golden_id": 5
+  },
+  {
+    "id": "golden-6",
+    "summary": "Why did the flask run HTTPS support in Flask 1.0 not include a gen_cert command or documentation for the adhoc and SSLContext options?",
+    "rationale": "The author deliberately left the adhoc and SSLContext options undocumented even though they are supported. A gen_cert command would have needed extra logic around werkzeug.serving.make_ssl_devcert to avoid unconditionally overwriting existing files. The preferred workflow is to generate a cert and key manually and pass them in, for example via FLASK_RUN_CERT and FLASK_RUN_KEY in .flaskenv.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2606,
+    "source_url": "https://github.com/pallets/flask/pull/2606",
+    "evidence_snippet": "The author deliberately left the adhoc and SSLContext options undocumented even though they are supported. A gen_cert command would have needed extra logic around werkzeug.serving.make_ssl_devcert to avoid unconditionally overwriting existing files. The preferred workflow is to generate a cert and key manually and pass them in, for example via FLASK_RUN_CERT and FLASK_RUN_KEY in .flaskenv.",
+    "people": [
+      "davidism",
+      "jscn"
+    ],
+    "dates": [
+      "2018-01-23",
+      "2018-01-11"
+    ],
+    "golden_id": 6
+  },
+  {
+    "id": "golden-7",
+    "summary": "Why did Flask allow jsonify to serialize top-level arrays without adding a config option to control the old restriction?",
+    "rationale": "The old restriction existed because of a JSON array exploit that affected IE 6, 7 and 8 (ECMAScript 3). Discussion in #248 concluded that this reason no longer mattered in practice, and that a config option whose default disables the protection would make the mechanism pointless, so it could be removed entirely. Following #1209 and #248, PR 1671 therefore added top-level array support without a new config variable.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 1671,
+    "source_url": "https://github.com/pallets/flask/pull/1671",
+    "evidence_snippet": "The old restriction existed because of a JSON array exploit that affected IE 6, 7 and 8 (ECMAScript 3). Discussion in #248 concluded that this reason no longer mattered in practice, and that a config option whose default disables the protection would make the mechanism pointless, so it could be removed entirely. Following #1209 and #248, PR 1671 therefore added top-level array support without a new config variable.",
+    "people": [
+      "jeffwidman",
+      "mitsuhiko"
+    ],
+    "dates": [
+      "2016-01-25",
+      "2011-06-20",
+      "2016-01-13"
+    ],
+    "golden_id": 7
+  },
+  {
+    "id": "golden-8",
+    "summary": "Why did the top-level array change to jsonify keep supporting keyword arguments instead of making jsonify accept a single argument like json.dumps?",
+    "rationale": "The PR author suggested aligning jsonify with json.dumps by removing kwargs support, but a maintainer objected that breaking kwargs would give almost no benefit and would only annoy people. He noted that calls like jsonify(some=thing, other=thing) are common, so kwargs support was kept.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 1671,
+    "source_url": "https://github.com/pallets/flask/pull/1671",
+    "evidence_snippet": "The PR author suggested aligning jsonify with json.dumps by removing kwargs support, but a maintainer objected that breaking kwargs would give almost no benefit and would only annoy people. He noted that calls like jsonify(some=thing, other=thing) are common, so kwargs support was kept.",
+    "people": [
+      "jeffwidman",
+      "kwellman"
+    ],
+    "dates": [
+      "2016-01-25",
+      "2011-02-16",
+      "2016-01-13"
+    ],
+    "golden_id": 8
+  },
+  {
+    "id": "golden-9",
+    "summary": "Why does jsonify raise an error when it is given both positional and keyword arguments instead of using one and ignoring the other?",
+    "rationale": "A reviewer asked whether calling jsonify with both args and kwargs should fail, since the old implementation silently combined them. After further thought the PR author restructured the *args/**kwargs handling to be more explicit and made the combination fail, calling it the least surprising outcome compared with silently dropping either the args or the kwargs.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 1671,
+    "source_url": "https://github.com/pallets/flask/pull/1671",
+    "evidence_snippet": "A reviewer asked whether calling jsonify with both args and kwargs should fail, since the old implementation silently combined them. After further thought the PR author restructured the *args/**kwargs handling to be more explicit and made the combination fail, calling it the least surprising outcome compared with silently dropping either the args or the kwargs.",
+    "people": [
+      "jeffwidman",
+      "kwellman"
+    ],
+    "dates": [
+      "2016-01-25",
+      "2011-02-16",
+      "2016-01-13"
+    ],
+    "golden_id": 9
+  },
+  {
+    "id": "golden-10",
+    "summary": "Why did maintainers deprecate request.json in favor of request.get_json() before Flask 1.0 was released?",
+    "rationale": "A maintainer argued that accessing .json drains the input stream, which is a problem if people want their own processing of that data. He said .form and .files have internal hooking support and are common enough that it matters less, while .json is highly problematic because untrusted nested JSON can be abusive (his example was json.loads('[' * 800 + ']' * 800)). He also said larger projects should use a validating or stream parser, and that merely touching a property should not bypass that.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_issue",
+    "source_id": 1421,
+    "source_url": "https://github.com/pallets/flask/issues/1421",
+    "evidence_snippet": "A maintainer argued that accessing .json drains the input stream, which is a problem if people want their own processing of that data. He said .form and .files have internal hooking support and are common enough that it matters less, while .json is highly problematic because untrusted nested JSON can be abusive (his example was json.loads('[' * 800 + ']' * 800)). He also said larger projects should use a validating or stream parser, and that merely touching a property should not bypass that.",
+    "people": [
+      "untitaker"
+    ],
+    "dates": [
+      "2015-04-06"
+    ],
+    "golden_id": 10
+  },
+  {
+    "id": "golden-11",
+    "summary": "Why was the deprecation of request.json reversed so that it is no longer deprecated in Flask 1.0?",
+    "rationale": "Users argued that keeping the property preserves backward compatibility, is more concise (request.json['foo']), is consistent with request.form and request.data, and caches the data just as get_json() does, while advanced users can still use get_data() and get_json(). One maintainer concluded that the stream-draining and memory concerns were tangential to .json existing, since they affect get_json() just as much, and that other common properties keep working because they are cached. The Flask 1.0 changelog then records the property as no longer deprecated, citing #1421.",
+    "tradeoffs": "",
+    "confidence": "medium",
+    "source_type": "github_issue",
+    "source_id": 1421,
+    "source_url": "https://github.com/pallets/flask/issues/1421",
+    "evidence_snippet": "Users argued that keeping the property preserves backward compatibility, is more concise (request.json['foo']), is consistent with request.form and request.data, and caches the data just as get_json() does, while advanced users can still use get_data() and get_json(). One maintainer concluded that the stream-draining and memory concerns were tangential to .json existing, since they affect get_json() just as much, and that other common properties keep working because they are cached. The Flask 1.0 changelog then records the property as no longer deprecated, citing #1421.",
+    "people": [
+      "untitaker"
+    ],
+    "dates": [
+      "2015-04-06"
+    ],
+    "golden_id": 11
+  },
+  {
+    "id": "golden-12",
+    "summary": "Why did Flask revert the earlier passthrough_errors changes instead of keeping a fix for the flask run command?",
+    "rationale": "The earlier changes (#1679 and #1996) had caused a new bug, #2005, where the server could crash, for example with a broken pipe error. The maintainer merged the revert so master would not be left in a broken state, and both maintainers said it was an interim step rather than a final decision, with a proper fix for #1679 to be reviewed later.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2006,
+    "source_url": "https://github.com/pallets/flask/pull/2006",
+    "evidence_snippet": "The earlier changes (#1679 and #1996) had caused a new bug, #2005, where the server could crash, for example with a broken pipe error. The maintainer merged the revert so master would not be left in a broken state, and both maintainers said it was an interim step rather than a final decision, with a proper fix for #1679 to be reviewed later.",
+    "people": [
+      "untitaker",
+      "ghost"
+    ],
+    "dates": [
+      "2016-09-06"
+    ],
+    "golden_id": 12
+  },
+  {
+    "id": "golden-13",
+    "summary": "Why did Flask 1.0 drastically simplify its logging setup and remove the LOGGER_NAME and LOGGER_HANDLER_POLICY config options?",
+    "rationale": "Based on the discussion in #2023 and #641, the PR states that Flask interfered too much with logging. It therefore greatly reduced the configuration Flask applies: the logger is always named flask.app, the level is set once on first access instead of checking debug for every message, only one handler and format are used, a handler is added only if none would already handle the logger's effective level, and existing handlers are never removed.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2436,
+    "source_url": "https://github.com/pallets/flask/pull/2436",
+    "evidence_snippet": "Based on the discussion in #2023 and #641, the PR states that Flask interfered too much with logging. It therefore greatly reduced the configuration Flask applies: the logger is always named flask.app, the level is set once on first access instead of checking debug for every message, only one handler and format are used, a handler is added only if none would already handle the logger's effective level, and existing handlers are never removed.",
+    "people": [
+      "davidism",
+      "untitaker"
+    ],
+    "dates": [
+      "2017-07-31",
+      "2016-09-12"
+    ],
+    "golden_id": 13
+  },
+  {
+    "id": "golden-14",
+    "summary": "Why did Flask 1.0 forbid dots in blueprint view function (endpoint) names?",
+    "rationale": "A maintainer explained that dots in endpoint names make it impossible to tell which part is the blueprint and which is the endpoint. Dots are meant only to separate blueprint names from endpoint names, and this would matter even more if nestable blueprints were implemented (#593, #1548). His suggestion for users who wanted structured names was to use a different separator such as a hyphen.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2450,
+    "source_url": "https://github.com/pallets/flask/pull/2450",
+    "evidence_snippet": "A maintainer explained that dots in endpoint names make it impossible to tell which part is the blueprint and which is the endpoint. Dots are meant only to separate blueprint names from endpoint names, and this would matter even more if nestable blueprints were implemented (#593, #1548). His suggestion for users who wanted structured names was to use a different separator such as a hyphen.",
+    "people": [
+      "Caratpine",
+      "gdude2002",
+      "davidism"
+    ],
+    "dates": [
+      "2017-10-09",
+      "2018-05-17"
+    ],
+    "golden_id": 14
+  },
+  {
+    "id": "golden-15",
+    "summary": "Why did Flask change the session handling so a request only opens a session if it doesn't already have one open?",
+    "rationale": "When stream_with_context was used, a new session was opened from the original request data, so any changes the view had made to the session were not visible inside the generator. The change makes the generator see the same session as the view. It deliberately does not allow modifying the session inside the generator, because the response headers have already been sent by then.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2354,
+    "source_url": "https://github.com/pallets/flask/pull/2354",
+    "evidence_snippet": "When stream_with_context was used, a new session was opened from the original request data, so any changes the view had made to the session were not visible inside the generator. The change makes the generator see the same session as the view. It deliberately does not allow modifying the session inside the generator, because the response headers have already been sent by then.",
+    "people": [
+      "davidism",
+      "ghost"
+    ],
+    "dates": [
+      "2017-06-03",
+      "2015-02-08"
+    ],
+    "golden_id": 15
+  },
+  {
+    "id": "golden-16",
+    "summary": "Why did Flask 1.0 enable TRAP_BAD_REQUEST_ERRORS by default in debug mode and put the missing key in BadRequestKeyError's description?",
+    "rationale": "The PR author noted that this error is one of the most recurring Flask questions on Stack Overflow, so making the error and the missing key visible in debug mode should answer many of those questions before they are asked. The old behavior can be restored by setting TRAP_BAD_REQUEST_ERRORS = False.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2348,
+    "source_url": "https://github.com/pallets/flask/pull/2348",
+    "evidence_snippet": "The PR author noted that this error is one of the most recurring Flask questions on Stack Overflow, so making the error and the missing key visible in debug mode should answer many of those questions before they are asked. The old behavior can be restored by setting TRAP_BAD_REQUEST_ERRORS = False.",
+    "people": [
+      "davidism",
+      "catlee"
+    ],
+    "dates": [
+      "2017-05-30",
+      "2012-01-17"
+    ],
+    "golden_id": 16
+  },
+  {
+    "id": "golden-17",
+    "summary": "Why was flask.ext deprecated with runtime warnings and documentation changes, without first building a migration tool to rewrite flask_* imports?",
+    "rationale": "Issue 1135 asked for both a deprecation and a migration tool. Once PR 1484 made the deprecation explicit in the docs and added runtime warnings for importing flask.ext.*, a contributor argued that a migration script was convenient but not necessary for most projects, since a simple find-and-replace of flask.ext. with flask_ had already worked for several Flask projects. The PR also shows two warnings being added, one addressed to app developers and one to extension developers.",
+    "tradeoffs": "",
+    "confidence": "medium",
+    "source_type": "github_pr",
+    "source_id": 1484,
+    "source_url": "https://github.com/pallets/flask/pull/1484",
+    "evidence_snippet": "Issue 1135 asked for both a deprecation and a migration tool. Once PR 1484 made the deprecation explicit in the docs and added runtime warnings for importing flask.ext.*, a contributor argued that a migration script was convenient but not necessary for most projects, since a simple find-and-replace of flask.ext. with flask_ had already worked for several Flask projects. The PR also shows two warnings being added, one addressed to app developers and one to extension developers.",
+    "people": [
+      "untitaker",
+      "DasIch"
+    ],
+    "dates": [
+      "2016-04-02",
+      "2014-07-27"
+    ],
+    "golden_id": 17
+  },
+  {
+    "id": "golden-18",
+    "summary": "Why does Flask ignore an unguarded app.run() for every flask command instead of only for flask run?",
+    "rationale": "A maintainer said an unguarded app.run() should not interrupt any command, not just the run command, because you wouldn't want a server accidentally starting when you call something like flask shell or flask db upgrade. He also advised against custom commands that call app.run(), since importing the app means the server crashes on reload instead of dropping to the debugger on import errors. For the rare case, he suggested unsetting the FLASK_RUN_FROM_CLI environment variable, and later considered setting that variable only from the flask run command.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_issue",
+    "source_id": 2776,
+    "source_url": "https://github.com/pallets/flask/issues/2776",
+    "evidence_snippet": "A maintainer said an unguarded app.run() should not interrupt any command, not just the run command, because you wouldn't want a server accidentally starting when you call something like flask shell or flask db upgrade. He also advised against custom commands that call app.run(), since importing the app means the server crashes on reload instead of dropping to the debugger on import errors. For the rare case, he suggested unsetting the FLASK_RUN_FROM_CLI environment variable, and later considered setting that variable only from the flask run command.",
+    "people": [
+      "miguelgrinberg"
+    ],
+    "dates": [
+      "2018-05-13"
+    ],
+    "golden_id": 18
+  },
+  {
+    "id": "golden-19",
+    "summary": "Why did maintainers want the blueprint url_prefix double-slash fix to touch only the prefix, rather than normalizing route definitions in general?",
+    "rationale": "The maintainer said the change should strip exactly one trailing slash from the prefix and that he did not want to mess with route definitions in general, just the prefixing. General route normalization was expected to be handled by Werkzeug if pallets/werkzeug#1132 was implemented, so he would rather focus on that and show a warning in Flask for prefixes ending in a slash. Another maintainer agreed a warning might be better than silently removing slashes, so people can fix their own code.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2629,
+    "source_url": "https://github.com/pallets/flask/pull/2629",
+    "evidence_snippet": "The maintainer said the change should strip exactly one trailing slash from the prefix and that he did not want to mess with route definitions in general, just the prefixing. General route normalization was expected to be handled by Werkzeug if pallets/werkzeug#1132 was implemented, so he would rather focus on that and show a warning in Flask for prefixes ending in a slash. Another maintainer agreed a warning might be better than silently removing slashes, so people can fix their own code.",
+    "people": [
+      "zcchen",
+      "davidism"
+    ],
+    "dates": [
+      "2018-02-24"
+    ],
+    "golden_id": 19
+  },
+  {
+    "id": "golden-20",
+    "summary": "Why did Flask add .env support by using python-dotenv as an optional dependency instead of writing its own .env parser?",
+    "rationale": "The issue argued that using python-dotenv instead of writing an own parser reduces the maintenance burden on Flask and can be an optional dependency: if it is installed the CLI loads the .env files, otherwise it skips them.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2416,
+    "source_url": "https://github.com/pallets/flask/pull/2416",
+    "evidence_snippet": "The issue argued that using python-dotenv instead of writing an own parser reduces the maintenance burden on Flask and can be an optional dependency: if it is installed the CLI loads the .env files, otherwise it skips them.",
+    "people": [
+      "davidism"
+    ],
+    "dates": [
+      "2017-07-16",
+      "2017-06-14"
+    ],
+    "golden_id": 20
+  },
+  {
+    "id": "golden-21",
+    "summary": "Why does Flask's dotenv support load two files, .flaskenv and .env, instead of a single .env file?",
+    "rationale": "In the earlier .env discussion (#2164), a maintainer raised that .env typically stores sensitive configuration, and that the convenience of setting FLASK_APP there could encourage users to commit the file publicly. The proposed solution was to load two files and document prominently that one can be committed but must not contain secrets. The merged PR follows this: .flaskenv is for public variables and .env is for private variables that won't be committed, with manual variables overriding .env, which overrides .flaskenv.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2416,
+    "source_url": "https://github.com/pallets/flask/pull/2416",
+    "evidence_snippet": "In the earlier .env discussion (#2164), a maintainer raised that .env typically stores sensitive configuration, and that the convenience of setting FLASK_APP there could encourage users to commit the file publicly. The proposed solution was to load two files and document prominently that one can be committed but must not contain secrets. The merged PR follows this: .flaskenv is for public variables and .env is for private variables that won't be committed, with manual variables overriding .env, which overrides .flaskenv.",
+    "people": [
+      "davidism"
+    ],
+    "dates": [
+      "2017-07-16",
+      "2017-06-14"
+    ],
+    "golden_id": 21
+  },
+  {
+    "id": "golden-22",
+    "summary": "Why does loading .env or .flaskenv files change the working directory to the location of those files?",
+    "rationale": "The PR states that the working directory is set to the location of the dotenv files, on the assumption that they are in the top level of the project, in order to facilitate local package imports (#2383).",
+    "tradeoffs": "",
+    "confidence": "medium",
+    "source_type": "github_pr",
+    "source_id": 2416,
+    "source_url": "https://github.com/pallets/flask/pull/2416",
+    "evidence_snippet": "The PR states that the working directory is set to the location of the dotenv files, on the assumption that they are in the top level of the project, in order to facilitate local package imports (#2383).",
+    "people": [
+      "davidism",
+      "bcongdon"
+    ],
+    "dates": [
+      "2017-07-16",
+      "2017-06-18"
+    ],
+    "golden_id": 22
+  },
+  {
+    "id": "golden-23",
+    "summary": "Why does FlaskClient.open copy and modify an environ or EnvironBuilder that is passed in, instead of using it exactly as given like werkzeug's test client does?",
+    "rationale": "The PR allows passing an EnvironBuilder or dict as the only argument to FlaskClient.open, similar to werkzeug.test.Client.open. Since FlaskClient does some other configuration for the environ, the change makes sure a passed environ is copied and modified appropriately rather than used untouched.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 2412,
+    "source_url": "https://github.com/pallets/flask/pull/2412",
+    "evidence_snippet": "The PR allows passing an EnvironBuilder or dict as the only argument to FlaskClient.open, similar to werkzeug.test.Client.open. Since FlaskClient does some other configuration for the environ, the change makes sure a passed environ is copied and modified appropriately rather than used untouched.",
+    "people": [
+      "davidism",
+      "mitsuhiko"
+    ],
+    "dates": [
+      "2017-07-13",
+      "2017-07-11"
+    ],
+    "golden_id": 23
+  },
+  {
+    "id": "golden-24",
+    "summary": "Why did maintainers originally decline to have the flask CLI auto-discover and call a create_app factory function?",
+    "rationale": "A maintainer closed the PR after private discussion, arguing that app factories are, in theory, only useful when arguments are passed to them, which the CLI cannot reasonably support, and that launcher scripts are already about as free of boilerplate as it gets. He said the documentation needed updating instead, pointing to issue 2027. Other participants added that discovering an existing app object is conceptually different from calling code to create one, and that a lambda passed to the script context can invoke a factory explicitly.",
+    "tradeoffs": "",
+    "confidence": "high",
+    "source_type": "github_pr",
+    "source_id": 1536,
+    "source_url": "https://github.com/pallets/flask/pull/1536",
+    "evidence_snippet": "A maintainer closed the PR after private discussion, arguing that app factories are, in theory, only useful when arguments are passed to them, which the CLI cannot reasonably support, and that launcher scripts are already about as free of boilerplate as it gets. He said the documentation needed updating instead, pointing to issue 2027. Other participants added that discovering an existing app object is conceptually different from calling code to create one, and that a lambda passed to the script context can invoke a factory explicitly.",
+    "people": [
+      "mbr",
+      "untitaker"
+    ],
+    "dates": [
+      "2015-07-17",
+      "2016-09-18"
+    ],
+    "golden_id": 24
+  },
+  {
+    "id": "golden-25",
+    "summary": "Why did Flask 1.0 stop requiring app factory functions to accept a script_info argument for the flask command?",
+    "rationale": "Issue 2266 proposed using inspect to check whether the factory takes an argument before passing the script info instance to it, preferably as a keyword argument so a factory could be written as def create_app(config=None, script_info=None). In a separate app-factory CLI discussion (#2027), one maintainer said he did not like adding a ScriptInfo argument just because the Click integration code requires it, and another said the argument has to be there to make Click happy but that he doesn't use it.",
+    "tradeoffs": "",
+    "confidence": "medium",
+    "source_type": "github_pr",
+    "source_id": 2319,
+    "source_url": "https://github.com/pallets/flask/pull/2319",
+    "evidence_snippet": "Issue 2266 proposed using inspect to check whether the factory takes an argument before passing the script info instance to it, preferably as a keyword argument so a factory could be written as def create_app(config=None, script_info=None). In a separate app-factory CLI discussion (#2027), one maintainer said he did not like adding a ScriptInfo argument just because the Click integration code requires it, and another said the argument has to be there to make Click happy but that he doesn't use it.",
+    "people": [
+      "hendrikmakait",
+      "davidism"
+    ],
+    "dates": [
+      "2017-05-23",
+      "2017-05-01"
+    ],
+    "golden_id": 25
+  }
+]

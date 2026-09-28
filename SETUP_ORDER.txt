@@ -1,0 +1,12 @@
+1. Keep your existing data/golden_questions.json and .env; do not overwrite them.
+2. Copy the app/, tests/, docs/, frontend/, requirements.txt, README.md, PROJECT_SPEC.md, .gitignore, .env.example files into the project root.
+3. pip install -r requirements.txt
+4. python -m compileall app
+5. pytest -q
+6. python -m app.neo4j_schema
+7. python -m app.github_ingest
+8. python -m app.normalize
+9. python -m app.extract_decisions
+10. python -m app.neo4j_ingest
+11. python -m app.eval
+12. python -m uvicorn app.api:app --reload

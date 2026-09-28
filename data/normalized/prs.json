@@ -1,0 +1,744 @@
+[
+  {
+    "number": 1484,
+    "title": "Deprecate flask.ext",
+    "body": "See #1135\n",
+    "state": "closed",
+    "created_at": "2015-06-06T04:00:26+00:00",
+    "merged_at": "2016-04-02T19:06:30+00:00",
+    "author_login": "untitaker",
+    "merge_commit_sha": "d3d8a4694a9c1601e213d6b5f27fab34615609b7",
+    "url": "https://github.com/pallets/flask/pull/1484",
+    "comments": [
+      {
+        "author_login": "untitaker",
+        "body": "cc @DasIch (now on the PR properly)\n",
+        "created_at": "2015-06-06T04:05:20+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-109518672"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "Would it make sense to show a different warning in case a `flask.ext` import points to an old `flaskext` package?\n",
+        "created_at": "2015-06-19T06:37:36+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-113394804"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "@ThiefMaster fixed, an additional warning is now shown. One is addressing the app dev, the other the extension dev.\n",
+        "created_at": "2015-06-19T13:36:23+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-113517096"
+      },
+      {
+        "author_login": "davidism",
+        "body": "What are we waiting on to merge this?\n",
+        "created_at": "2015-10-31T04:01:28+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-152690731"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Feel free to do so.\n\nOn 31 October 2015 05:02:17 CET, David Lord notifications@github.com wrote:\n\n> What are we waiting on to merge this?\n> \n> ---\n> \n> Reply to this email directly or view it on GitHub:\n> https://github.com/mitsuhiko/flask/pull/1484#issuecomment-152690731\n\n## \n\nSent from my phone. Please excuse my brevity.\n",
+        "created_at": "2015-10-31T05:47:56+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-152697670"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Can someone rebase and then merge this?\n\nSeems like this is all that's needed to check one of the #1182 checkboxes.\n",
+        "created_at": "2015-12-30T22:54:10+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-168090417"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "Let's merge this.\n",
+        "created_at": "2016-04-02T19:03:05+00:00",
+        "url": "https://github.com/pallets/flask/pull/1484#issuecomment-204782235"
+      }
+    ]
+  },
+  {
+    "number": 1536,
+    "title": "Support argument-less factory functions in CLI",
+    "body": "Since the cli module does does fairly aggressive autodiscovery of a\nflask application object anyway, supporting argument-less factory\nfunctions is not far from the current behavior.\n\nArgument-less factory function do happen if you configuration is based on your environment. There's a whole pattern around it (see http://12factor.net) that Heroku uses. I've written a Flask-Extension to support it (http://github.com/mbr/flask-appconfig) and I want to make sure it integrates well with the 1.0 CLI features.\n\nWhile it is possible to write a script to get the same functionality, this is a bit of a convention-over-configuration issue and seeing that the CLI already searches pretty thoroughly for an app instance, looking for a callable `create_app()` function seems reasonable (and very useful!) to me.\n\nThis may get a bit confusing if `create_app()` does exepct arguments, but the resulting \n\n```\nTypeError: create_app() takes exactly 1 argument (0 given)\n```\n\nseems very clear.\n\n<!-- Reviewable:start -->\n\n---\n\nThis change is [<img src=\"https://reviewable.io/review_button.svg\" height=\"34\" align=\"absmiddle\" alt=\"Reviewable\"/>](https://reviewable.io/reviews/pallets/flask/1536)\n\n<!-- Reviewable:end -->\n",
+    "state": "closed",
+    "created_at": "2015-07-17T11:23:42+00:00",
+    "merged_at": null,
+    "author_login": "mbr",
+    "merge_commit_sha": "3c0e8081616ae37950f5edb21fe30d4a0b584453",
+    "url": "https://github.com/pallets/flask/pull/1536",
+    "comments": [
+      {
+        "author_login": "mbr",
+        "body": "It would be great to get some official feedback whether or not this feature has a chance of making it into 1.0. Is there an argument against it?\n",
+        "created_at": "2015-08-19T09:46:35+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-132517466"
+      },
+      {
+        "author_login": "RonnyPfannschmidt",
+        "body": "a note from personal oppinion: since one can just pass a `(lambda scriptobj: make_app())` to explicitly invoke own app factories, i don't quite see a good reason to include magical calling of code into something that's supposed to find a Flask instance, after all finding something existing is conceptually different from creating something new\n",
+        "created_at": "2015-08-19T10:42:16+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-132535611"
+      },
+      {
+        "author_login": "mbr",
+        "body": "> a note from personal oppinion: since one can just pass a (lambda scriptobj: make_app()) to explicitly invoke own app factories, i don't quite see a good reason to include magical calling of code into something that's supposed to find a Flask instance, after all finding something existing is conceptually different from creating something new\n\nI think the difference between creation and discovery in this case is a bit philosophical though; if I am not mistaken many apps that use the factory pattern are structured in a way that there is a single `wsgi.py` or similar that looks somewhat like this:\n\n``` python\n\nimport myapp\n\napp = myapp.create_app()\n```\n\nIn that case, \"discovering\" the app by importing the module is equivalent to creating it. I get that there is a difference in semantics, because discovering an app twice would result in the same object, while calling `create_app` twice obviously gives two separate instances.\n\nWhat I am really asking for is a way to dig into the discovery process somehow. I'd like to be able to ship Flask-Appconfig with a straightforward way of using the bundled flask tool with it without much trouble, while avoiding creating small boilerplate files like the one described above.\n",
+        "created_at": "2015-08-19T11:52:38+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-132560242"
+      },
+      {
+        "author_login": "mbr",
+        "body": "I should add that there are probably other ways of achieving this, but the ones I can think of right now seem really fragile (such as creating an appplication object automagically upon import and other things).\n",
+        "created_at": "2015-08-19T11:55:05+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-132560631"
+      },
+      {
+        "author_login": "RonnyPfannschmidt",
+        "body": "but i really don't see what's wrong with just using the create_app argument to the script context and a lambda - there you can pass in exactly what you want as a function in a explicit manner,\n\nand i think that tops over calling actual functions that wouldn't get auto-invoked at import time\n\nalso if you completely configure from the environment, whats wrong with just having a module inside your package that does exactly one thing - call the app-factory?\n",
+        "created_at": "2015-08-19T14:37:36+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-132622283"
+      },
+      {
+        "author_login": "mbr",
+        "body": "> but i really don't see what's wrong with just using the create_app argument to the script context and a lambda - there you can pass in exactly what you want as a function in a explicit manner,\n\nThat's true, but i am trying to cover an 80% use-case here (at least for a specific style of deployment). Passing in specific arguments means leaving the domain of Flask-AppConfig anyway.\n\n> also if you completely configure from the environment, whats wrong with just having a module inside your package that does exactly one thing - call the app-factory?\n\nBecause that's exactly what I'm trying to avoid =). With that, I will have a new boilerplate file for each project I am creating, which I am not a fan of.\n\n## \n\nUltimately I am just looking for a way to hook into the discovery process or anything before it. At worst, I'll monkeypatch things if I have to, but I'd really like way to get in before auto-discovery happens. This just seemed the cleanest way to do it. As said, I'd be really happy if I found a more acceptable alternative to achieve what I'm trying to do.\n",
+        "created_at": "2015-10-29T09:38:07+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-152128009"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "@mbr just pointed this out to me in person and I think it's an important issue. This is not a question of whether it's possible to make the Flask CLI as-is work with app factories, but rather whether we see app factories as second-class convention compared to having an app object called `app` or `application`. Currently Flask's CLI obviously does not encourage them at all while supporting the other conventions mentioned \"out of the box\".\n\nI'm assigning this to @mitsuhiko, because he's the one who came up with Flask's CLI in the first place.\n",
+        "created_at": "2016-09-17T20:37:12+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-247806345"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Discussed this in private with both.\n\nI'm closing this, with the argumentation that app factories, in theory, are only useful when passing arguments to them, and we can't reasonably support that in the CLI (and launcher scripts as described above are as boilerplate-less as you can have it).\n\nWhat definetly needs update is the documentation. We already merged a lot of PRs, mainly by @wgwz, to fix up the documentation to take the new `flask` CLI into account. This is just another instance of this issue. See https://github.com/pallets/flask/issues/2027\n",
+        "created_at": "2016-09-18T12:18:01+00:00",
+        "url": "https://github.com/pallets/flask/pull/1536#issuecomment-247844412"
+      }
+    ]
+  },
+  {
+    "number": 1671,
+    "title": "Add support for serializing top-level arrays to JSON",
+    "body": "Major discussion of the issue is in #248. \n\nI'm tired of working around it, so just like to get it fixed. \n\nThis solution is similar to #1402 & #1209 with a few changes:\n- I found it unexpected that in #1402 to convert a python list to a top level array you had to pass `jsonify(*l)`. I changed it so that both `jsonify(1,2,3)` and `jsonify([1,2,3])` serialize to `[1,2,3]` as I think that's the more intuitive behavior.\n- Per the discussion in #1209 & #248, I didn't create a separate config variable to modify this behavior. \n\nI know it'd be nice to incorporate a fix for #1443 in here as well, but I don't fully understand the issue there. So let's get this merged, and then tackle that issue in a followup PR.\n\nFix #170, #248, #510, #673, #1177 and check one of the boxes on #1182 \n",
+    "state": "closed",
+    "created_at": "2015-12-30T11:32:53+00:00",
+    "merged_at": "2016-01-25T15:16:51+00:00",
+    "author_login": "jeffwidman",
+    "merge_commit_sha": "a4e440b5602b6661cee46192f1750152148d9823",
+    "url": "https://github.com/pallets/flask/pull/1671",
+    "comments": [
+      {
+        "author_login": "ThiefMaster",
+        "body": "Shouldn't jsonify with both args and kwargs fail?\n",
+        "created_at": "2015-12-30T11:33:54+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167983788"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "I don't know. \n\nI was just going off of the current implementation (`data = dict(*args, **kwargs)`) which doesn't look like it will complain if passed both `args` and `kwargs`. \n\nHappy to change that if it should.\n",
+        "created_at": "2015-12-30T11:37:28+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167984044"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "I wonder if the starargs-like syntax is actually useful.. If you have a fixed/low number of list entries, chances are good that you should be using a dict instead.\n",
+        "created_at": "2015-12-30T11:48:28+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167985227"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "> If you have a fixed/low number of list entries, chances are good that you should be using a dict instead.\n\nWhy is that? \n\nI've got API endpoints like `/categories/` and `/users/` that I want to return lists of items. I don't understand why a dict would make more sense than an array even if I've only got 4-5 categories.\n",
+        "created_at": "2015-12-30T11:56:46+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167986163"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "No, I meant the cases where you would do `jsonify(1,2,3)` - if it's a list of users, you pass a list there, but you won't do `jsonify(u1, u2, u3)`\n",
+        "created_at": "2015-12-30T11:57:45+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167986229"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Agreed. \n\n`json.dumps()` only accepts the first item and appears to silently drop the others, so I considered copying that. It might be more natural as most people are used to the `dumps()` API. \n\nHowever, `jsonify()` currently accepts `**kwargs`, so I decided handling `*args` this way was more internally consistent.\n\nOverall, I think the divergence in accepted input between `json.dumps()` and `jsonify()` creates more confusion than convenience. Right now I sometimes forget which one supports `kwargs` and which supports arrays. And I'm not the only one who has [trouble remembering](http://stackoverflow.com/questions/7907596/json-dumps-vs-flask-jsonify). \n\nSplitting behavior so `jsonify()` rejects `*args` but happily handles `**kwargs` just adds to the confusion, so we should pick either of the following:\n1. Make `jsonify()` internally consistent so it accepts both `*args` and `**kwargs`. \n2. Make `jsonify()` consistent with `dumps()`, meaning they both only accept a single argument. This implies a long term plan to deprecate  `jsonify(**kwargs)` so that it throws an exception just like `dumps(**kwargs)`.\n\nI don't care strongly, but if I had to pick I'd choose the latter because it's simpler to think of `jsonify()` as a `json.dumps()` that adds Flask niceties like the response class and serializing datetimes/UUIDs.\n",
+        "created_at": "2015-12-30T12:49:30+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167991522"
+      },
+      {
+        "author_login": "justanr",
+        "body": ":+1: on being consistent with json.dumps, especially since it's a widely copied API.\n",
+        "created_at": "2015-12-30T12:52:16+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167991767"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "BTW, I think the reason why `jsonify` uses `*args` instead of just a single `obj` argument is to allow an argument with that name name to be used as a kwarg.\n",
+        "created_at": "2015-12-30T12:55:33+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-167992051"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "Maybe the solution to this mess is to introduce a new function that just invokes `json.dumps` and makes a response. Same behavior as `json.dumps` but with different name and makes a response object.\n",
+        "created_at": "2015-12-30T13:41:04+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168000707"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "> Maybe the solution to this mess is to introduce a new function that just invokes json.dumps and makes a response. Same behavior as json.dumps but with different name and makes a response object.\n\nIs there any reason to create a new function vs just modifying the existing `jsonify()` function? \n\nIt breaks backwards compatibility, but for a 1.0 release that should be fine. Also, I know in my own projects, I've never intentionally used `jsonify(**kwargs)`, I've just always passed it a dict, and I suspect most people use it similarly.\n\nTo me, the path of least surprise is to stay with the current `jsonify()` function name and remove the `**kwargs` support to be consistent with `dumps()`.\n\nThe other nicety that `jsonify()` currently has is serializing datetimes & UUIDs. If they weren't already in there, I wouldn't add them, but since they are in there, I'd just leave it in. \n",
+        "created_at": "2015-12-30T20:47:06+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168070977"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "Breaking kwargs in `jsonify` would be a terrible idea. It's the kind of breakage that provides pretty much no real value and just annoys people (including myself ;)).\n\nWhile passing `**kwargs` literally is indeed rate, `jsonify(some=thing, other=thing)` is pretty common.\n",
+        "created_at": "2015-12-30T20:49:00+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168071199"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "I hear you. :-)\n\nMy vote is to stick with my original implementation where both `jsonify(1,2,3)` and `jsonify([1,2,3])` serialize to `[1,2,3]`. That behavior is a bit more loose than `dumps()`, but I think it's more convenient for the user and unlikely to trip up anyone unexpectedly. If anything, copying `dumps(1,2,3)` by serializing `jsonify(1,2,3)` to `1` is more likely to trip up someone. \n\n> Shouldn't jsonify with both args and kwargs fail?\n\nStill a very valid question, but I don't want it to delay merging this PR. For now, let's just stick with Flask's current behavior which is to accept both `args` and `kwargs` and serialize them to a dict. We can discuss changing that behavior in a separate issue or PR.\n",
+        "created_at": "2015-12-30T21:26:04+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168076247"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Any other feedback @mitsuhiko @davidism ? \n\nWould like to see this merged so I don't have to keep working around it. \n\nSupporting top-level arrays was already discussed ad nauseum in the issues I linked to in the OP, so IMHO this PR should be relatively non-controversial since it's just implementing behavior that already has been decided on.\n",
+        "created_at": "2016-01-03T22:40:21+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168548822"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "What about a test case for all the important cases on how to call `jsonify`? It'd be a shame to break any of them (kwargs / dict) without noticing  it at some point\n",
+        "created_at": "2016-01-03T22:42:19+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168548916"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Good idea. Let me see what I can do. \n",
+        "created_at": "2016-01-03T22:54:48+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168549560"
+      },
+      {
+        "author_login": "davidism",
+        "body": "This needs a test case and docs to demonstrate exactly what is accepted by the function now.  The docs for the `jsonify` function can be improved.\n\nNote that as a side effect, simple types are accepted as well (`True`, `3.14`, etc.), so there should be a test/doc for that too.  Test both a single and multi character string.\n\nNot sure if I like that `*args` will be treated as an array, if it was me I'd make it always explicit, but it's not a huge deal.\n",
+        "created_at": "2016-01-04T03:19:31+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-168571157"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Some updates:\n1. Added tests.\n2. Moved around the existing `jsonify()` tests so they're located next to each other--before they were a little scattered. Other than relocating, I made minimal changes to existing tests.\n3. Expanded the docs for `jsonify()`. I'm not very familiar with RST/sphinx, so there might be some formatting issues I missed.\n4. Restructured the code handling the `*args`/`**kwargs` to be more explicit and linear. Previously, it wasn't always clear which combinations of `*args`/`**kwargs` would throw an exception and cause the `try`/`except` block to switch from dict to array.\n5. As part of this restructuring, made it so passing `args` + `kwargs` at the same time to `jsonify()` will fail as suggested by @ThiefMaster. After thinking about it more, I agree that this is the least surprising outcome rather than silently dropping either the `args` or `kwargs`.\n\nFeedback welcome. \n",
+        "created_at": "2016-01-12T02:00:09+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-170757743"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "@davidism any chance you can review this weekend? \n",
+        "created_at": "2016-01-23T02:56:04+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-174114223"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I'll get to this on Sunday.\n",
+        "created_at": "2016-01-23T18:58:05+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-174212403"
+      },
+      {
+        "author_login": "davidism",
+        "body": "OK, Monday morning. :wink: Thanks for your work on this.  I might clean up the wording a bit at some point, but other than that this looks good.\n",
+        "created_at": "2016-01-25T15:17:44+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-174540092"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "Thanks for merging @davidism, really nice to see this finally land. Also, improvements to my wording are always appreciated.\n",
+        "created_at": "2016-01-25T18:38:57+00:00",
+        "url": "https://github.com/pallets/flask/pull/1671#issuecomment-174615013"
+      }
+    ]
+  },
+  {
+    "number": 2006,
+    "title": "Don't passthrough_errors unless instructed.",
+    "body": "Fix #2005\n\nRevert #1679 and #1996\n\n<!-- Reviewable:start -->\n\n---\n\nThis change is [<img src=\"https://reviewable.io/review_button.svg\" height=\"34\" align=\"absmiddle\" alt=\"Reviewable\"/>](https://reviewable.io/reviews/pallets/flask/2006)\n\n<!-- Reviewable:end -->\n",
+    "state": "closed",
+    "created_at": "2016-09-06T12:19:53+00:00",
+    "merged_at": "2016-09-06T20:32:34+00:00",
+    "author_login": "untitaker",
+    "merge_commit_sha": "c4ec6954e57b1ab3cb5a0d178e6030f8bab6c149",
+    "url": "https://github.com/pallets/flask/pull/2006",
+    "comments": [
+      {
+        "author_login": "untitaker",
+        "body": "cc @miguelgrinberg @davidism\n",
+        "created_at": "2016-09-06T12:20:07+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-244932935"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "If you merge this, we are back at square one, the passthrough errors option for flask will be broken again. Flask will passthrough errors all right, but then werkzeug will block them.\n\nI see now how the change in cli.py is a problem, but the change in app.py is perfectly fine and can/should stay. Why is there a need to undo that one as well?\n\nAs for the cli.py change, would it make sense to adapt that change to only set passthrough errors when the app is loaded eagerly? That seems doable and will only leave passthrough errors incorrectly set when the reloader is used, and that to me is fine, since the reloader and a debugger are normally not used together.\n",
+        "created_at": "2016-09-06T16:14:18+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245003657"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "IMO it's problematic to have two different behaviors for the Flask command and app.run. They should behave the same as far as possible.\n\nOn 6 September 2016 18:14:30 CEST, Miguel Grinberg notifications@github.com wrote:\n\n> If you merge this, we are back at square one, the passthrough errors\n> option for flask will be broken again. Flask will passthrough errors\n> all right, but then werkzeug will block them.\n> \n> I see now how the change in cli.py is a problem, but the change in\n> app.py is perfectly fine and can/should stay. Why is there a need to\n> undo that one as well?\n> \n> As for the cli.py change, would it make sense to adapt that change to\n> only set passthrough errors when the app is loaded eagerly? That seems\n> doable and will only leave passthrough errors incorrectly set when the\n> reloader is used, and that to me is fine, since the reloader and a\n> debugger are normally not used together.\n> \n> ## \n> \n> You are receiving this because you authored the thread.\n> Reply to this email directly or view it on GitHub:\n> https://github.com/pallets/flask/pull/2006#issuecomment-245003657\n\n## \n\nSent from my Android device with K-9 Mail. Please excuse my brevity.\n",
+        "created_at": "2016-09-06T16:50:44+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245014471"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "Uniform behavior is good, but in this case you are uniformly applying the wrong behavior, so it isn't a great solution IMHO.\n\nFor starters, let's agree that the use of `flask run` with a debugger isn't that friendly. It's not even documented how to do it at this point, the only debugger example in the documentation is still based on `app.run`.\n\nI do not agree that it is a good idea to break passthrough errors for `app.run` just for the sake of uniformity. If we agree that the end goal is to have passthrough errors working in the correct way across the board, then I think what makes sense is to fix the cases that are easy to fix, and to leave bugs open for the cases that need more careful thinking.\n\nI think we can leave `app.run` out of this discussion, since it is working 100% right at this time. For the `flask run` case, we can fix the eager loading case fairly easily, as I indicated above (I can write that fix if you want, and I'm happy to also throw updated docs for debugging with `flask run` to sweeten the deal ;-). This addresses the cases in which debug mode and/or the reloader is off. These are the cases in which it makes more sense to use a debugger, and thus to also use passthrough errors.\n\nWhat's left are the lazy loading cases, which in general are the cases where debug mode is enabled, or at least when the reloader is on. The usefulness of passthrough errors in these cases is debatable. I have never used passthrough errors in conjunction with Flask's debug mode myself. I think addressing passthrough errors in this case is much lower priority than the other cases, so I would leave an issue open for that. I'm happy to think about addressing this case as well.\n",
+        "created_at": "2016-09-06T17:18:39+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245022825"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "On Tue, Sep 06, 2016 at 09:14:30AM -0700, Miguel Grinberg wrote:\n\n> If you merge this, we are back at square one, the passthrough errors option for flask will be broken again. Flask will passthrough errors all right, but then werkzeug will block them.\n> \n> I see now how the change in cli.py is a problem, but the change in app.py is perfectly fine and can/should stay. Why is there a need to undo that one as well?\n> \n> As for the cli.py change, would it make sense to adapt that change to only set passthrough errors when the app is loaded eagerly? That seems doable and will only leave passthrough errors incorrectly set when the reloader is used, and that to me is fine, since the reloader and a debugger are normally not used together.\n\nCurrently we already have a very complex net of dependencies for the default\nvalues of PROPAGATE_EXCEPTIONS (true if app.debug or app.testing), use_reloader\n(true if app.debug), use_debugger (true if app.debug), a few Jinja settings,\nand a few others I already forgot. Having those dependencies differ for `flask\ncli` and `app.run` respectively is IMO out of the question for the simple\nreason that the current interdependencies are hard enough to understand. At\nleast having them differ would require a better reason than \"it's implementable\non one side and not on the other\".\n\nThe upside for those is that in the end this chain reaction of setting\n`app.debug` makes sense from a user's perspective, as the usual explanation is\n\"Turn on app.debug and everything will fall into place\".  To make\npassthrough_errors dependent on eager_loading, however, makes no sense from a\nuser perspective. There is no reason for this behavior other than \"this is\nimplementable\".\n\nI know that this PR breaks the usecase of attaching a debugger, but I consider\nreverting all PRs the only agreeable behavior at the moment that doesn't break\nusecases that have existed before your PR got merged. We will have to think\nabout how to enable that usecase again for `flask cli`, but I can't think of a\ngood solution right now.\n\n> ## \n> \n> You are receiving this because you authored the thread.\n> Reply to this email directly or view it on GitHub:\n> https://github.com/pallets/flask/pull/2006#issuecomment-245003657\n",
+        "created_at": "2016-09-06T18:16:55+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245040624"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "> that doesn't break usecases that have existed before your PR got merged\n\n@untitaker do you have a list of these? I'm not aware of any broken use cases outside of this whack-a-mole situation we are in now, where we fix an issue, and a new one pops out. As far as I'm aware, the only problem with current master code is #2005.\n",
+        "created_at": "2016-09-06T19:13:19+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245058175"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "The whack-a-mole situation is exactly what I'm referring to.\n",
+        "created_at": "2016-09-06T19:21:15+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245060279"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "If you don't mind I'll merge this PR for now. If a solution for #1679 comes up I'll be happy to merge, but I don't want to leave master in a broken state.\n",
+        "created_at": "2016-09-06T19:33:35+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245063638"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "I would have preferred to leave the `app.run` side alone, since that works, but sure, if you think it is better to undo the whole thing instead of just that, then go for it.\n",
+        "created_at": "2016-09-06T19:36:46+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-245064641"
+      },
+      {
+        "author_login": "jeffwidman",
+        "body": "@untitaker @miguelgrinberg A thought--this issue contains a lot of thoughtful back and forth between two folks who deeply understand the underlying issue... but the discussion/disagreement/decision all happened in a single day.\n\nIn general I'm in favor of being decisive and keeping moving--we've got plenty of issues in the tracker where I wish a decision had just been made and moved forward. However, this particular issue strikes me as one that might have been better to sit on for 2-3 days before making a final decision. You're both responsive and not going to abandon the issue, and you're clearly disagreeing w/o getting upset. That's fine, healthy even for the community.\n\nHistorically when I've disagreed about a solution with another engineer who was knowledgable about the problem space, a night or two of sleep gives everyone's brains a little more time to ponder. Sometimes we're still at the same place and have to just decide, but other times we realize the problem constraints are slightly different than we'd originally thought which makes the better solution obvious. Not a big deal, a thought for the future.\n",
+        "created_at": "2016-09-10T22:11:18+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-246146377"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "This is just reverting a PR that caused issues, not a final decision.\n",
+        "created_at": "2016-09-10T22:35:12+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-246147975"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "@jeffwidman Thanks for writing this. @untitaker can correct me if I'm wrong, but I believe the action that he took to address this issue was not a final decision. I see it more as an interim solution. His choice was to leave a known bug in the code, instead of keep trying to fix it and risk causing other problems, which we all agree is a possibility, given how tricky this issue demonstrated to be. I would not have done what he did, but I can understand the choice and as you say, I'm not upset. I think both agree there is a problem that needs a fix. I am thinking about how to solve it in a safe way and will bring it here for review once I have it.\n",
+        "created_at": "2016-09-10T22:35:18+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-246147979"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "Yeah I think what @miguelgrinberg said is the consensus.\n",
+        "created_at": "2016-09-10T22:36:32+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-246148035"
+      },
+      {
+        "author_login": "arotman",
+        "body": "THANKS for fixing this issue. My Flask server had been crashing due to **error: [Errno 32] Broken pipe**, and now there is just an exception and the server keeps running. Others also suffered from this issue too. I appreciate very much this fix.",
+        "created_at": "2017-03-20T18:05:03+00:00",
+        "url": "https://github.com/pallets/flask/pull/2006#issuecomment-287847112"
+      }
+    ]
+  },
+  {
+    "number": 2254,
+    "title": "Ensure error while opening session pops context",
+    "body": "Reported in #1528. #1538 provided a solution, but can be simplified by only moving `ctx.push()` into the `try` block. Errors raised by `SessionInterface.open_session` and `.make_null_session` will be handled by the normal app error handling mechanism, and the context will be popped at the end of the request.",
+    "state": "closed",
+    "created_at": "2017-04-22T21:00:49+00:00",
+    "merged_at": "2017-04-22T21:43:22+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "8d515a644f4d1a508e5de85d1ab991194fc6394a",
+    "url": "https://github.com/pallets/flask/pull/2254",
+    "comments": []
+  },
+  {
+    "number": 2319,
+    "title": "Support `create_app` without script_info or with script_info as named argument",
+    "body": "#2266 ",
+    "state": "closed",
+    "created_at": "2017-05-23T20:53:45+00:00",
+    "merged_at": "2017-05-23T23:24:30+00:00",
+    "author_login": "hendrikmakait",
+    "merge_commit_sha": "39f7aaa41678bbd110365a55453dd5e395655bb8",
+    "url": "https://github.com/pallets/flask/pull/2319",
+    "comments": []
+  },
+  {
+    "number": 2348,
+    "title": "make debugging bad key errors easier",
+    "body": "* `TRAP_BAD_REQUEST_ERRORS` is enabled by default in debug mode\r\n* `BadRequestKeyError` has the key in the description in debug mode\r\n\r\nIf `app.debug` is true but we're not running in the interactive debugger, this now raises a 500 error (the traceback in the console has the key error though). Can get the old behavior by setting `TRAP_BAD_REQUEST_ERRORS = False`.\r\n\r\nThis error is one of the most recurring questions about Flask on Stack Overflow. Making the error visible will hopefully answer a lot of questions before they're asked.\r\n\r\ncloses #382",
+    "state": "closed",
+    "created_at": "2017-05-30T02:11:10+00:00",
+    "merged_at": "2017-05-30T02:53:19+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "9049755e3fac192d5c0cca5092a74a67e562cdc6",
+    "url": "https://github.com/pallets/flask/pull/2348",
+    "comments": []
+  },
+  {
+    "number": 2352,
+    "title": "Make session serializer extensible",
+    "body": "Continues #1452.\r\n\r\nRefactors `flask.session.TaggedJSONSerializer` to a new `flask.json.tag` module. Creates a `JSONTag` interface and a `TaggedJSONSerializer.register` method to register new tags.\r\n\r\n~~~python\r\nfrom flask.json.tag import JSONTag\r\n\r\nclass TagOrderedDict(JSONTag):\r\n    __slots__ = ('serializer',)\r\n    key = ' od'\r\n\r\n    def check(self, value):\r\n        return isinstance(value, OrderedDict)\r\n\r\n    def to_json(self, value):\r\n        return [[k, self.serializer.tag(v)] for k, v in iteritems(value)]\r\n\r\n    def to_python(self, value):\r\n        return OrderedDict(value)\r\n\r\napp.session_interface.serializer.register(TagOrderedDict, 0)\r\n~~~\r\n\r\nSince `register` takes an index, it can be used to override existing tags (although it would be slightly more efficient to subclass `TaggedJSONSerializer` instead). This can address #1908 by adding a higher-priority `dict` serializer that uses a different format to support non-string keys.\r\n\r\nCloses #1438, #1511, #1908.\r\n\r\n~Still needs:~\r\n\r\n- [x] refactor to move the `serializer` argument to `self.serializer` instead. It was an attempt at optimization but didn't change anything.\r\n- [x] refactor `TagDict` to split the logic between addressing #1511 and regular dict passthrough, as #1452 originally did. This was another optimization attempt that didn't help, it just made the code more confusing.\r\n- [x] more tests\r\n- [x] documentation",
+    "state": "closed",
+    "created_at": "2017-06-02T06:12:33+00:00",
+    "merged_at": "2017-06-02T17:07:57+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "62406e667c8004cf0367a3ec5bcbed980cbc32bb",
+    "url": "https://github.com/pallets/flask/pull/2352",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "@ThiefMaster from https://github.com/pallets/flask/pull/1452#issuecomment-305609953:\r\n\r\nRe: performance: new method is ~ 30 µs slower.\r\n\r\n~~~\r\nold: 70.7 µs ± 164 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)\r\nnew: 96.3 µs ± 678 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)\r\n~~~\r\n\r\nYou'd need to handle 2,000,000 requests before you wasted 1 extra minute. There's always Flask-Session, etc. where server-side sessions are serialized with `pickle`, which is *much* faster.",
+        "created_at": "2017-06-02T13:46:26+00:00",
+        "url": "https://github.com/pallets/flask/pull/2352#issuecomment-305791757"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "ok, that seems fine",
+        "created_at": "2017-06-02T13:48:03+00:00",
+        "url": "https://github.com/pallets/flask/pull/2352#issuecomment-305792177"
+      }
+    ]
+  },
+  {
+    "number": 2354,
+    "title": "Only open session if request does not have open session",
+    "body": "When using `stream_with_context`, a new session was being opened based on the original request data. If the view containing the generator had modified the session, those changes were not visible.\r\n\r\nThis does not enable modifying the session in the generator, as the headers will have already been sent. (Possibly does not apply to server-side sessions, but you would still need to manually save the session in the generator.)\r\n\r\nCloses #1348.",
+    "state": "closed",
+    "created_at": "2017-06-02T18:16:30+00:00",
+    "merged_at": "2017-06-03T19:26:15+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "3b678b7927e38af1f50cfaa60e1c2fdeaf391325",
+    "url": "https://github.com/pallets/flask/pull/2354",
+    "comments": []
+  },
+  {
+    "number": 2362,
+    "title": "Remove error handler cache",
+    "body": "Caching handlers for the exception MRO caused issues with some inheritance setups. I don't expect hierarchies to be deep enough for this to affect most cases, but if performance is an issues handlers should be explicitly registered for each class they apply to.\r\n\r\ncloses #2267, closes #1433",
+    "state": "closed",
+    "created_at": "2017-06-05T13:26:59+00:00",
+    "merged_at": "2017-06-05T13:34:49+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "b80cf057fc2b41a5f642c222dbcb79ce28d3fe0e",
+    "url": "https://github.com/pallets/flask/pull/2362",
+    "comments": []
+  },
+  {
+    "number": 2395,
+    "title": "Remove deprecated flask.ext",
+    "body": "`flask.ext` was deprecated a year ago when 0.12 was released. We've contacted as many extensions as possible to fix docs and examples, I update Stack Overflow questions as I come across them, and most new questions do not use the old form. It's safe to remove at this point and should not be present in 1.0.\r\n\r\n#2385",
+    "state": "closed",
+    "created_at": "2017-06-26T15:54:37+00:00",
+    "merged_at": "2017-06-26T16:18:21+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "bce8ec75ebde8a7f49fbc3a9825e667d7327c64d",
+    "url": "https://github.com/pallets/flask/pull/2395",
+    "comments": []
+  },
+  {
+    "number": 2412,
+    "title": "support passing environ to test client",
+    "body": "This allows passing an `EnvironBuilder` or `dict` as the only argument to `flask.testing.FlaskClient.open`, similar to `werkzeug.test.Client.open`. Since `FlaskClient` does some other configuration for the environ, this makes sure that a passed environ is copied and modified appropriately.\r\n\r\ncloses #2411\r\n",
+    "state": "closed",
+    "created_at": "2017-07-13T15:15:21+00:00",
+    "merged_at": "2017-07-13T15:42:53+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "59f7966e3192bcf478a213ba0aa9cd3bda7da4e4",
+    "url": "https://github.com/pallets/flask/pull/2412",
+    "comments": []
+  },
+  {
+    "number": 2416,
+    "title": "Add .env support",
+    "body": "If installed, [python-dotenv](https://github.com/theskumar/python-dotenv#readme) is used to load environment variables from `.env` and `.flaskenv` files. Manual vars override `.env`, which overrides `.flaskenv`. `.flaskenv` is intended for public vars, `.env` is intended for private vars that won't be committed to the repository.\r\n\r\nThe working directory is set to the location of the files, with the assumption that they are in the top level of the project, to facilitate local package imports (#2383).\r\n\r\nThe files are only loaded when calling the `flask` command or `app.run`, and can be disabled by passing `load_dotenv=False` to a custom `FlaskGroup` or `app.run`. If a user wants to load dotenv files in production, they can call `flask.cli.load_dotenv` manually from a `wsgi.py` file.\r\n\r\nCloses #2375\r\nBased off #2164 \r\n\r\n---\r\n\r\nExample, assuming python-dotenv is installed:\r\n\r\n`flaskr/app.py`:\r\n\r\n```python\r\nfrom flask import Flask\r\n\r\ndef create_app():\r\n    return Flask('flaskr')\r\n```\r\n\r\n`.flaskenv`:\r\n\r\n```\r\nFLASK_APP=flaskr.app\r\n```\r\n\r\n```\r\nflask run\r\n# no need to set FLASK_APP\r\n# no need for intermediate file to call create_app\r\n```",
+    "state": "closed",
+    "created_at": "2017-07-15T05:51:09+00:00",
+    "merged_at": "2017-07-16T20:55:19+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "851eaa4db7cef513dae35286d816867d68a72049",
+    "url": "https://github.com/pallets/flask/pull/2416",
+    "comments": [
+      {
+        "author_login": "mitsuhiko",
+        "body": "Looks good. I feel like we should add feature requires to setup.py so you can install `Flask[signals]` or `Flask[dotenv]`.",
+        "created_at": "2017-07-15T06:38:06+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315514354"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "In my opinion, loading the .env file only when using `flask run` or `app.run()` can have unexpected results that may take people a long time to debug. The `.flaskenv` file feels like something that makes sense only when using the development server, but `.env` feels like something you'll use regardless of the server. What do you think about always importing `.env`, so that you also get it when running gunicorn/uwsgi/etc.?",
+        "created_at": "2017-07-15T18:22:04+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315552650"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "@miguelgrinberg i agree to some degree but at the same time a production deployment of flask most likely has a completely untrustworthy CWD and might even be in site-packages. We had similar issues with the instance folder few people are using.\r\n\r\nNot sure if a .env file in prod would work reliably for users even.",
+        "created_at": "2017-07-15T18:40:22+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315553626"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "@mitsuhiko Yeah, I can see the unpredictable CWD in production being a problem. Just noticed that @davidism added a note in the docs recommending calling `load_dotenv()` manually in production. That is a good compromise.",
+        "created_at": "2017-07-15T18:56:07+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315554599"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Moving comment about `top_dir` behavior out of review:\r\n\r\nWhen `top_dir` is not an ancestor, I don't want to permanently change to it for the same reason mitsuhiko commented above: we don't know the relationship between the working dir and the search dir. For example, if the package is installed, the `.env` file might be in `/etc/myapp/config`, which probably isn't the right cwd either. Supervisor, uWSGI, and other runners have the ability to set the working dir if desired.\r\n\r\nBasically, if the user specifies a non-ancestor top dir, I'm assuming they will be the ones managing the working directory.",
+        "created_at": "2017-07-16T17:15:53+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315623198"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "With this change as it is, I really have no good reason to stop using python-dotenv directly, as that gives me a better experience that is consistent across dev/test/prod configurations. What I was thinking this would look like is something like this:\r\n\r\n    def load_dotenv(path=None):\r\n        # ...\r\n\r\nIf `path` is not passed, then you call `find_dotenv()` to locate the `.env` and/or `.flaskenv` files (not sure `top_dir` is worth the trouble). But then I can also do this:\r\n\r\n    load_dotenv(join(dirname(__file__), '.env')\r\n\r\nAnd this loads the .env directly from the place I know I have it. In this second option there would be no need to look for `.env` and `.flaskenv`, or to search parent directories, you will just go and load from the filename I give you, regardless of its name and/or location. For those developers that want to use `.env` just for development, they can just let Flask look for these files, and for those that want to also load an explicit .env file, they can do it in a way that feels a bit more integrated.\r\n\r\nAlso let's not forget that the `flask` command is sometimes also used in production. As an example, with the current changes, both Flask-Migrate and Flask-Alembic's commands would be used in production, and would be importing .env and .flaskenv files, while the main server running through gunicorn/uwsgi/etc. would not, and this seems like an inconsistency to me.",
+        "created_at": "2017-07-16T18:24:35+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315627312"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I think your suggestion to just have a `path` argument is good, ~but at that point I think we should just tell users to call `dotenv.load_dotenv` themselves, they don't get anything from calling `cli.load_dotenv` in that case~ it's basically a passthrough but gives a consistent thing to call if we change to a different dotenv library later. I'll push a rollback for most of the previous commit.\r\n\r\n---\r\n\r\nTo give some context of how I would use this, here's what my project setup looks like in production:\r\n\r\n```\r\n/home/project/  # owned by \"project\" user\r\n    venv/  # added to path so it doesn't need to be activated\r\n    .flaskenv\r\n    uwsgi.ini\r\n    wsgi.py  # optional, usually not needed for my setups\r\n```\r\n\r\nA build of the project is installed with `pip install -U project.whl uwsgi`. uWSGI is run from a systemd unit, sets the user and working directory to \"project\". Units have a directive `EnvironmentFile`, so we don't even need to load the `.env` file with Python. Any runner can set the working directory, so even if it can't load an env file, calling `load_dotenv()` from a `wsgi.py` file will do the right thing at that point.\r\n\r\nMeanwhile, for the `flask` command: SSH into the machine as the \"project\" user. You're already in the home directory containing the `.flaskenv` file, so run `flask db upgrade` and it's loaded as expected.",
+        "created_at": "2017-07-16T19:10:37+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-315630256"
+      },
+      {
+        "author_login": "quanpower",
+        "body": "When i use dotenv in Flask 0.1.2.2, i set a FLASK_APP in the .env or .flaskenv, but it also can't find the FLASK_APP when i run 'flask run'.Not suppoted in 0.12.2?  ",
+        "created_at": "2017-12-18T12:51:52+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-352417237"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "@quanpower as you can see in the changelog, it's not part of 0.12.",
+        "created_at": "2017-12-18T12:52:59+00:00",
+        "url": "https://github.com/pallets/flask/pull/2416#issuecomment-352417466"
+      }
+    ]
+  },
+  {
+    "number": 2436,
+    "title": "Simplify logging",
+    "body": "Based on discussion in #2023 and #641, Flask interferes too much with logging. This patch greatly reduces the logging configuration that Flask does.\r\n\r\n* Remove `LOGGER_NAME` and `LOGGER_HANDLER_POLICY` configuration.\r\n* `app.logger` is always named `'flask.app'`. Use the `'flask'` namespace to allow other logging from Flask in the future.\r\n* Don't use a `Logger` subclass to override `getEffectiveLevel`. Call `setLevel` when the logger is first accessed, based on `app.debug`, instead of checking `debug` for every message.\r\n* Only one handler with one format is added, instead of different formats for production and development.\r\n* A handler is only added if there are no handlers configured that would handle the logger's `getEffectiveLevel`.\r\n* Handlers are never removed.\r\n* The `default_handler` is accessible so that it can be passed to `removeHandler` in case the user wants to get rid of the default handler after it is configured.\r\n* The proxy stream to `environ['wsgi.errors']` is exposed as `wsgi_errors_stream`, in case the user wants to use it in their own configuration.\r\n* Logging documentation is split from error handling documentation and reorganized to address the key concepts.\r\n* Added documentation for injecting request information into messages.\r\n* Logging tests are split into a separate module.\r\n* Some previously miscategorized tests are correctly organized.",
+    "state": "closed",
+    "created_at": "2017-07-28T22:14:05+00:00",
+    "merged_at": "2017-07-31T20:23:45+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "c74f46979a8b8358437bd7f76e478d04248a9c72",
+    "url": "https://github.com/pallets/flask/pull/2436",
+    "comments": [
+      {
+        "author_login": "idjaw",
+        "body": "Great job with this!",
+        "created_at": "2017-07-31T19:28:15+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-319171122"
+      },
+      {
+        "author_login": "davidism",
+        "body": "100% coverage on `logging.py`: https://codecov.io/gh/pallets/flask/pull/2436/src/flask/logging.py?before=flask/logging.py",
+        "created_at": "2017-07-31T19:28:42+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-319171217"
+      },
+      {
+        "author_login": "behrtam",
+        "body": "Am I understanding the new `logging docs` wrong? I was expecting a different log output with the injected information. https://gist.github.com/behrtam/03b484db328bd1e4c95b201871fe6c15",
+        "created_at": "2017-08-19T09:59:29+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-323513762"
+      },
+      {
+        "author_login": "davidism",
+        "body": "You didn't log anything with the app logger.",
+        "created_at": "2017-08-19T14:59:54+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-323528186"
+      },
+      {
+        "author_login": "oribaldi",
+        "body": "Hello guys! This is just what I need :) However, the changes are not in the latest release v0.12.2. Do you know when there will be a new release? ",
+        "created_at": "2017-11-28T12:29:39+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-347508497"
+      },
+      {
+        "author_login": "davidism",
+        "body": "This is part of the 1.0 milestone. It will be released once that is complete.",
+        "created_at": "2017-11-28T17:37:00+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-347602368"
+      },
+      {
+        "author_login": "Light-Gao",
+        "body": "So glad many people work on this...\r\nI just experienced Flask for weeks, and I really like it...\r\nI hope I could do more help in this community in the future days...",
+        "created_at": "2018-03-06T15:47:16+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-370825682"
+      },
+      {
+        "author_login": "untitaker",
+        "body": "I am not really sure whether the rename of the logger from `__name__` to `flask.app` made sense. previously you were able to have multiple loggers for submodules (`myapp.foo`, `myapp.bar`) and their records would all propagate to `myapp`, which would be the name of the app logger.",
+        "created_at": "2018-07-26T10:34:17+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-408053898"
+      },
+      {
+        "author_login": "davidism",
+        "body": "I know I had a good reason at the time for changing that, but I can't remember what it was. :-/ I guess it should be ok to add the `LOGGER_NAME` config back in.",
+        "created_at": "2018-07-26T12:37:06+00:00",
+        "url": "https://github.com/pallets/flask/pull/2436#issuecomment-408082765"
+      }
+    ]
+  },
+  {
+    "number": 2450,
+    "title": "Blueprint view function name should not contain dots",
+    "body": "\r\n\r\nI want to use `before_request` function to my `blueprint`. here is my usecase:\r\n\r\n\r\n```\r\nfrom flask import Flask, Blueprint, request, abort\r\nfrom flask.views import MethodView\r\n\r\n\r\napp = Flask(__name__)\r\nsystem = Blueprint('system', __name__, url_prefix='/system')\r\n\r\n\r\n@system.before_request\r\ndef auth():\r\n    if not request.headers.get('token', None):\r\n        abort(401)\r\n\r\n\r\nclass UserView(MethodView):\r\n    def get(self):\r\n        return 'user list'\r\n\r\n\r\nclass UserProfileView(MethodView):\r\n    def get(self, id):\r\n        return 'hello {}'.format(id)\r\n\r\n\r\nsystem.add_url_rule('/user', view_func=UserView.as_view('user'))\r\nsystem.add_url_rule('/user/<int:id>/profile', view_func=UserProfileView.as_view('user.profile'))\r\n\r\napp.register_blueprint(system)\r\n\r\napp.run(debug=True)\r\n\r\n```\r\n\r\nwhen I test `/system/user`, `auth` function can work, when I test `/system/user/1/profile` it doesn't work.\r\n\r\nso I debug my code on shell:\r\n\r\n```\r\nIn [1]: from test import app\r\n\r\nIn [2]: app\r\nOut[2]: <Flask 'test'>\r\n\r\nIn [3]: app.blueprints\r\nOut[3]: {'system': <flask.blueprints.Blueprint at 0x1020bc850>}\r\n\r\nIn [4]: from flask import request\r\n\r\nIn [5]: with app.test_request_context('/system/user'):\r\n   ...:     print request.blueprint\r\n   ...:\r\nsystem\r\n\r\nIn [6]: with app.test_request_context('/system/user/1/profile'):\r\n   ...:     print request.blueprint\r\n   ...:\r\nsystem.user\r\n```\r\n\r\nit's ridiculous!\r\n\r\nso I read the [flask/wrapper.py](https://github.com/pallets/flask/blob/7c510199850957161240f081359e2246d8982be1/flask/wrappers.py#L152)\r\n\r\n```\r\n@property\r\ndef blueprint(self):\r\n   \"\"\"The name of the current blueprint\"\"\"\r\n   if self.url_rule and '.' in self.url_rule.endpoint:\r\n       return self.url_rule.endpoint.rsplit('.', 1)[0]\r\n```\r\n\r\nI know my view function endpoint name is not normative.\r\n\r\nI think Blueprint endpoints should not contain dots. view function name can instead endpoint when endpoint is none, so view function name should not contain dots either.\r\n\r\n\r\nsorry for my bad English. I'm shame it!\r\n\r\n\r\n",
+    "state": "closed",
+    "created_at": "2017-08-19T03:46:06+00:00",
+    "merged_at": "2017-10-09T15:18:35+00:00",
+    "author_login": "Caratpine",
+    "merge_commit_sha": "8020d5eac9e4bb0e40a47b82ca95713ee78fc73c",
+    "url": "https://github.com/pallets/flask/pull/2450",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "Thanks! Rebased against master, added a changelog, and squashed.",
+        "created_at": "2017-10-09T15:18:30+00:00",
+        "url": "https://github.com/pallets/flask/pull/2450#issuecomment-335189816"
+      }
+    ]
+  },
+  {
+    "number": 2529,
+    "title": "Enable threads by default for the dev server",
+    "body": "It's way too easy currently to deadlock the server with background resource\nfetching.  We really should have threads enabled by default now in my mind.",
+    "state": "closed",
+    "created_at": "2017-11-24T22:49:02+00:00",
+    "merged_at": "2017-11-24T23:17:09+00:00",
+    "author_login": "mitsuhiko",
+    "merge_commit_sha": "2ef2000a39541d8424f3163ef5feeabacc81e681",
+    "url": "https://github.com/pallets/flask/pull/2529",
+    "comments": [
+      {
+        "author_login": "davidism",
+        "body": "Are there any issues using the debugger with threads, or is that just processes?",
+        "created_at": "2017-11-24T23:15:35+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346905332"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "At least I never had problems with the debugger with threads.",
+        "created_at": "2017-11-24T23:16:12+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346905367"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "The debugger is threadsafe, so it should be fine.",
+        "created_at": "2017-11-24T23:16:50+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346905404"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "The threaded Werkzeug server often locked for me as a result of hitting Ctrl-C to stop it, so I had to kill it from another terminal. A user of my Flask-SocketIO extension (which requires threads when running under Werkzeug) reported this as well (https://github.com/miguelgrinberg/Flask-SocketIO/issues/199). I never investigated the problem in detail, since the vast majority of my Socket.IO users use eventlet or gevent.\r\n\r\nIn any case, I'm +1 on enabling threads, but be aware that it might uncover some exit cleanup issues.",
+        "created_at": "2017-11-25T07:01:15+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346923260"
+      },
+      {
+        "author_login": "mitsuhiko",
+        "body": "@miguelgrinberg the ctrl+c most likely is that a random greenlet captures the signal and does not pass it to the main one.",
+        "created_at": "2017-11-25T08:10:06+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346925826"
+      },
+      {
+        "author_login": "miguelgrinberg",
+        "body": "@mitsuhiko After looking through the last couple of years worth of commits to Werkzeug, I'm going to make a guess that https://github.com/pallets/werkzeug/commit/4afd141368384dd1925fcc75a245a649dc4233a3 addressed the problem I've seen. Thanks.",
+        "created_at": "2017-11-25T17:14:33+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-346953494"
+      },
+      {
+        "author_login": "Davidrjx",
+        "body": "as @mitsuhiko and @ThiefMaster commented, in debug mode no such keyboardinterrupt error when to quit flask app via ctrl plus c. now that the issue is about thread under werKzeug, are there any solutions to deal with app closing/quit for non-debug/development mode",
+        "created_at": "2018-01-26T11:41:16+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-360763944"
+      },
+      {
+        "author_login": "Davidrjx",
+        "body": "@mitsuhiko your guess seems wrong, my werkzeug is v0.14.1 but problem still there",
+        "created_at": "2018-01-26T12:32:23+00:00",
+        "url": "https://github.com/pallets/flask/pull/2529#issuecomment-360773127"
+      }
+    ]
+  },
+  {
+    "number": 2606,
+    "title": "add HTTPS support for flask run command",
+    "body": "closes #2594 \r\n\r\nPreferred use case is to manually generate a cert and key and pass them.\r\n\r\nAn interesting config is using `.flaskenv` and setting `FLASK_RUN_CERT` and `FLASK_RUN_KEY` instead of passing them in the command line.",
+    "state": "closed",
+    "created_at": "2018-01-22T20:22:27+00:00",
+    "merged_at": "2018-01-23T18:09:43+00:00",
+    "author_login": "davidism",
+    "merge_commit_sha": "8ff0cef6b9ecee2c0bc31774b33cb88632dc79db",
+    "url": "https://github.com/pallets/flask/pull/2606",
+    "comments": []
+  },
+  {
+    "number": 2629,
+    "title": "prevent double slash /a//b when blueprint prefix ends with slash",
+    "body": "Simple example file as below:\r\n\r\n```\r\nfrom __future__ import print_function\r\n\r\nfrom flask import Flask, Blueprint, redirect\r\n\r\nbp = Blueprint('bp', __name__)\r\napp = Flask(__name__)\r\n\r\n@bp.route('/b/')\r\ndef tmp():\r\n    return \"URI should be '/a/b/\"\r\n\r\n\r\n@app.route('/')\r\ndef index():\r\n    return redirect(\"/a/b/\")\r\n\r\napp.register_blueprint(bp, url_prefix='/a/')\r\n\r\nif __name__ == \"__main__\":\r\n    print(\"app.url_map: \", app.url_map)\r\n    app.run(port=5000, host='127.0.0.1', debug=True)\r\n```\r\n\r\nWith the old code, there is one rule like this `<Rule '/a//b/' (HEAD, OPTIONS, GET) ->`.\r\nWith the new code, that rule would be change to `<Rule '/a/b/' (HEAD, OPTIONS, GET) ->`.",
+    "state": "closed",
+    "created_at": "2018-02-12T10:56:05+00:00",
+    "merged_at": "2018-02-24T00:00:31+00:00",
+    "author_login": "zcchen",
+    "merge_commit_sha": "b16592aba0e9c60c9b3329c884bd9236a35168c0",
+    "url": "https://github.com/pallets/flask/pull/2629",
+    "comments": [
+      {
+        "author_login": "ThiefMaster",
+        "body": "I think people should rather not add trailing slashes to their `url_prefix` ;)\r\n\r\nMaybe showing a warning would be better instead of removing consecutive slashes so people can actually fix their code?\r\n\r\nPS: The commit message is a bit too long (even GitHub truncates it), first line should be 51 chars max.",
+        "created_at": "2018-02-12T10:58:21+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-364889841"
+      },
+      {
+        "author_login": "zcchen",
+        "body": "Maybe someone would use `url_prefix = '/'`?\r\nAt that time, bp.route would also have a rule like '/' .",
+        "created_at": "2018-02-12T11:08:10+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-364892024"
+      },
+      {
+        "author_login": "ThiefMaster",
+        "body": "`url_prefix='/'` seems to be quite pointless, isn't it?",
+        "created_at": "2018-02-12T11:09:07+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-364892209"
+      },
+      {
+        "author_login": "zcchen",
+        "body": "Yes.\r\nBut should we clear the extra and useless slashes in the URL?",
+        "created_at": "2018-02-12T11:45:09+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-364899785"
+      },
+      {
+        "author_login": "davidism",
+        "body": "Related to pallets/werkzeug#1132.\r\n\r\n`url_prefix=''` (or just not specifying it at all) already works for registering a blueprint at the root path.",
+        "created_at": "2018-02-12T15:10:56+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-364951208"
+      },
+      {
+        "author_login": "davidism",
+        "body": "This should probably just strip exactly one trailing slash off the prefix. I don't want to mess with route definitions in general, just the prefixing. If pallets/werkzeug#1132 is implemented, it will handle normalizing routes in general.",
+        "created_at": "2018-02-20T00:35:28+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-366834787"
+      },
+      {
+        "author_login": "keysmashes",
+        "body": "I agree that some kind of feature to either strip a trailing slash or to warn that it's not necessary should be added – I recently was trying to work out why some things were not working properly when using `url_prefix=\"/\"`, since that seemed like the obvious thing to do to explicitly register a blueprint at the root of the app.",
+        "created_at": "2018-02-21T11:29:57+00:00",
+        "url": "https://github.com/pallets/flask/pull/2629#issuecomment-367297650"
+      }
+    ]
+  }
+]

@@ -34,6 +34,7 @@ class Settings:
     embedding_model: str | None
     embedding_dimensions: int
     extraction_mode: str
+    cors_origins: tuple[str, ...] = ("http://localhost:3000", "http://127.0.0.1:3000")
 
     @property
     def neo4j_enabled(self) -> bool:
@@ -57,6 +58,8 @@ def _env(name: str, default: str | None = None) -> str | None:
 
 
 def get_settings() -> Settings:
+    cors_raw = _env("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000") or "http://localhost:3000,http://127.0.0.1:3000"
+    cors_origins = tuple(o.strip() for o in cors_raw.split(",") if o.strip())
     return Settings(
         github_token=_env("GITHUB_TOKEN"),
         github_repo=_env("GITHUB_REPO", "pallets/flask") or "pallets/flask",
@@ -73,6 +76,7 @@ def get_settings() -> Settings:
         embedding_model=_env("EMBEDDING_MODEL"),
         embedding_dimensions=int(_env("EMBEDDING_DIMENSIONS", "1536") or "1536"),
         extraction_mode=_env("EXTRACTION_MODE", "curated") or "curated",
+        cors_origins=cors_origins,
     )
 
 

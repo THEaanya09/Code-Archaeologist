@@ -1,5 +1,24 @@
-.venv/
-.env
+# Python
 __pycache__/
 *.pyc
-data/raw/
+*.pyo
+.venv/
+
+# Backend secrets
+backend/.env
+
+# Backend raw cache
+backend/data/raw/
+backend/Raw/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store

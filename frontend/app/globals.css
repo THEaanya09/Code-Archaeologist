@@ -1,0 +1,235 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --paper: #f7f6f2;
+  --surface: #ffffff;
+  --ink: #1c1c1a;
+  --stone: #6f6d67;
+  --rule: #e4e1da;
+  --rule-strong: #d4d0c8;
+  --ember: #e8752a;
+  --amber-note: #d9a441;
+  --charcoal: #2a2926;
+  --graphite: #3d3c38;
+  --grid-line: rgba(28, 28, 26, 0.055);
+}
+
+/* ─── Complete Deep Dark Mode Palette ────────────────────────────── */
+[data-theme="dark"] {
+  --paper: #111110;
+  --surface: #181816;
+  --ink: #f2eee6;
+  --stone: #969288;
+  --rule: #292825;
+  --rule-strong: #3b3935;
+  --ember: #e8752a;
+  --amber-note: #d9a441;
+  --charcoal: #faf7f2;
+  --graphite: #c2bdb2;
+  --grid-line: rgba(255, 255, 255, 0.035);
+  color-scheme: dark;
+}
+
+@theme {
+  --font-serif: "Merriweather", Georgia, Cambria, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-stone: var(--stone);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-ember: var(--ember);
+  --color-amber-note: var(--amber-note);
+  --color-charcoal: var(--charcoal);
+  --color-graphite: var(--graphite);
+}
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, text-shadow;
+  transition-duration: 0s;
+  transition-timing-function: ease;
+}
+
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition-duration: 450ms !important;
+}
+
+/* ─── Smooth Lazy Scrolling (Lenis) ────────────────────────────────── */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: auto;
+  background-color: var(--paper);
+}
+
+[data-theme="dark"] html,
+[data-theme="dark"] body {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(232, 117, 42, 0.25);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 1px solid var(--ember);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--stone);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #33312c;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #48453e;
+}
+
+/* Engineering notebook grid */
+.bg-grid {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-grid-faint {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.section-rule {
+  border: none;
+  border-top: 1px solid var(--rule);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.evidence-snippet {
+  position: relative;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--ember);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawDown {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.git-spine {
+  transform-origin: top;
+  animation: drawDown 0.45s ease-out forwards;
+}
+
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ─── DARK MODE: Glowy White on Text Hover ────────────────────────── */
+[data-theme="dark"] a:hover,
+[data-theme="dark"] button:hover,
+[data-theme="dark"] .hover\:text-ink:hover,
+[data-theme="dark"] .hover\:text-stone:hover,
+[data-theme="dark"] .group:hover .group-hover\:text-ink,
+[data-theme="dark"] .group:hover .group-hover\:text-ember,
+[data-theme="dark"] .group:hover p,
+[data-theme="dark"] .group:hover span.text-ink,
+[data-theme="dark"] button:hover p,
+[data-theme="dark"] button:hover span.text-ink,
+[data-theme="dark"] button:hover span.text-stone,
+[data-theme="dark"] .hover\:border-rule-strong:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.75), 0 0 24px rgba(255, 255, 255, 0.4) !important;
+}
+
+[data-theme="dark"] a:hover svg,
+[data-theme="dark"] button:hover svg,
+[data-theme="dark"] .group:hover svg {
+  color: #ffffff !important;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.65));
+}

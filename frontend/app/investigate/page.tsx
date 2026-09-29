@@ -13,6 +13,122 @@ import { SkeletonAnswer } from "@/components/ui/Skeleton";
 import { askQuestion, getGoldenQuestions } from "@/lib/api";
 import type { AskResponse, GoldenQuestion } from "@/types/api";
 
+// ─── Example question categories shown in the empty state ───────────────────
+
+const QUESTION_CATEGORIES = [
+  {
+    label: "Historical · Why",
+    accent: "#d4622a",
+    icon: "📜",
+    description: "Trace the reasoning behind code decisions",
+    questions: [
+      "Why was request.json deprecated?",
+      "Why was Flask's before_request hook introduced?",
+      "Why did Flask move to Blueprints?",
+      "Why was the ApplicationContext separated?",
+    ],
+  },
+  {
+    label: "Repository · Architecture",
+    accent: "#4db6ac",
+    icon: "🏛",
+    description: "Explore the structure of pallets/flask",
+    questions: [
+      "What is the architecture of Flask?",
+      "How does the request lifecycle work?",
+      "Where is routing handled in Flask?",
+      "What are the major modules in Flask?",
+    ],
+  },
+  {
+    label: "General · Concepts",
+    accent: "#9575cd",
+    icon: "💡",
+    description: "Understand web concepts, grounded in this repo",
+    questions: [
+      "What is WSGI?",
+      "What is middleware?",
+      "What is a request context?",
+      "What is dependency injection?",
+    ],
+  },
+] as const;
+
+// ─── Empty-state question showcase ──────────────────────────────────────────
+
+function QuestionShowcase({ onSelect }: { onSelect: (q: string) => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="border-t border-rule pt-14 space-y-12"
+    >
+      <div>
+        <h2 className="font-serif text-2xl font-bold text-ink tracking-tight">
+          Ask anything about{" "}
+          <span style={{ color: "var(--color-ember)" }}>pallets/flask</span>
+        </h2>
+        <p className="mt-2 text-[14px] leading-[1.75] text-stone max-w-lg">
+          From architectural decisions to concept explanations — every answer is
+          grounded in the actual repository, its history and its code.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        {QUESTION_CATEGORIES.map((cat, catIdx) => (
+          <motion.div
+            key={cat.label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 * catIdx, duration: 0.35 }}
+            className="space-y-4"
+          >
+            {/* Category header */}
+            <div className="flex items-start gap-2.5 pb-3 border-b border-rule">
+              <span className="text-[18px] leading-none mt-0.5">{cat.icon}</span>
+              <div>
+                <p
+                  className="font-mono text-[10px] font-semibold tracking-widest uppercase"
+                  style={{ color: cat.accent }}
+                >
+                  {cat.label}
+                </p>
+                <p className="text-[11px] text-stone leading-tight mt-0.5">
+                  {cat.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Clickable question chips */}
+            <ul className="space-y-1.5">
+              {cat.questions.map((q) => (
+                <li key={q}>
+                  <button
+                    onClick={() => onSelect(q)}
+                    className="w-full text-left group"
+                  >
+                    <span
+                      className="block text-[13px] leading-[1.55] text-stone transition-all duration-150
+                        group-hover:text-ink rounded px-2.5 py-1.5 -mx-2.5
+                        border border-transparent group-hover:border-rule
+                        group-hover:bg-white/5"
+                    >
+                      {q}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Main page content ───────────────────────────────────────────────────────
+
 function InvestigateContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
@@ -64,7 +180,7 @@ function InvestigateContent() {
     <div className="min-h-screen bg-grid">
       <Header
         title="Investigate"
-        description="Query the repository why-code history and architectural rationale"
+        description="Ask why, what, how, or where — grounded in the actual repository"
       />
 
       <div className="px-8 sm:px-12 py-12 sm:py-16 max-w-4xl space-y-16">
@@ -118,7 +234,8 @@ function InvestigateContent() {
                     Evidence Trail
                   </h2>
                   <p className="mt-1 font-mono text-[12px] text-stone">
-                    {result.evidence.length} primary source{result.evidence.length !== 1 ? "s" : ""} retrieved & verified
+                    {result.evidence.length} primary source
+                    {result.evidence.length !== 1 ? "s" : ""} retrieved &amp; verified
                   </p>
                 </div>
                 <div className="divide-y divide-rule border-b border-rule">
@@ -143,15 +260,7 @@ function InvestigateContent() {
         )}
 
         {!loading && !result && !error && (
-          <div className="py-20 border-t border-rule">
-            <h2 className="font-serif text-2xl font-bold text-ink tracking-tight">
-              Ask a question about pallets/flask
-            </h2>
-            <p className="mt-3 max-w-lg text-[15px] leading-[1.75] text-stone">
-              CodeArchaeologist navigates historical GitHub discussions, issues, commits,
-              and pull requests to explain the reasoning behind architectural choices.
-            </p>
-          </div>
+          <QuestionShowcase onSelect={handleInvestigate} />
         )}
       </div>
     </div>
@@ -165,7 +274,7 @@ export default function InvestigatePage() {
         <div className="min-h-screen bg-grid">
           <Header
             title="Investigate"
-            description="Query the repository why-code history and architectural rationale"
+            description="Ask why, what, how, or where — grounded in the actual repository"
           />
           <div className="px-8 sm:px-12 py-12 sm:py-16 max-w-4xl">
             <SkeletonAnswer />

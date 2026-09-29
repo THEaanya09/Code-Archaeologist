@@ -19,9 +19,31 @@ export interface GraphNode {
   key: string;
 }
 
+export interface ArchitectureStep {
+  title: string;
+  description: string;
+  file_path?: string | null;
+  component?: string | null;
+}
+
+export interface KeyModule {
+  name: string;
+  file: string;
+  role: string;
+  description: string;
+}
+
 export interface AskResponse {
   answer: string;
-  confidence: "high" | "medium" | "low";
+  confidence: "high" | "medium" | "low" | string;
+  category?: "historical" | "repository" | "general" | "hybrid";
+  overview?: string | null;
+  concept?: string | null;
+  how_it_works?: string | null;
+  in_repository?: string | null;
+  architecture_flow?: ArchitectureStep[];
+  key_modules?: KeyModule[];
+  relevant_files?: string[];
   sources: string[];
   evidence: Evidence[];
   people: string[];

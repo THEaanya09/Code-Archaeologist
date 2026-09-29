@@ -28,9 +28,31 @@ class GraphNode(BaseModel):
     key: str
 
 
+class ArchitectureStep(BaseModel):
+    title: str
+    description: str
+    file_path: str | None = None
+    component: str | None = None
+
+
+class KeyModule(BaseModel):
+    name: str
+    file: str
+    role: str
+    description: str
+
+
 class AskResponse(BaseModel):
     answer: str
     confidence: str
+    category: str = "historical"  # "historical" | "repository" | "general" | "hybrid"
+    overview: str | None = None
+    concept: str | None = None
+    how_it_works: str | None = None
+    in_repository: str | None = None
+    architecture_flow: list[ArchitectureStep] = Field(default_factory=list)
+    key_modules: list[KeyModule] = Field(default_factory=list)
+    relevant_files: list[str] = Field(default_factory=list)
     sources: list[str] = Field(default_factory=list)
     evidence: list[Evidence] = Field(default_factory=list)
     people: list[str] = Field(default_factory=list)

@@ -24,47 +24,49 @@ class OpenAICompatibleLLM(LLMProvider):
 
     def generate(self, system: str, user: str) -> str:
         models_to_try = [self.model]
-        # If model is a Gemini variant, add fallbacks for temporary 503/timeouts
+        # If model is a Gemini variant, configure resilient fallback sequence
+        # gemini-2.0-flash is most stable; others follow in order of reliability
         if "gemini" in self.model.lower():
-            for alt in ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]:
+            for alt in [
+                "gemini-2.0-flash",
+                "gemini-2.5-flash",
+                "gemini-flash-latest",
+                "gemini-3.8-flash",
+                "gemini-3.5-flash",
+            ]:
                 if alt not in models_to_try:
                     models_to_try.append(alt)
 
         last_error = None
         for m in models_to_try:
-            for _ in range(2):
-                try:
-                    response = requests.post(
-                        f"{self.base_url}/chat/completions",
-                        headers={
-                            "Authorization": f"Bearer {self.api_key}",
-                            "Content-Type": "application/json",
-                        },
-                        json={
-                            "model": m,
-                            "messages": [
-                                {"role": "system", "content": system},
-                                {"role": "user", "content": user},
-                            ],
-                            "temperature": 0,
-                        },
-                        timeout=45,
-                    )
-                    if response.status_code == 200:
-                        payload = response.json()
-                        return payload["choices"][0]["message"]["content"]
-                    elif response.status_code in (503, 429, 500):
-                        last_error = f"HTTP {response.status_code} on {m}: {response.text[:200]}"
-                        import time
-                        time.sleep(1)
-                        continue
-                    else:
-                        response.raise_for_status()
-                except Exception as exc:
-                    last_error = str(exc)
-                    import time
-                    time.sleep(1)
+            try:
+                response = requests.post(
+                    f"{self.base_url}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {self.api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": m,
+                        "messages": [
+                            {"role": "system", "content": system},
+                            {"role": "user", "content": user},
+                        ],
+                        "temperature": 0,
+                    },
+                    timeout=20,  # 20s per candidate
+                )
+                if response.status_code == 200:
+                    payload = response.json()
+                    return payload["choices"][0]["message"]["content"]
+                elif response.status_code in (503, 429, 500):
+                    last_error = f"HTTP {response.status_code} on {m}"
                     continue
+                else:
+                    response.raise_for_status()
+            except Exception as exc:
+                last_error = str(exc)
+                continue
 
         if last_error:
             raise RuntimeError(f"All LLM candidate models failed. Last error: {last_error}")

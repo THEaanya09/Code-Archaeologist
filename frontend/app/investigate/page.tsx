@@ -12,6 +12,8 @@ import GraphPath from "@/components/investigation/GraphPath";
 import { SkeletonAnswer } from "@/components/ui/Skeleton";
 import { askQuestion, getGoldenQuestions } from "@/lib/api";
 import type { AskResponse, GoldenQuestion } from "@/types/api";
+import ChatInterface from "@/components/chat/ChatInterface";
+import { Sparkles, Search as SearchIcon } from "lucide-react";
 
 // ─── Example question categories shown in the empty state ───────────────────
 
@@ -176,20 +178,59 @@ function InvestigateContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [activeTab, setActiveTab] = useState<"investigate" | "chat">("investigate");
+
   return (
     <div className="min-h-screen bg-grid">
       <Header
-        title="Investigate"
-        description="Ask why, what, how, or where — grounded in the actual repository"
+        title={activeTab === "chat" ? "AI Conversation" : "Investigate"}
+        description={
+          activeTab === "chat"
+            ? "Multi-turn conversational code archaeology & general programming assistant powered by Sarvam AI"
+            : "Ask why, what, how, or where — grounded in the actual repository"
+        }
       />
 
-      <div className="px-8 sm:px-12 py-12 sm:py-16 max-w-4xl space-y-16">
-        <SearchBar
-          onSubmit={handleInvestigate}
-          isLoading={loading}
-          initialQuery={initialQuery}
-          suggestions={suggestions}
-        />
+      <div className="px-8 sm:px-12 py-8 max-w-4xl space-y-10">
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-2 border-b border-rule pb-4">
+          <button
+            onClick={() => setActiveTab("investigate")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 font-mono text-xs transition-colors rounded-xs border ${
+              activeTab === "investigate"
+                ? "bg-ink text-paper border-ink font-semibold shadow-xs"
+                : "bg-surface text-stone border-rule hover:text-ink"
+            }`}
+          >
+            <SearchIcon className="h-3.5 w-3.5" />
+            <span>Deep Investigation</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("chat")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 font-mono text-xs transition-colors rounded-xs border ${
+              activeTab === "chat"
+                ? "bg-ink text-paper border-ink font-semibold shadow-xs"
+                : "bg-surface text-stone border-rule hover:text-ink"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5 text-ember" />
+            <span>AI Conversation (Sarvam AI)</span>
+          </button>
+        </div>
+
+        {activeTab === "chat" ? (
+          <div className="h-[calc(100vh-240px)] flex flex-col min-h-0">
+            <ChatInterface />
+          </div>
+        ) : (
+          <div className="space-y-16">
+            <SearchBar
+              onSubmit={handleInvestigate}
+              isLoading={loading}
+              initialQuery={initialQuery}
+              suggestions={suggestions}
+            />
 
         {loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-4">
@@ -259,8 +300,10 @@ function InvestigateContent() {
           </div>
         )}
 
-        {!loading && !result && !error && (
-          <QuestionShowcase onSelect={handleInvestigate} />
+            {!loading && !result && !error && (
+              <QuestionShowcase onSelect={handleInvestigate} />
+            )}
+          </div>
         )}
       </div>
     </div>

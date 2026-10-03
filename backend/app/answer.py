@@ -3,24 +3,28 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.grounding import compute_deterministic_confidence, filter_and_ground_claims
 from app.models import ArchitectureStep, Evidence, KeyModule
 from app.providers import LLMProvider, parse_json_object
 from app.utils import unique_keep_order
 
 SYSTEM_HISTORICAL = """You answer WHY-code and historical software questions using ONLY the supplied repository evidence.
 Never invent historical facts, people, dates, motivations, or sources.
-Prefer the highest-scoring evidence.
-Return JSON with keys: answer, confidence.
-- answer: Explain the historical decision, reason, and main trade-off in 2-4 clear sentences.
-- confidence: high, medium, or low."""
+Every factual sentence or claim in your response MUST cite its supporting evidence using an exact 'evidence_id' (e.g. 'golden-1').
+Do NOT state any fact without citing a provided evidence ID.
+Return JSON with key 'claims':
+{
+  "claims": [
+    {"statement": "Sentence explaining the historical decision or reason.", "evidence_id": "golden-X"}
+  ]
+}"""
 
 SYSTEM_REPOSITORY = """You are a repository architecture expert analyzing pallets/flask.
 Explain the architecture, module relationships, or request execution flow using ONLY the supplied code entities and verified modules.
 Never hallucinate non-existent files or functions.
 Return JSON with keys:
 - overview: A high-level technical summary of the subsystem or architectural design (2-3 sentences).
-- answer: A detailed explanation of how these modules communicate, where routing/execution occurs, and what happens at each stage.
-- confidence: high or medium."""
+- answer: A detailed explanation of how these modules communicate, where routing/execution occurs, and what happens at each stage."""
 
 SYSTEM_GENERAL = """You are an expert technical educator explaining software engineering concepts with direct grounding in pallets/flask.
 Return JSON with keys:
@@ -31,10 +35,10 @@ Return JSON with keys:
 
 SYSTEM_HYBRID = """You are an expert software historian and systems architect.
 Synthesize both the technical architecture/concept and the historical evolution/decision rationale using the supplied evidence.
+Every historical claim MUST cite an 'evidence_id' from the provided evidence.
 Return JSON with keys:
-- answer: Comprehensive explanation combining the architectural mechanism and the historical decision rationale.
-- overview: High-level architectural context in pallets/flask.
-- confidence: high or medium."""
+- claims: List of {"statement": "...", "evidence_id": "golden-X"}
+- overview: High-level architectural context in pallets/flask."""
 
 
 def _fallback_historical(evidence: list[Evidence]) -> tuple[str, str, list[str], list[str]]:
@@ -46,9 +50,10 @@ def _fallback_historical(evidence: list[Evidence]) -> tuple[str, str, list[str],
             [],
         )
     top = evidence[0]
+    conf = compute_deterministic_confidence(evidence, channels_count=1, verified_ratio=1.0)
     return (
         top.rationale,
-        top.confidence if top.score > 0 else "low",
+        conf,
         unique_keep_order([p for e in evidence[:2] for p in e.people]),
         unique_keep_order([d for e in evidence[:2] for d in e.dates]),
     )
@@ -57,12 +62,24 @@ def _fallback_historical(evidence: list[Evidence]) -> tuple[str, str, list[str],
 def generate_historical_answer(
     question: str, evidence: list[Evidence], llm: LLMProvider | None
 ) -> tuple[str, str, list[str], list[str], str]:
-    if not evidence or llm is None:
+    if not evidence:
+        # Skip LLM call entirely when zero evidence is retrieved
+        return (
+            "I could not find enough evidence in the indexed repository history to answer this reliably.",
+            "low",
+            [],
+            [],
+            "no_evidence",
+        )
+
+    if llm is None:
         return (*_fallback_historical(evidence), "fallback")
 
+    valid_ids = {e.decision_id for e in evidence if e.decision_id}
+
     evidence_text = "\n\n".join(
-        f"SOURCE: {e.source_url}\nSUMMARY: {e.summary}\nRATIONALE: {e.rationale}\n"
-        f"EVIDENCE: {e.evidence_snippet}\nSCORE: {e.score:.3f}"
+        f"EVIDENCE ID: {e.decision_id}\nSOURCE: {e.source_url}\nSUMMARY: {e.summary}\nRATIONALE: {e.rationale}\n"
+        f"SNIPPET: {e.evidence_snippet}\nSCORE: {e.score:.3f}"
         for e in evidence[:3]
     )
 
@@ -72,8 +89,22 @@ def generate_historical_answer(
             f"QUESTION: {question}\n\nEVIDENCE:\n{evidence_text}",
         ).strip()
         parsed = parse_json_object(raw)
-        answer = str(parsed.get("answer") or evidence[0].rationale).strip()
-        confidence = str(parsed.get("confidence") or evidence[0].confidence)
+
+        raw_claims = parsed.get("claims")
+        if not isinstance(raw_claims, list) and parsed.get("answer"):
+            raw_claims = [{"statement": parsed["answer"], "evidence_id": parsed.get("evidence_id", "")}]
+
+        accepted, rejected = filter_and_ground_claims(raw_claims or [], valid_ids)
+
+        if accepted:
+            answer = " ".join(c.statement for c in accepted)
+            ratio = len(accepted) / max(len(raw_claims or []), 1)
+            confidence = compute_deterministic_confidence(evidence, channels_count=1, verified_ratio=ratio)
+        else:
+            # Drop uncited or wrongly cited claims; fallback to verified ground-truth rationale
+            answer = evidence[0].rationale
+            confidence = "low"
+
         people = unique_keep_order([p for e in evidence[:2] for p in e.people])
         dates = unique_keep_order([d for e in evidence[:2] for d in e.dates])
         return answer, confidence, people, dates, "llm"
@@ -214,21 +245,17 @@ def generate_hybrid_answer(
     concept_data: dict[str, Any] | None,
     llm: LLMProvider | None,
 ) -> dict[str, Any]:
-    evidence_text = "\n\n".join(
-        f"SOURCE: {e.source_url}\nSUMMARY: {e.summary}\nRATIONALE: {e.rationale}\nEVIDENCE: {e.evidence_snippet}"
-        for e in evidence[:2]
-    ) if evidence else "No direct historical decision found."
+    if not evidence:
+        return {
+            "answer": "No historical decision evidence found in the indexed repository history for this question.",
+            "overview": "Flask integrates WSGI and context management across its core architecture.",
+            "confidence": "low",
+            "people": [],
+            "dates": [],
+            "mode": "no_evidence",
+        }
 
-    module_text = ", ".join([f"{m.name} ({m.file})" for m in modules[:4]])
-
-    user_prompt = f"""QUESTION: {question}
-
-CODEBASE ARCHITECTURE:
-Modules: {module_text}
-Concept Context: {concept_data.get('in_repository', '') if concept_data else 'Standard Flask architecture'}
-
-HISTORICAL EVIDENCE / DECISION RATIONALE:
-{evidence_text}"""
+    valid_ids = {e.decision_id for e in evidence if e.decision_id}
 
     if llm is None:
         ans, conf, people, dates = _fallback_historical(evidence)
@@ -241,15 +268,45 @@ HISTORICAL EVIDENCE / DECISION RATIONALE:
             "mode": "fallback",
         }
 
+    evidence_text = "\n\n".join(
+        f"EVIDENCE ID: {e.decision_id}\nSOURCE: {e.source_url}\nSUMMARY: {e.summary}\nRATIONALE: {e.rationale}\nSNIPPET: {e.evidence_snippet}"
+        for e in evidence[:2]
+    )
+
+    module_text = ", ".join([f"{m.name} ({m.file})" for m in modules[:4]])
+
+    user_prompt = f"""QUESTION: {question}
+
+CODEBASE ARCHITECTURE:
+Modules: {module_text}
+Concept Context: {concept_data.get('in_repository', '') if concept_data else 'Standard Flask architecture'}
+
+HISTORICAL EVIDENCE / DECISION RATIONALE:
+{evidence_text}"""
+
     try:
         raw = llm.generate(SYSTEM_HYBRID, user_prompt).strip()
         parsed = parse_json_object(raw)
+        raw_claims = parsed.get("claims")
+        if not isinstance(raw_claims, list) and parsed.get("answer"):
+            raw_claims = [{"statement": parsed["answer"], "evidence_id": parsed.get("evidence_id", "")}]
+
+        accepted, rejected = filter_and_ground_claims(raw_claims or [], valid_ids)
+
+        if accepted:
+            answer = " ".join(c.statement for c in accepted)
+            ratio = len(accepted) / max(len(raw_claims or []), 1)
+            confidence = compute_deterministic_confidence(evidence, channels_count=1, verified_ratio=ratio)
+        else:
+            answer = evidence[0].rationale
+            confidence = "low"
+
         people = unique_keep_order([p for e in evidence[:2] for p in e.people])
         dates = unique_keep_order([d for e in evidence[:2] for d in e.dates])
         return {
-            "answer": str(parsed.get("answer", "")).strip() or evidence[0].rationale,
+            "answer": answer,
             "overview": str(parsed.get("overview", "")).strip(),
-            "confidence": str(parsed.get("confidence", "high")),
+            "confidence": confidence,
             "people": people,
             "dates": dates,
             "mode": "llm",

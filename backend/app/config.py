@@ -34,7 +34,20 @@ class Settings:
     embedding_model: str | None
     embedding_dimensions: int
     extraction_mode: str
+    expose_golden_questions: bool = False
     cors_origins: tuple[str, ...] = ("http://localhost:3000", "http://127.0.0.1:3000")
+
+    # ── Sarvam AI Configuration ──────────────────────────────────────
+    sarvam_api_key: str | None = None
+    sarvam_model: str = "sarvam-105b"
+    sarvam_base_url: str = "https://api.sarvam.ai"
+
+    # ── Token Optimization & Rate Limiting ───────────────────────────
+    max_input_tokens: int = 4000
+    max_output_tokens: int = 1000
+    max_history_messages: int = 6
+    max_retrieved_chunks: int = 5
+    daily_request_limit: int = 20
 
     @property
     def neo4j_enabled(self) -> bool:
@@ -42,6 +55,8 @@ class Settings:
 
     @property
     def llm_enabled(self) -> bool:
+        if self.llm_provider == "sarvam":
+            return bool(self.sarvam_api_key and self.sarvam_model)
         return bool(self.llm_api_key and self.llm_model)
 
     @property
@@ -66,17 +81,28 @@ def get_settings() -> Settings:
         neo4j_uri=_env("NEO4J_URI"),
         neo4j_username=_env("NEO4J_USERNAME"),
         neo4j_password=_env("NEO4J_PASSWORD"),
-        llm_provider=_env("LLM_PROVIDER", "openai_compatible") or "openai_compatible",
+        llm_provider=_env("LLM_PROVIDER", "sarvam") or "sarvam",
         llm_base_url=_env("LLM_BASE_URL", "http://127.0.0.1:11434/v1") or "http://127.0.0.1:11434/v1",
-        llm_api_key=_env("LLM_API_KEY", "ollama"),
-        llm_model=_env("LLM_MODEL", "qwen:latest"),
+        llm_api_key=_env("LLM_API_KEY"),
+        llm_model=_env("LLM_MODEL", "sarvam-105b"),
         embedding_provider=_env("EMBEDDING_PROVIDER", "openai_compatible") or "openai_compatible",
         embedding_base_url=_env("EMBEDDING_BASE_URL"),
         embedding_api_key=_env("EMBEDDING_API_KEY"),
         embedding_model=_env("EMBEDDING_MODEL"),
         embedding_dimensions=int(_env("EMBEDDING_DIMENSIONS", "1536") or "1536"),
         extraction_mode=_env("EXTRACTION_MODE", "curated") or "curated",
+        expose_golden_questions=(_env("EXPOSE_GOLDEN_QUESTIONS", "false") or "false").lower() in ("true", "1", "yes"),
         cors_origins=cors_origins,
+        # Sarvam AI
+        sarvam_api_key=_env("SARVAM_API_KEY"),
+        sarvam_model=_env("SARVAM_MODEL", "sarvam-105b") or "sarvam-105b",
+        sarvam_base_url=_env("SARVAM_BASE_URL", "https://api.sarvam.ai") or "https://api.sarvam.ai",
+        # Token optimization
+        max_input_tokens=int(_env("MAX_INPUT_TOKENS", "4000") or "4000"),
+        max_output_tokens=int(_env("MAX_OUTPUT_TOKENS", "1000") or "1000"),
+        max_history_messages=int(_env("MAX_HISTORY_MESSAGES", "6") or "6"),
+        max_retrieved_chunks=int(_env("MAX_RETRIEVED_CHUNKS", "5") or "5"),
+        daily_request_limit=int(_env("DAILY_REQUEST_LIMIT", "20") or "20"),
     )
 
 

@@ -106,3 +106,67 @@ export interface GoldenQuestion {
 export interface GoldenQuestionsResponse {
   questions: GoldenQuestion[];
 }
+
+// ─── Conversational AI Types ─────────────────────────────────────
+
+export type ChatMode = "auto" | "repository" | "general";
+
+export interface ChatRequest {
+  question: string;
+  mode?: ChatMode;
+  session_id?: string;
+}
+
+export interface ChatResponse {
+  answer: string;
+  mode_used: "auto" | "repository" | "general" | string;
+  category?: string | null;
+  confidence?: string | null;
+  overview?: string | null;
+  sources: string[];
+  evidence: Evidence[];
+  people: string[];
+  dates: string[];
+  graph_path: GraphNode[];
+  relevant_files: string[];
+  architecture_flow?: ArchitectureStep[];
+  key_modules?: KeyModule[];
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  } | null;
+  remaining_requests?: number | null;
+  session_id: string;
+  cached?: boolean;
+  error?: string | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  mode_used?: string;
+  category?: string | null;
+  confidence?: string | null;
+  sources?: string[];
+  evidence?: Evidence[];
+  relevant_files?: string[];
+  timestamp: number;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  } | null;
+  error?: string | null;
+}
+
+export interface ChatSessionInfo {
+  exists: boolean;
+  session_id?: string;
+  message_count?: number;
+  request_count?: number;
+  total_tokens_used?: number;
+  remaining_requests?: number;
+  created_at?: number;
+}

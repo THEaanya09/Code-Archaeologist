@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, BookOpen, FolderGit2 } from "lucide-react";
+import { Search, BookOpen, FolderGit2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import GitLogo from "@/components/icons/GitLogo";
 import GitHubLogo from "@/components/icons/GitHubLogo";
 
 const NAV_ITEMS = [
   { label: "Repository", href: "/", icon: FolderGit2 },
+  { label: "AI Chat", href: "/chat", icon: Sparkles },
   { label: "Investigate", href: "/investigate", icon: Search },
   { label: "Decisions", href: "/decisions", icon: BookOpen },
 ];

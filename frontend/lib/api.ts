@@ -100,6 +100,36 @@ export async function getGoldenQuestions(): Promise<GoldenQuestionsResponse> {
   return apiFetch<GoldenQuestionsResponse>("/golden-questions");
 }
 
+// ─── Conversational AI (Sarvam AI) ──────────────────────────────
+
+export async function sendChatMessage(
+  request: import("@/types/api").ChatRequest
+): Promise<import("@/types/api").ChatResponse> {
+  return apiFetch<import("@/types/api").ChatResponse>("/chat", {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
+}
+
+export async function getChatSession(
+  sessionId: string
+): Promise<import("@/types/api").ChatSessionInfo> {
+  return apiFetch<import("@/types/api").ChatSessionInfo>(
+    `/chat/session/${encodeURIComponent(sessionId)}`
+  );
+}
+
+export async function clearChatSession(
+  sessionId: string
+): Promise<{ status: string; session_id: string; cleared: boolean }> {
+  return apiFetch<{ status: string; session_id: string; cleared: boolean }>(
+    `/chat/session/${encodeURIComponent(sessionId)}`,
+    {
+      method: "DELETE",
+    }
+  );
+}
+
 // ─── Export error class for consumers ────────────────────────────
 
 export { APIError };

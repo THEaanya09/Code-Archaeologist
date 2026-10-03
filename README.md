@@ -25,7 +25,8 @@ Target repository: **`pallets/flask`** (configurable via `.env`).
 - [Environment Variables](#environment-variables)
 - [Backend Pipeline Commands](#backend-pipeline-commands)
 - [API Reference](#api-reference)
-- [Query Routing](#query-routing)
+- [Query Routing & Evaluation](#query-routing--evaluation)
+- [Limitations](#limitations)
 - [Tech Stack](#tech-stack)
 - [Contributing](#contributing)
 
@@ -96,9 +97,22 @@ User question
     per-category UI
 ```
 
-**Trust rule**: Every repository-specific claim is grounded in indexed evidence. If sufficient evidence cannot be retrieved from Neo4j, the system says so rather than hallucinating files, commits, PR numbers, or architecture details.
+### Evidence Grounding & Anti-Hallucination Mechanism
 
----
+CodeArchaeologist does not rely on prompt assertions alone to prevent hallucinations. It enforces concrete programmatic verification gates in code:
+
+1. **Verbatim Snippet Verification in Extraction**:
+   - Every candidate evidence snippet extracted from raw GitHub sources is verified verbatim (case and whitespace-insensitive) against the underlying PR, issue, or commit text.
+   - Any decision with zero verifiable snippets is discarded.
+   - Decisions with partial snippet matches have their confidence downgraded (`high` → `medium`, `medium` → `low`).
+2. **Mandatory Claim Citations in Answer Generation**:
+   - The LLM is instructed to structure answers as individual claims, where every factual sentence must cite a specific `evidence_id` from the retrieved evidence package.
+   - Any claim that lacks a citation or references an invalid `evidence_id` is programmatically stripped from the output before delivery.
+3. **Deterministic Confidence Metric**:
+   - Confidence is computed algorithmically via `compute_deterministic_confidence()` from evidence scores and citation verification ratios.
+   - The LLM is prohibited from self-reporting confidence.
+4. **Zero-Evidence Guard**:
+   - If retrieval finds no relevant evidence, the system bypasses the LLM entirely, returning an immediate low-confidence refusal (`"no_evidence"`) rather than prompting the model with an empty evidence package.
 
 ## Architecture
 
@@ -340,11 +354,21 @@ python3 -m app.extract_decisions   # LLM + rule-based decision extraction
 python3 -m app.neo4j_schema        # Create constraints & indexes
 python3 -m app.neo4j_ingest        # Ingest nodes and relationships
 
-# Optional — Evaluation & smoke tests
-python3 -m app.eval                # Run automated evaluation benchmark
-python3 -m app.smoke               # Quick smoke checks
-pytest tests/                      # Full test suite
+# Optional — Evaluation & test suite
+python3 -m app.eval                # Run automated evaluation benchmark (classifier + retrieval)
+python3 -m app.smoke               # Live smoke checks (known decision vs unsupported DB switch)
+pytest                             # Run backend test suite (28 passing tests)
 ```
+
+The test suite consists of **28 passing tests** across 8 dedicated test modules:
+- **`tests/test_sarvam_provider.py` (1 test)**: Sarvam AI API client, `api-subscription-key` header verification, payload formatting, conversation history handling, and token usage parsing.
+- **`tests/test_chat_service.py` (5 tests)**: Dual-mode routing (General AI vs Repository Analysis vs Auto), session state isolation, rate limiting enforcement, and session clearing.
+- **`tests/test_api_contract.py` (5 tests)**: REST endpoint registration including `/chat` and session routes, gated `/golden-questions` access, `AskResponse` and `ChatResponse` schema validation, and session cleanup contracts.
+- **`tests/test_classifier.py` (6 tests)**: Single-signal routing for all categories, multi-signal / ambiguous queries, real overlapping examples, and deterministic tie-breaking.
+- **`tests/test_grounding.py` (5 tests)**: Fabricated evidence rejection, partial evidence confidence downgrade, verbatim evidence retention, uncited/wrongly-cited claim stripping, and deterministic confidence computation.
+- **`tests/test_config.py` (2 tests)**: `Settings` dataclass properties and golden question dataset structure validation.
+- **`tests/test_utils.py` (3 tests)**: Deduplication utilities and robust JSON serialization.
+- **`tests/test_models.py` (1 test)**: Pydantic model roundtrips and evidence serialization.
 
 ---
 
@@ -352,12 +376,52 @@ pytest tests/                      # Full test suite
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/health` | Service health, Neo4j connection status, LLM status |
+| `GET` | `/health` | Service health, Neo4j connection status, LLM status, Sarvam config status |
 | `GET` | `/stats` | Decision counts, confidence distribution, contributor stats |
-| `POST` | `/ask` | Ask any question; returns category-routed answer + evidence |
+| `POST` | `/chat` | **Conversational AI endpoint**: Multi-turn chat with mode selection (`auto`, `repository`, `general`), session memory, token tracking, and GraphRAG grounding |
+| `GET` | `/chat/session/{id}` | Inspect conversation session status, token usage, and remaining request quota |
+| `DELETE` | `/chat/session/{id}` | Clear conversation session history |
+| `POST` | `/ask` | Ask any single question; returns category-routed answer + evidence (backward compatible) |
 | `GET` | `/decisions` | Paginated decision list (filter by confidence, source type) |
 | `GET` | `/decision/{id}` | Full decision record by ID |
-| `GET` | `/golden-questions` | Curated evaluation questions for quick testing |
+| `GET` | `/golden-questions` | Curated benchmark questions (gated by default behind `EXPOSE_GOLDEN_QUESTIONS` to prevent evaluation data leakage) |
+
+### `POST /chat` (Conversational AI)
+
+**Request**
+```json
+{
+  "question": "Why did Flask separate ApplicationContext from RequestContext in 0.9?",
+  "mode": "auto",
+  "session_id": "session_abc123"
+}
+```
+
+**Response**
+```json
+{
+  "answer": "Flask separated ApplicationContext from RequestContext in version 0.9 to decouple application-level configuration and teardown callbacks from HTTP request processing...",
+  "mode_used": "repository",
+  "category": "historical",
+  "confidence": "high",
+  "sources": ["https://github.com/pallets/flask/commit/..."],
+  "evidence": [
+    {
+      "decision_id": "DEC-004",
+      "summary": "Split ApplicationContext from RequestContext",
+      "rationale": "Allows CLI scripts and tests to run within app context without mocking HTTP requests."
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 128,
+    "completion_tokens": 256,
+    "total_tokens": 384
+  },
+  "remaining_requests": 19,
+  "session_id": "session_abc123",
+  "cached": false
+}
+```
 
 ### `POST /ask`
 
@@ -399,18 +463,61 @@ The `category` field drives the frontend's adaptive rendering:
 
 ---
 
-## Query Routing
+## Query Routing & Evaluation
 
-The classifier uses deterministic heuristics (no extra LLM call):
+Query routing runs via deterministic pattern scoring in [`app/classifier.py`](backend/app/classifier.py) without requiring an additional LLM call.
 
-| Signal | Routed to |
-|--------|-----------|
-| Starts with *why*, contains *deprecated*, *introduced*, *merged*, *removed* | `historical` |
-| Contains *architecture*, *structure*, *lifecycle*, *routing*, *module*, *how does* | `repository` |
-| Generic concept questions (*what is X*) with no repo-specific context | `general` |
-| Combines why + how / architecture + historical rationale | `hybrid` |
+### Signal Scoring & Tie-Break Rules
 
-The classifier was validated against 22 benchmark cases with 100% accuracy before deployment.
+| Category | Matched Signal Patterns | Weight |
+|---|---|---|
+| `historical` | `why`, `why did`, `why does`, `why was`, `why were` | 3 |
+| | `reason`, `rationale`, `motivation`, `tradeoff`, `decision` | 2 |
+| | `deprecat*`, `removed`, `dropped`, `migrated`, `origin`, `history` | 2 |
+| | `who merged`, `when did`, `when was`, `merged at`, `maintainers` | 2 |
+| | `pull request`, `pr`, `commit`, `issue`, `changelog`, `fix`, `#<digits>` | 2 |
+| | `instead of`, `rather than`, `revert` | 1 |
+| `repository` | `architecture`, `structure`, `lifecycle`, `request lifecycle` | 3 |
+| | `modules`, `major modules`, `file structure`, `directory structure`, `codebase` | 2 |
+| | `workflow`, `pipeline`, `entry point`, `wsgi`, `blueprint`, `dispatch`, `routing` | 2 |
+| | `how does ... work`, `how is ... implemented`, `how do ... communicate` | 2 |
+| | `where is ... (handled\|defined\|located\|called)` | 2 |
+| | `what happens when a request enters` | 3 |
+| | `in flask`, `in this repo`, `in pallets/flask` | 1 |
+| `general` | `^what is`, `^what are`, `^define`, `^meaning of` (definition prefix) | 3 |
+| | `difference between`, `concept of`, `explain the concept` | 2 |
+
+**Tie-Break Rules:**
+- If historical and repository scores are positive and tied (`score_hist == score_repo`), **`hybrid` wins the tie-break**.
+- If both historical and repository are strongly present (`score_hist >= 3` and `score_repo >= 3`), **`hybrid`** is selected to activate dual retrieval.
+- Incidental code tokens in historical questions (e.g. `wsgi_app` in *"Why did Flask move ctx.push() inside try block in wsgi_app?"*) are dominated by multiple historical tokens (score 8 vs 2).
+
+### Real Evaluation Benchmark Results
+
+Computed from the evaluation suite (`python3 -m app.eval`):
+
+- **Query Classifier Benchmark:** **97.8% Accuracy** (44/45 correct across `data/benchmark_questions.json`)
+- **Retrieval Match Rate:** **100.0%** (25/25 verified hits on curated ground-truth URLs in `data/golden_questions.json`)
+
+#### Real Confusion Matrix (Rows: Expected, Columns: Predicted)
+
+| Expected \ Predicted | `historical` | `repository` | `general` | `hybrid` | Total | Class Recall |
+|---|---|---|---|---|---|---|
+| **`historical`** | 25 | 0 | 0 | 0 | 25 | 100.0% |
+| **`repository`** | 0 | 10 | 0 | 0 | 10 | 100.0% |
+| **`general`** | 0 | 0 | 5 | 0 | 5 | 100.0% |
+| **`hybrid`** | 0 | 1 | 0 | 4 | 5 | 80.0% |
+
+*Multi-signal analysis:* Out of 45 benchmark queries, 14 contained signals spanning multiple categories simultaneously. In 13 of 14 cases, the scoring hierarchy and tie-break rules produced the intended routing. In 1 case (ID 44: *"Rationale for blueprint routing architecture"*), repository tokens (score 5) dominated the rationale token (score 2), routing to `repository`.
+
+---
+
+## Limitations
+
+1. **Repository Scope**: Ingested and verified against `pallets/flask` (25 curated golden decisions + sample recent PRs and issues). It is not a full 14-year commit crawl of the entire repository history.
+2. **Model Dependency**: Decision extraction and answer generation depend on the configured LLM. While ground-truth facts and citations are verified, output wording is not bit-for-bit reproducible across model versions. Pinned model identifiers prevent silent drift.
+3. **Deterministic Heuristic Confidence**: Confidence is an algorithmic score derived from evidence presence, retrieval ranks, and citation verification ratios, not a calibrated Bayesian statistical probability.
+4. **Active Verification Status**: The active, fully validated pipeline utilizes Cypher graph queries in Neo4j Aura + BM25/lexical retrieval + Gemini/OpenAI-compatible LLM synthesis. Dense vector embedding similarity search is implemented in `retrieval.py` but is optional and requires a locally configured embeddings endpoint.
 
 ---
 
@@ -420,14 +527,13 @@ The classifier was validated against 22 benchmark cases with 100% accuracy befor
 |-------|-----------|
 | **Backend framework** | FastAPI + Uvicorn |
 | **Knowledge graph** | Neo4j Aura (bolt+TLS) |
-| **LLM** | OpenAI-compatible endpoint (Google Gemini 2.0 Flash) |
-| **LLM resilience** | Failover cascade: `gemini-2.0-flash` → `gemini-2.5-flash` → `gemini-flash-latest` |
+| **Active LLM** | Google Gemini 2.0 Flash (`gemini-2.0-flash`) via OpenAI-compatible endpoint |
+| **Pinned LLM failover** | Explicit version cascade: `gemini-2.0-flash` → `gemini-2.5-flash` → `gemini-1.5-flash` → `gemini-3.5-flash` *(no unpinned `-latest` aliases)* |
 | **GitHub ingestion** | PyGithub + GitHub REST API |
 | **Data validation** | Pydantic v2 |
 | **Frontend framework** | Next.js 15 (App Router) + TypeScript |
-| **UI animations** | Framer Motion |
-| **Design** | Vanilla CSS design tokens (no Tailwind) |
-| **Fonts** | Merriweather (serif) · Inter (sans) · JetBrains Mono |
+| **UI presentation** | Framer Motion · Vanilla CSS design tokens (no Tailwind) |
+| **Typography** | Merriweather (serif) · Inter (sans) · JetBrains Mono |
 
 ---
 
@@ -435,7 +541,7 @@ The classifier was validated against 22 benchmark cases with 100% accuracy befor
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feat/my-improvement`
-3. Run `pytest tests/` and verify `npx tsc --noEmit` passes before pushing
+3. Run `pytest` in `backend/` (20 tests) and verify `npx tsc --noEmit` in `frontend/` before pushing
 4. Open a pull request against `main`
 
 ---

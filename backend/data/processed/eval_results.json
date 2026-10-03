@@ -1,0 +1,659 @@
+{
+  "classifier": {
+    "total": 45,
+    "correct": 44,
+    "accuracy_pct": 97.78,
+    "confusion_matrix": {
+      "historical": {
+        "historical": 25,
+        "repository": 0,
+        "general": 0,
+        "hybrid": 0
+      },
+      "repository": {
+        "historical": 0,
+        "repository": 10,
+        "general": 0,
+        "hybrid": 0
+      },
+      "general": {
+        "historical": 0,
+        "repository": 0,
+        "general": 5,
+        "hybrid": 0
+      },
+      "hybrid": {
+        "historical": 0,
+        "repository": 1,
+        "general": 0,
+        "hybrid": 4
+      }
+    },
+    "multi_signal_cases": [
+      {
+        "id": 4,
+        "question": "Why did Flask 1.0 move ctx.push() inside the try block in wsgi_app instead of adopting the more involved fix proposed in #1538 for errors raised while opening the session?",
+        "expected": "historical",
+        "predicted": "historical",
+        "scores": {
+          "historical": 8,
+          "repository": 2,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix",
+            "git_artifact",
+            "issue_pr_number",
+            "contrastive_choice"
+          ],
+          "repository": [
+            "routing_flow"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Historical score (8) dominates repository score (2)"
+      },
+      {
+        "id": 6,
+        "question": "Why did the flask run HTTPS support in Flask 1.0 not include a gen_cert command or documentation for the adhoc and SSLContext options?",
+        "expected": "historical",
+        "predicted": "historical",
+        "scores": {
+          "historical": 3,
+          "repository": 1,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "repo_scope"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Historical score (3) dominates repository score (1)"
+      },
+      {
+        "id": 11,
+        "question": "Why was the deprecation of request.json reversed so that it is no longer deprecated in Flask 1.0?",
+        "expected": "historical",
+        "predicted": "historical",
+        "scores": {
+          "historical": 5,
+          "repository": 1,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix",
+            "lifecycle_event"
+          ],
+          "repository": [
+            "repo_scope"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Historical score (5) dominates repository score (1)"
+      },
+      {
+        "id": 14,
+        "question": "Why did Flask 1.0 forbid dots in blueprint view function (endpoint) names?",
+        "expected": "historical",
+        "predicted": "historical",
+        "scores": {
+          "historical": 3,
+          "repository": 2,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "routing_flow"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Historical score (3) dominates repository score (2)"
+      },
+      {
+        "id": 19,
+        "question": "Why did maintainers want the blueprint url_prefix double-slash fix to touch only the prefix, rather than normalizing route definitions in general?",
+        "expected": "historical",
+        "predicted": "historical",
+        "scores": {
+          "historical": 8,
+          "repository": 2,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix",
+            "attribution",
+            "git_artifact",
+            "contrastive_choice"
+          ],
+          "repository": [
+            "routing_flow"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Historical score (8) dominates repository score (2)"
+      },
+      {
+        "id": 26,
+        "question": "What is the architecture of this repository?",
+        "expected": "repository",
+        "predicted": "repository",
+        "scores": {
+          "historical": 0,
+          "repository": 3,
+          "general": 3
+        },
+        "matched_signals": {
+          "historical": [],
+          "repository": [
+            "architecture_core"
+          ],
+          "general": [
+            "definition_prefix"
+          ]
+        },
+        "tie_break_applied": false,
+        "rationale": "Repository score (3) dominates"
+      },
+      {
+        "id": 31,
+        "question": "What are the major modules and how do they communicate?",
+        "expected": "repository",
+        "predicted": "repository",
+        "scores": {
+          "historical": 0,
+          "repository": 4,
+          "general": 3
+        },
+        "matched_signals": {
+          "historical": [],
+          "repository": [
+            "module_structure",
+            "component_interaction"
+          ],
+          "general": [
+            "definition_prefix"
+          ]
+        },
+        "tie_break_applied": false,
+        "rationale": "Repository score (4) dominates"
+      },
+      {
+        "id": 34,
+        "question": "What is the file structure and directory layout of the Flask codebase?",
+        "expected": "repository",
+        "predicted": "repository",
+        "scores": {
+          "historical": 0,
+          "repository": 5,
+          "general": 3
+        },
+        "matched_signals": {
+          "historical": [],
+          "repository": [
+            "architecture_core",
+            "module_structure"
+          ],
+          "general": [
+            "definition_prefix"
+          ]
+        },
+        "tie_break_applied": false,
+        "rationale": "Repository score (5) dominates"
+      },
+      {
+        "id": 36,
+        "question": "What is WSGI?",
+        "expected": "general",
+        "predicted": "general",
+        "scores": {
+          "historical": 0,
+          "repository": 2,
+          "general": 3
+        },
+        "matched_signals": {
+          "historical": [],
+          "repository": [
+            "routing_flow"
+          ],
+          "general": [
+            "definition_prefix"
+          ]
+        },
+        "tie_break_applied": false,
+        "rationale": "General definition score (3) dominates"
+      },
+      {
+        "id": 41,
+        "question": "Why does the routing architecture work this way?",
+        "expected": "hybrid",
+        "predicted": "hybrid",
+        "scores": {
+          "historical": 3,
+          "repository": 5,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "architecture_core",
+            "routing_flow"
+          ],
+          "general": []
+        },
+        "tie_break_applied": true,
+        "rationale": "Both historical (3>=3) and repository (5>=3) are strongly present: hybrid selected"
+      },
+      {
+        "id": 42,
+        "question": "Explain the structure of Flask and why blueprints were introduced",
+        "expected": "hybrid",
+        "predicted": "hybrid",
+        "scores": {
+          "historical": 3,
+          "repository": 3,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "architecture_core"
+          ],
+          "general": []
+        },
+        "tie_break_applied": true,
+        "rationale": "Tied historical (3) and repository (3) signals: hybrid wins tie-break rule"
+      },
+      {
+        "id": 43,
+        "question": "How does WSGI integration work and why was it chosen?",
+        "expected": "hybrid",
+        "predicted": "hybrid",
+        "scores": {
+          "historical": 3,
+          "repository": 4,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "routing_flow",
+            "mechanism"
+          ],
+          "general": []
+        },
+        "tie_break_applied": true,
+        "rationale": "Both historical (3>=3) and repository (4>=3) are strongly present: hybrid selected"
+      },
+      {
+        "id": 44,
+        "question": "Rationale for blueprint routing architecture",
+        "expected": "hybrid",
+        "predicted": "repository",
+        "scores": {
+          "historical": 2,
+          "repository": 5,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "rationale_term"
+          ],
+          "repository": [
+            "architecture_core",
+            "routing_flow"
+          ],
+          "general": []
+        },
+        "tie_break_applied": false,
+        "rationale": "Repository score (5) dominates historical score (2)"
+      },
+      {
+        "id": 45,
+        "question": "Why did Flask adopt Werkzeug for its routing engine and how does the dispatch pipeline work?",
+        "expected": "hybrid",
+        "predicted": "hybrid",
+        "scores": {
+          "historical": 3,
+          "repository": 4,
+          "general": 0
+        },
+        "matched_signals": {
+          "historical": [
+            "why_prefix"
+          ],
+          "repository": [
+            "routing_flow",
+            "mechanism"
+          ],
+          "general": []
+        },
+        "tie_break_applied": true,
+        "rationale": "Both historical (3>=3) and repository (4>=3) are strongly present: hybrid selected"
+      }
+    ]
+  },
+  "retrieval": {
+    "total": 25,
+    "matched": 25,
+    "match_rate_pct": 100.0,
+    "details": [
+      {
+        "id": 1,
+        "question": "Why did Flask 1.0 remove the deprecated flask.ext import namespace instead of keeping it as a compatibility shim?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2385",
+          "https://github.com/pallets/flask/pull/2395"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2395"
+        ]
+      },
+      {
+        "id": 2,
+        "question": "Why did Flask 1.0 make the session serializer extensible through TaggedJSONSerializer.register even though it made session serialization about 30 microseconds slower per request?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2352",
+          "https://github.com/pallets/flask/issues/1908"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2352"
+        ]
+      },
+      {
+        "id": 3,
+        "question": "Why did Flask 1.0 remove the error handler cache instead of keeping it for performance?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2267",
+          "https://github.com/pallets/flask/pull/2362"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2362"
+        ]
+      },
+      {
+        "id": 4,
+        "question": "Why did Flask 1.0 move ctx.push() inside the try block in wsgi_app instead of adopting the more involved fix proposed in #1538 for errors raised while opening the session?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2254",
+          "https://github.com/pallets/flask/issues/1528"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2254"
+        ]
+      },
+      {
+        "id": 5,
+        "question": "Why did Flask 1.0 enable threading by default for the development server?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2529"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2529"
+        ]
+      },
+      {
+        "id": 6,
+        "question": "Why did the flask run HTTPS support in Flask 1.0 not include a gen_cert command or documentation for the adhoc and SSLContext options?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2606",
+          "https://github.com/pallets/flask/issues/2594"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2606"
+        ]
+      },
+      {
+        "id": 7,
+        "question": "Why did Flask allow jsonify to serialize top-level arrays without adding a config option to control the old restriction?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/1671",
+          "https://github.com/pallets/flask/issues/248"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/1671"
+        ]
+      },
+      {
+        "id": 8,
+        "question": "Why did the top-level array change to jsonify keep supporting keyword arguments instead of making jsonify accept a single argument like json.dumps?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/170",
+          "https://github.com/pallets/flask/pull/1671"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/1671"
+        ]
+      },
+      {
+        "id": 9,
+        "question": "Why does jsonify raise an error when it is given both positional and keyword arguments instead of using one and ignoring the other?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/170",
+          "https://github.com/pallets/flask/pull/1671"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/1671"
+        ]
+      },
+      {
+        "id": 10,
+        "question": "Why did maintainers deprecate request.json in favor of request.get_json() before Flask 1.0 was released?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/1421"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/issues/1421"
+        ]
+      },
+      {
+        "id": 11,
+        "question": "Why was the deprecation of request.json reversed so that it is no longer deprecated in Flask 1.0?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/1421"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/issues/1421"
+        ]
+      },
+      {
+        "id": 12,
+        "question": "Why did Flask revert the earlier passthrough_errors changes instead of keeping a fix for the flask run command?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2006",
+          "https://github.com/pallets/flask/issues/2005"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2006"
+        ]
+      },
+      {
+        "id": 13,
+        "question": "Why did Flask 1.0 drastically simplify its logging setup and remove the LOGGER_NAME and LOGGER_HANDLER_POLICY config options?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2436",
+          "https://github.com/pallets/flask/issues/2023"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2436"
+        ]
+      },
+      {
+        "id": 14,
+        "question": "Why did Flask 1.0 forbid dots in blueprint view function (endpoint) names?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2450",
+          "https://github.com/pallets/flask/issues/2790"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2450"
+        ]
+      },
+      {
+        "id": 15,
+        "question": "Why did Flask change the session handling so a request only opens a session if it doesn't already have one open?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/1348",
+          "https://github.com/pallets/flask/pull/2354"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2354"
+        ]
+      },
+      {
+        "id": 16,
+        "question": "Why did Flask 1.0 enable TRAP_BAD_REQUEST_ERRORS by default in debug mode and put the missing key in BadRequestKeyError's description?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/382",
+          "https://github.com/pallets/flask/pull/2348"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2348"
+        ]
+      },
+      {
+        "id": 17,
+        "question": "Why was flask.ext deprecated with runtime warnings and documentation changes, without first building a migration tool to rewrite flask_* imports?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/1484",
+          "https://github.com/pallets/flask/issues/1135"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/1484"
+        ]
+      },
+      {
+        "id": 18,
+        "question": "Why does Flask ignore an unguarded app.run() for every flask command instead of only for flask run?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2776"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/issues/2776"
+        ]
+      },
+      {
+        "id": 19,
+        "question": "Why did maintainers want the blueprint url_prefix double-slash fix to touch only the prefix, rather than normalizing route definitions in general?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/2629"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2629"
+        ]
+      },
+      {
+        "id": 20,
+        "question": "Why did Flask add .env support by using python-dotenv as an optional dependency instead of writing its own .env parser?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2375",
+          "https://github.com/pallets/flask/pull/2416"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2416"
+        ]
+      },
+      {
+        "id": 21,
+        "question": "Why does Flask's dotenv support load two files, .flaskenv and .env, instead of a single .env file?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2375",
+          "https://github.com/pallets/flask/pull/2416"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2416"
+        ]
+      },
+      {
+        "id": 22,
+        "question": "Why does loading .env or .flaskenv files change the working directory to the location of those files?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2383",
+          "https://github.com/pallets/flask/pull/2416"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2416"
+        ]
+      },
+      {
+        "id": 23,
+        "question": "Why does FlaskClient.open copy and modify an environ or EnvironBuilder that is passed in, instead of using it exactly as given like werkzeug's test client does?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2411",
+          "https://github.com/pallets/flask/pull/2412"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2412"
+        ]
+      },
+      {
+        "id": 24,
+        "question": "Why did maintainers originally decline to have the flask CLI auto-discover and call a create_app factory function?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/pull/1536",
+          "https://github.com/pallets/flask/issues/2027"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/1536"
+        ]
+      },
+      {
+        "id": 25,
+        "question": "Why did Flask 1.0 stop requiring app factory functions to accept a script_info argument for the flask command?",
+        "hit": true,
+        "expected_urls": [
+          "https://github.com/pallets/flask/issues/2266",
+          "https://github.com/pallets/flask/pull/2319",
+          "https://github.com/pallets/flask/issues/2027"
+        ],
+        "retrieved_urls": [
+          "https://github.com/pallets/flask/pull/2319"
+        ]
+      }
+    ]
+  }
+}

@@ -6,9 +6,52 @@ historical text; the original source and curated rationale remain preserved.
 """
 from __future__ import annotations
 
+from typing import Any
+
 from app.config import GOLDEN_FILE, NORMALIZED_DIR, PROCESSED_DIR, ensure_data_dirs, get_settings
-from app.providers import make_llm, parse_json_object
+from app.grounding import verify_evidence_snippets
+from app.providers import LLMProvider, make_llm, parse_json_object
 from app.utils import read_json, unique_keep_order, write_json
+
+
+def extract_decision_from_source(
+    llm: LLMProvider,
+    source_type: str,
+    source_id: str | int,
+    source_text: str,
+    initial_confidence: str = "high",
+) -> dict[str, Any] | None:
+    """Extract a decision using LLM and strictly verify snippets verbatim against source text.
+
+    - Rejects decisions with zero verifiable snippets.
+    - Downgrades confidence if only some snippets verify.
+    """
+    prompt = (
+        "Extract the technical decision and rationale from this source text.\n"
+        "Return JSON with keys:\n"
+        "- summary: short description of the decision\n"
+        "- rationale: explanation of why the choice was made\n"
+        "- evidence_snippets: list of exact verbatim quote strings copied directly from the text\n"
+        f"SOURCE TEXT:\n{source_text[:3000]}"
+    )
+    raw = llm.generate("You are an evidence-grounded technical decision extractor.", prompt)
+    parsed = parse_json_object(raw)
+    snippets = parsed.get("evidence_snippets") or []
+    if isinstance(snippets, str):
+        snippets = [snippets]
+
+    verified_snippets, final_conf, ratio = verify_evidence_snippets(snippets, source_text, initial_confidence)
+    if not verified_snippets or final_conf == "rejected":
+        # Discard any decision that has zero verifiable snippets
+        return None
+
+    return {
+        "summary": str(parsed.get("summary", "")),
+        "rationale": str(parsed.get("rationale", "")),
+        "evidence_snippets": verified_snippets,
+        "confidence": final_conf,
+        "verification_ratio": ratio,
+    }
 
 
 def _source(item: dict) -> tuple[str, int | str | None, str | None]:

@@ -1,0 +1,227 @@
+[
+  {
+    "id": 1,
+    "question": "Why did Flask 1.0 remove the deprecated flask.ext import namespace instead of keeping it as a compatibility shim?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 2,
+    "question": "Why did Flask 1.0 make the session serializer extensible through TaggedJSONSerializer.register even though it made session serialization about 30 microseconds slower per request?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 3,
+    "question": "Why did Flask 1.0 remove the error handler cache instead of keeping it for performance?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 4,
+    "question": "Why did Flask 1.0 move ctx.push() inside the try block in wsgi_app instead of adopting the more involved fix proposed in #1538 for errors raised while opening the session?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 5,
+    "question": "Why did Flask 1.0 enable threading by default for the development server?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 6,
+    "question": "Why did the flask run HTTPS support in Flask 1.0 not include a gen_cert command or documentation for the adhoc and SSLContext options?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 7,
+    "question": "Why did Flask allow jsonify to serialize top-level arrays without adding a config option to control the old restriction?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 8,
+    "question": "Why did the top-level array change to jsonify keep supporting keyword arguments instead of making jsonify accept a single argument like json.dumps?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 9,
+    "question": "Why does jsonify raise an error when it is given both positional and keyword arguments instead of using one and ignoring the other?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 10,
+    "question": "Why did maintainers deprecate request.json in favor of request.get_json() before Flask 1.0 was released?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 11,
+    "question": "Why was the deprecation of request.json reversed so that it is no longer deprecated in Flask 1.0?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 12,
+    "question": "Why did Flask revert the earlier passthrough_errors changes instead of keeping a fix for the flask run command?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 13,
+    "question": "Why did Flask 1.0 drastically simplify its logging setup and remove the LOGGER_NAME and LOGGER_HANDLER_POLICY config options?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 14,
+    "question": "Why did Flask 1.0 forbid dots in blueprint view function (endpoint) names?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 15,
+    "question": "Why did Flask change the session handling so a request only opens a session if it doesn't already have one open?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 16,
+    "question": "Why did Flask 1.0 enable TRAP_BAD_REQUEST_ERRORS by default in debug mode and put the missing key in BadRequestKeyError's description?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 17,
+    "question": "Why was flask.ext deprecated with runtime warnings and documentation changes, without first building a migration tool to rewrite flask_* imports?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 18,
+    "question": "Why does Flask ignore an unguarded app.run() for every flask command instead of only for flask run?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 19,
+    "question": "Why did maintainers want the blueprint url_prefix double-slash fix to touch only the prefix, rather than normalizing route definitions in general?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 20,
+    "question": "Why did Flask add .env support by using python-dotenv as an optional dependency instead of writing its own .env parser?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 21,
+    "question": "Why does Flask's dotenv support load two files, .flaskenv and .env, instead of a single .env file?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 22,
+    "question": "Why does loading .env or .flaskenv files change the working directory to the location of those files?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 23,
+    "question": "Why does FlaskClient.open copy and modify an environ or EnvironBuilder that is passed in, instead of using it exactly as given like werkzeug's test client does?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 24,
+    "question": "Why did maintainers originally decline to have the flask CLI auto-discover and call a create_app factory function?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 25,
+    "question": "Why did Flask 1.0 stop requiring app factory functions to accept a script_info argument for the flask command?",
+    "expected_category": "historical"
+  },
+  {
+    "id": 26,
+    "question": "What is the architecture of this repository?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 27,
+    "question": "Explain the structure of Flask.",
+    "expected_category": "repository"
+  },
+  {
+    "id": 28,
+    "question": "How does the request lifecycle work?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 29,
+    "question": "Where is routing handled in Flask?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 30,
+    "question": "How does WSGI integration work in Flask?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 31,
+    "question": "What are the major modules and how do they communicate?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 32,
+    "question": "What happens when a request enters the application?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 33,
+    "question": "Where is request dispatching defined in the codebase?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 34,
+    "question": "What is the file structure and directory layout of the Flask codebase?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 35,
+    "question": "How is the application context implemented in ctx.py?",
+    "expected_category": "repository"
+  },
+  {
+    "id": 36,
+    "question": "What is WSGI?",
+    "expected_category": "general"
+  },
+  {
+    "id": 37,
+    "question": "What are thread locals in Python?",
+    "expected_category": "general"
+  },
+  {
+    "id": 38,
+    "question": "Define reverse proxy in web applications",
+    "expected_category": "general"
+  },
+  {
+    "id": 39,
+    "question": "What is the difference between app context and request context?",
+    "expected_category": "general"
+  },
+  {
+    "id": 40,
+    "question": "Explain the concept of middleware in web frameworks",
+    "expected_category": "general"
+  },
+  {
+    "id": 41,
+    "question": "Why does the routing architecture work this way?",
+    "expected_category": "hybrid"
+  },
+  {
+    "id": 42,
+    "question": "Explain the structure of Flask and why blueprints were introduced",
+    "expected_category": "hybrid"
+  },
+  {
+    "id": 43,
+    "question": "How does WSGI integration work and why was it chosen?",
+    "expected_category": "hybrid"
+  },
+  {
+    "id": 44,
+    "question": "Rationale for blueprint routing architecture",
+    "expected_category": "hybrid"
+  },
+  {
+    "id": 45,
+    "question": "Why did Flask adopt Werkzeug for its routing engine and how does the dispatch pipeline work?",
+    "expected_category": "hybrid"
+  }
+]

@@ -15,11 +15,11 @@ CodeArchaeologist is a repository-intelligence web app that answers:
 
 > **"Why is this code the way it is?"**
 
-Instead of explaining only what code does, it reconstructs historical reasoning from pull requests, issues, discussions and extracted decisions.
+It reconstructs historical reasoning from pull requests, issues, discussions and extracted decisions.
 
-Repository history is represented as a Neo4j knowledge graph. The system retrieves relevant evidence, verifies it, and returns a cited answer.
+Repository history is represented in a Neo4j knowledge graph. The system retrieves evidence, verifies it, and returns a cited answer.
 
-When supporting evidence cannot be found, it returns **`no_evidence` rather than inventing a rationale**.
+When useful evidence cannot be found, it returns **`no_evidence` rather than inventing historical rationale**.
 
 ---
 
@@ -35,7 +35,7 @@ Typical situations include:
 - finding a commit but not understanding why it happened
 - deciding whether an old constraint is still intentional
 
-This is a **reasoned ICP, not yet validated through real interviews**.
+This is a **reasoned ICP, not yet validated with real users**.
 
 ---
 
@@ -47,7 +47,7 @@ Accept a natural-language repository question.
 
 ### Routing
 
-Classify the question as:
+Classify it as:
 
 - **Historical**
 - **Repository**
@@ -68,9 +68,7 @@ Retrieve relevant context including:
 
 ### Answering
 
-Return a structured answer appropriate to the question type.
-
-The answer should expose:
+Return a structured response with:
 
 - explanation
 - supporting evidence
@@ -88,13 +86,13 @@ Support:
 
 ### Failure behavior
 
-Given a question with no useful supporting evidence, the system must return:
+Given a question with no useful supporting evidence:
 
 ```text
 no_evidence
 ```
 
-rather than generate an unsupported historical explanation.
+must be returned instead of an unsupported historical explanation.
 
 ---
 
@@ -106,13 +104,11 @@ The MVP deliberately does **not**:
 - support multiple repositories in the deployed instance
 - preserve chat sessions across restarts
 - edit, generate or refactor code
-- guarantee that historical rationale exists for every question
-- treat benchmark accuracy as proof of product-market fit
+- guarantee historical rationale exists for every question
+- treat benchmark performance as product-market-fit evidence
 - claim real-user validation
 
 ### Current MVP boundary
-
-The deployed scope is centered on:
 
 > **`pallets/flask` + curated decisions + sample PR/issue data**
 
@@ -124,14 +120,14 @@ The deployed scope is centered on:
 |---|---|
 | GitHub pull requests | Historical changes and discussions |
 | GitHub issues / discussions | Rationale and context |
-| Extracted decisions | Searchable historical decision records |
+| Extracted decisions | Searchable historical decisions |
 | Contributors / dates | Decision context |
 | Repository modules / files | Repository-level context |
 | Neo4j graph | Connects decisions and repository relationships |
 | Benchmark questions | Routing/retrieval evaluation |
 | Chat history | Short-lived conversational context |
 
-The existing project README reports **25 curated golden decisions** and a **45-question benchmark**.
+The project README reports **25 curated golden decisions** and a **45-question benchmark**.
 
 ---
 
@@ -162,7 +158,7 @@ Chat state and rate limiting are in memory and tied to the running process.
 
 ### Security
 
-API keys must remain server-side and must not be exposed through public frontend environment variables.
+API keys must remain server-side.
 
 ### Retrieval
 
@@ -170,9 +166,9 @@ Optional vector retrieval requires an embeddings endpoint.
 
 ---
 
-## 7. What does "done" mean?
+# 7. What does "done" mean?
 
-A technically complete system must satisfy this contract:
+A technically complete system must satisfy:
 
 ```text
 question
@@ -190,7 +186,7 @@ cite
 answer OR no_evidence
 ```
 
-### Definition-of-done checklist
+## Definition-of-done checklist
 
 | Requirement | State |
 |---|---|
@@ -206,20 +202,20 @@ answer OR no_evidence
 | Chat mode | ✅ |
 | Automated test infrastructure | ✅ |
 | Benchmark | ✅ |
-| Real interviews | **Pending** |
+| Real developer interviews | **Pending** |
 | Stranger test | **Pending** |
 
-The project README reports:
+The README reports:
 
 - **44/45 (97.8%)** classifier performance
 - **25/25** golden retrieval matches
 - **28 passing backend tests**
 
-These remain **README-reported results**, not independently re-run results.
+These are **README-reported results, not independently re-run**.
 
 ---
 
-## 8. What remains unknown?
+# 8. What remains unknown?
 
 ### User behavior
 
@@ -227,23 +223,23 @@ Do developers actually look through repository history before changing unfamilia
 
 ### Trust
 
-Is a cited answer enough to influence a developer's next action?
+Is a cited answer enough to influence what a developer does next?
 
 ### Evidence availability
 
-How often does repository history contain enough rationale to answer the questions developers actually ask?
+How often does repository history contain enough rationale to answer real developer questions?
 
 ### Retrieval quality
 
-Can the system reliably connect the correct discussion to the correct design decision outside the curated benchmark?
+Can the system connect the correct discussion to the correct design decision outside the curated benchmark?
 
 ### Transferability
 
-Does the approach work on repositories with sparse, inconsistent or undocumented history?
+Does the approach work on repositories with sparse or inconsistent history?
 
 ### Product value
 
-Does the workflow save enough time or reduce enough uncertainty to become part of a developer's normal workflow?
+Does this workflow save enough time or reduce enough uncertainty to become part of a developer's normal workflow?
 
 ### Market
 
@@ -261,7 +257,7 @@ No real interviews or stranger test have been completed yet.
 
 ### Example
 
-A developer encounters an unfamiliar behavior and asks:
+A developer encounters unfamiliar behavior and asks:
 
 > **"Why was `request.json` deprecated?"**
 
@@ -272,7 +268,49 @@ The system should:
 3. verify the evidence
 4. synthesize the explanation
 5. show the source trail
-6. let the developer inspect the evidence before acting
+6. let the developer inspect it before acting
+
+---
+
+# Practical User Scenarios
+
+These scenarios are **hypotheses, not observed user behavior**:
+
+- onboarding to a mature repository
+- preparing a refactor of code someone else wrote
+- reviewing an old design decision
+- tracing a surprising behavior to the original change
+- deciding whether a compatibility constraint can safely be removed
+
+---
+
+# Simulated User Research
+
+> **Not real interviews. Not validation.**
+
+Three AI-generated conversations were used to rehearse interview questions and shape hypotheses.
+
+A representative simulated conversation explored a common situation:
+
+> **Builder:** "If you find code that looks strange but works, how do you usually decide whether it's safe to change?"
+
+> **Simulated developer:** "I'd look at the code first, then probably the commit or PR that introduced it. The annoying part is finding the right discussion."
+
+> **Builder:** "What would you want from a tool answering 'why was this designed this way?'"
+
+> **Simulated developer:** "I'd want the original PR or issue linked. If the tool just gives me an explanation without the source, I wouldn't fully trust it."
+
+> **Builder:** "What would worry you?"
+
+> **Simulated developer:** "Incomplete history. It could find something related and make it sound like that's definitely the reason."
+
+These lines are **simulation only** and should not be interpreted as participant quotes.
+
+They identify hypotheses worth testing with actual developers:
+- source visibility may matter for trust
+- historical search may be harder than code reading
+- incomplete history may be a significant failure mode
+- the tool may be most useful immediately before a code change
 
 ---
 
@@ -318,7 +356,7 @@ The system should:
                     └─────────────────────┘
 ```
 
-Chat adds session handling, caching and rate limiting.
+Chat additionally uses session handling, caching and rate limiting.
 
 ---
 
@@ -338,23 +376,23 @@ Chat adds session handling, caching and rate limiting.
 
 # Evidence & Grounding
 
-The project's core rule is:
+The core rule is:
 
 > **A plausible answer is not enough.**
 
-### 1. Evidence verification
+### Evidence verification
 
-Retrieved snippets are checked against their underlying source text.
+Retrieved snippets are checked against the underlying source text.
 
-### 2. Claim-level citations
+### Claim-level citations
 
 Generated claims must reference an `evidence_id`.
 
-### 3. Unsupported-claim removal
+### Unsupported-claim removal
 
 Claims without valid evidence are removed.
 
-### 4. Zero-evidence guard
+### Zero-evidence guard
 
 When retrieval produces no useful evidence, the LLM is bypassed and:
 
@@ -364,15 +402,13 @@ no_evidence
 
 is returned.
 
-### 5. Confidence
+### Confidence
 
 Confidence is computed outside the LLM from evidence-related signals and citation behavior.
 
 ---
 
 # Non-Negotiables
-
-These are product rules, not optional UX choices:
 
 - **Never invent historical rationale.**
 - **Never present an uncited claim as evidence-backed.**
@@ -401,9 +437,9 @@ The project exposes:
 | Golden retrieval URLs | **25/25** |
 | Backend tests | **28 passing** |
 
-These are **README-reported results, not independently re-run**.
+These are **README-reported, not independently re-run**.
 
-The benchmark evaluates system behavior; it does **not** establish user demand or product-market fit.
+The benchmark evaluates system behavior. It does **not** establish user demand, PMF, or usability.
 
 ---
 
@@ -434,13 +470,29 @@ The benchmark evaluates system behavior; it does **not** establish user demand o
 
 # Limitations
 
-1. **Curated history:** the knowledge base is not the entire Flask history.
+1. **Curated history:** the knowledge base is not the complete Flask history.
 2. **Repository specificity:** the MVP is centered on Flask.
-3. **Evidence availability:** some design rationale may never have been documented.
+3. **Evidence availability:** some rationale may never have been documented.
 4. **Model dependence:** answer wording varies with the configured model.
 5. **In-memory state:** chat sessions and rate limiting are not distributed.
-6. **Benchmark size:** 45 questions are useful for regression checks but cannot prove broad real-world performance.
-7. **Validation:** no real interviews or stranger test have been completed.
+6. **Benchmark size:** 45 questions cannot establish broad real-world performance.
+7. **User validation:** no real interviews or stranger test have been completed.
+
+---
+
+# Validation Status
+
+| Validation item | Status |
+|---|---|
+| Technical implementation | ✅ Complete |
+| Offline/system evaluation | ✅ Exists |
+| PMF hypothesis | ✅ Reasoned |
+| Simulated interview rehearsal | ✅ Complete |
+| Real developer interviews | **Pending** |
+| Real Insight Ledger | **Pending** |
+| Opportunity sizing | **Pending** |
+| Stranger test | **Pending** |
+| Independent re-run of reported metrics | **Pending** |
 
 ---
 
@@ -451,16 +503,3 @@ The benchmark evaluates system behavior; it does **not** establish user demand o
 The implementation meets this technical scope.
 
 **Real-world validation remains a separate milestone.**
-
----
-
-# Open Questions
-
-- Do developers actually reach for repository history before modifying unfamiliar code?
-- Is a sourced answer faster or more useful than manually reading the original thread?
-- How much rationale exists for the code developers actually care about?
-- Can retrieval generalize beyond the curated Flask benchmark?
-- Does the workflow transfer to repositories with sparse discussion history?
-- Would developers return to the tool repeatedly?
-- What would a real stranger test reveal?
-- What is a defensible opportunity size?

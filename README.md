@@ -593,6 +593,31 @@ cd backend && pytest
 | **Typography** | Merriweather (serif) · Inter (sans) · JetBrains Mono |
 | **Smooth scrolling** | Lenis (disabled on `/chat` to prevent scroll conflicts) |
 
+
+# CodeArchaeologist — Assessment Pack
+
+This package contains the assessment documentation and evidence register for CodeArchaeologist.
+
+## Contents
+
+- `BUILD_LOG.md` — Activities 1–6, problem framing, AI leverage, developer conversations, tester observation, decisions, limitations, and evidence boundaries.
+- `PROJECT_SPEC.md` — product scope, behavior, architecture, stack, grounding requirements, early user research, and validation limits.
+- `RESEARCH_EVIDENCE.md` — source register and transparent opportunity-sizing scenarios.
+- `TECHNICAL_VALIDATION.md` — repository-defined commands, README-reported metrics, and the scope of the final inspection.
+
+## Project links
+
+- Live frontend: https://code-archaeologist-tau.vercel.app/
+- Source repository: https://github.com/THEaanya09/Code-Archaeologist
+- Target repository used by the MVP: `pallets/flask`
+
+The application source remains in the linked public GitHub repository; this ZIP is the **documentation/evidence pack**, not a copy of the full source-code tree.
+
+## Evidence conventions
+
+Exploratory participant reports, the first-time tester's observed task outcomes, repository README claims, public external sources, and scenario assumptions are kept separate. In particular, T01's observed usability score is **1/4 tasks independently completed**. The later 4/4 statement was explicitly hypothetical, so it is not treated as a retest. The opportunity figures are illustrative assumptions—not measured market size, user adoption, or product-market fit.
+
+
 ---
 
 ## Contributing

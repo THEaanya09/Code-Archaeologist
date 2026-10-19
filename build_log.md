@@ -1,285 +1,639 @@
-# PROJECT SPEC | CodeArchaeologist
+# BUILD LOG | CodeArchaeologist
 
 > **Code tells you what. History tells you why.**
+
+You join a project, open a file, and understand what it does in ten minutes. Understanding **why it was written that way** can take much longer.
+
+The reasoning may be spread across commits, pull requests, issues, discussions, and the people who were involved at the time. CodeArchaeologist turns that history into a searchable, evidence-grounded system for asking **why**.
 
 **Live demo:** [code-archaeologist-tau.vercel.app](https://code-archaeologist-tau.vercel.app/)  
 **Source repository:** [THEaanya09/Code-Archaeologist](https://github.com/THEaanya09/Code-Archaeologist)  
 **Target repository:** `pallets/flask`
 
-> **Project state:** The implementation is built and deployed. Three exploratory developer conversations (P01–P03) inform a preliminary research synthesis. T01’s reported first-time session records 1/4 tasks independently completed: the question task was completed, the historical-answer task could not be completed, and source verification plus the no-evidence case were not tested. A later 4/4 description was explicitly hypothetical, not a retest, and is excluded from observed results.
+> **Snapshot:** The implementation is built and deployed. Three exploratory developer conversations (P01–P03) and one first-time tester feedback record (T01) inform the current product direction. T01 independently completed the initial question task, could not complete the historical-answer task, and did not test source verification or the no-evidence response. A later 4/4 description was explicitly hypothetical, not a retest, and is excluded from the observed results.
 
-| At a glance | Current state |
+## At a Glance
+
+| Area | Current evidence |
 |---|---|
-| Technical implementation | **Built and deployed** |
-| Exploratory developer conversations | **3 recorded (P01 dated 14 Oct 2026; P02/P03 dates not recorded)** |
-| Preliminary Insight Ledger | **Synthesis of P01–P03; confidence labels included** |
-| User research | **Three exploratory conversations; evidence is qualitative and preliminary** |
-| First-time usability session | **1/4 tasks independently completed; 1 task not completed; 2 tasks not tested** |
-| Reported benchmark and test results | README-reported; command execution and results are documented separately in `TECHNICAL_VALIDATION.md` |
+| Implementation | Existing deployed app and six-activity project documentation |
+| Developer research | Three exploratory conversations, with partial notes for P02 and P03 |
+| First-time usability | T01 completed 1 of 4 tasks independently; 1 task could not be completed; 2 tasks were not tested |
+| Technical evaluation | README reports 28 tests passing, 44/45 classifier accuracy, and 25/25 retrieval matches; this packaging pass did not execute those commands |
+| Product-market fit | Early qualitative signals only; no adoption, time-saved, or willingness-to-pay result is claimed |
+
+## Quick Navigation
+
+- [Activity 1 — Problem and leverage](#activity-1--find-a-problem-worth-solving)
+- [Activity 2 — 4D AI Fluency](#activity-2--work-with-ai-deliberately-4d-fluency)
+- [Activity 3 — Research and verification](#activity-3--research-and-verify)
+- [Activity 4 — Critical design thinking](#activity-4--challenge-the-design)
+- [Activity 5 — PMF research and developer interviews](#activity-5--product-market-fit-research)
+- [Activity 6 — Build and systemize](#activity-6--build-and-systemize)
 
 ---
 
-# The 8 Questions
+## Project Status
 
-## 1. What is this?
+| # | Activity | Status |
+|---|---|---|
+| 1 | Problem, leverage map, human-owned decisions | ✅ Complete |
+| 2 | 4D AI Fluency | ✅ Complete |
+| 3 | Research brief and verification | ✅ Complete |
+| 4 | Critical design thinking | ✅ Problem reframes, critics, assumptions, and test criteria documented |
+| 5 | PMF research | ✅ Three exploratory conversations synthesized; findings remain preliminary |
+| 6 | Build and systemize | ✅ Implementation built; first-time usability evidence summarized below |
 
-CodeArchaeologist is a repository-intelligence web app that answers **"Why is this code the way it is?"** It retrieves historical context from pull requests, issues, discussions, and extracted decisions represented in a Neo4j knowledge graph.
+### Evidence policy
 
-The system is designed to return an evidence-backed explanation—or `no_evidence` when the available sources do not support an answer.
+**Real user research:** three exploratory developer conversations (P01–P03) have been reported by the project owner. P01 is dated **14 October 2026**. The dates, exact job titles, and employers for P02 and P03 were not supplied in the notes reviewed here, so they are not inferred. The supplied P02 notes are partial; the P03 excerpt covers the later workflow-improvement, trust, and post-concept-feedback questions, but does not include answers to questions 1–7 or a concrete past incident. Findings are preliminary and do not establish market-wide validation.
 
-## 2. Who uses it?
+**Interview study:** the protocol below is structured for conversations with developers who have worked in unfamiliar or inherited codebases, using past behavior and concrete examples as the primary evidence.
 
-**Intended user:** a developer making a meaningful change to code they did not write.
+**Simulated conversations:** three AI-generated conversations from an earlier session were used only to rehearse interview questions. They are not interviews, findings, quotes, or validation, and are kept separate from P01, P02, and P03.
 
-Typical situations include:
+**Synthetic / offline evaluation:** benchmark, classifier, retrieval and grounding checks evaluate the system itself. They are not user validation.
+
+**README-reported:** evaluation numbers taken from the project README are labeled as such when they have not been independently re-run.
+
+---
+
+# Activity 1 — Find a Problem Worth Solving
+
+### What we were trying to solve
+
+The starting question was not:
+
+> "What can we build with AI?"
+
+It was:
+
+> **"Where does AI create real leverage while important judgment stays human?"**
+
+### Problem
+
+Developers can usually understand **what** unfamiliar code does before they understand **why** it exists.
+
+A typical investigation becomes:
+
+```text
+code
+  ↓
+git blame
+  ↓
+commit
+  ↓
+PR
+  ↓
+issue / discussion
+  ↓
+finally find the context
+```
+
+The information exists, but the connections are expensive to reconstruct.
+
+### Who experiences it
+
+The initial target situations are:
+
+- a developer onboarding to a repository they did not write
+- an engineer preparing a refactor of unfamiliar or legacy code
+- a reviewer facing a change with unclear original rationale
+- a developer who found the relevant commit but still cannot explain why it happened
+- an engineer deciding whether an old constraint is still intentional
+
+These are **reasoned target situations, not validated user findings**.
+
+### When it happens
+
+The problem appears immediately before or during a consequential change:
+
+- onboarding
+- refactoring
+- reviewing unfamiliar code
+- debugging historical behavior
+- deciding whether an apparently unnecessary constraint can safely be removed
+
+### Cost / friction
+
+The current workflow creates:
+
+- repeated context switching between code and history
+- manual searching across multiple GitHub artifacts
+- uncertainty about whether a design choice was deliberate
+- risk of removing or changing behavior whose original rationale is not obvious
+
+No measured time-saved or monetary-cost figure was collected.
+
+### Why now
+
+The opportunity exists because:
+
+1. LLMs can summarize long technical discussions.
+2. Graph retrieval can connect decisions, PRs, issues, people, and dates.
+3. Generic AI can produce plausible "why" explanations without historical evidence, creating a trust risk.
+
+So the goal was not simply **"use AI to explain code."**
+
+The goal became:
+
+> **Use AI to recover historical reasoning, but make the answer checkable.**
+
+### Intended build
+
+Build a system that ingests repository history into a knowledge graph and answers **why** questions with:
+
+- linked evidence
+- source URLs
+- contributors and dates
+- a traceable retrieval path
+- deterministic confidence
+- an explicit refusal when supporting evidence is missing
+
+## Leverage Map
+
+| Task | AI role |
+|---|---|
+| Pull PRs, issues and discussions from GitHub | **Automation** |
+| Normalize and deduplicate raw records | **Automation** |
+| Propose candidate decisions from technical discussions | **Augmentation** |
+| Classify incoming questions | **Automation** |
+| Retrieve connected historical evidence | **Automation** |
+| Draft a readable explanation from retrieved evidence | **Augmentation** |
+| Bounded automatic routing in Chat | **Agency** |
+
+### Human-owned decisions
+
+1. **Scope:** start with one real repository, `pallets/flask`.
+2. **Evidence quality:** decide what counts as a meaningful decision and trustworthy source.
+3. **Refusal policy:** "no evidence" is a valid answer; the system should not invent historical rationale.
+
+### Artifact
+
+Problem framing, leverage map, scope decision and product principles are reflected in the project design and README.
+
+---
+
+# Activity 2 — Work With AI Deliberately: 4D Fluency
+
+The goal was to use AI as a **work partner**, not an answer machine.
+
+| D | How it appears in the project |
+|---|---|
+| **Delegation** | AI handles reading, extraction, drafting and synthesis; humans own scope, rules and release decisions. |
+| **Description** | Historical, repository, general and hybrid questions use different prompts and evidence expectations instead of one vague prompt. |
+| **Discernment** | Model output is never accepted raw: snippets are verified, citations are enforced, and confidence is computed outside the model. |
+| **Diligence** | Tests, benchmark questions and smoke checks exist so system changes can be checked rather than judged by fluency. |
+
+### Delegation Map
+
+| Work | Owner |
+|---|---|
+| Ingestion, normalization, retrieval | **AI / automation-led** |
+| Decision extraction | **Shared** — AI proposes, humans curate |
+| Answer drafting | **Shared** — AI drafts, grounding gates filter |
+| Scope, refusal rules, confidence rules, release | **Human-led** |
+
+### What AI cannot reliably evaluate
+
+- whether extracted rationale truly matches maintainer intent
+- whether "no evidence found" means "no reason existed"
+- whether an answer is useful enough for a developer to act on
+
+### Three Review Checkpoints
+
+**1. After extraction:** compare candidate decisions with their sources.
+
+**2. After synthesis:** apply grounding and citation checks.
+
+**3. Before release:** run tests, evaluation and smoke checks.
+
+> **Key decision:** 4D AI Fluency became a product property. The tool questions AI output instead of simply presenting it.
+
+### One task through the 4D lens: answering a historical “why” question
+
+| D | Applied to this task |
+|---|---|
+| **Delegation** | Let the system retrieve candidate context and draft an answer from repository evidence. |
+| **Description** | Specify that historical claims must use retrieved evidence and cite valid `evidence_id` values. |
+| **Discernment** | Reject unsupported snippets/claims and return `no_evidence` when evidence is insufficient. |
+| **Diligence** | Check behavior with grounding tests, benchmark questions and a smoke check; the recorded project metrics remain README-reported until rerun. |
+
+This is an implementation walkthrough of the project's approach, not a claim that a new test was run for this document.
+
+### Artifacts
+
+Grounding logic, category-specific prompts, evaluation tooling and test modules.
+
+---
+
+# Activity 3 — Research and Verify
+
+## Six-Part Research Brief
+
+| Part | Definition |
+|---|---|
+| **Context** | Design rationale for old code is harder to recover than code behavior itself. |
+| **Objective** | Determine whether historical rationale can be retrieved from repository history and returned with verifiable evidence. |
+| **Task** | Study where rationale appears and design extraction, retrieval and synthesis around it. |
+| **Constraints** | Public repository data, one repository, practical service limits, no invented history. |
+| **Output** | A decision graph plus a question-answering pipeline. |
+| **Success criteria** | Claims trace to real sources; routing/retrieval hit expected evaluation targets; missing evidence produces a refusal. |
+
+## Five Questions Used to Expose Gaps
+
+1. Where does rationale actually live: commits, PRs, issues or comments?
+2. How can a retrieved snippet be verified against its source?
+3. What should happen when no useful evidence exists?
+4. Which question types need different evidence and answer structures?
+5. How should routing and retrieval quality be measured?
+
+## Evidence / Inference / Hypothesis / Assumption
+
+| Type | Example |
+|---|---|
+| **Evidence** | Flask repository PRs, issues and discussions provide linkable historical sources. |
+| **Inference** | A graph connecting decisions to PRs, issues, people and dates should make historical context easier to retrieve than isolated search. |
+| **Hypothesis** | A developer about to change unfamiliar code would prefer a cited explanation before reconstructing the thread manually. |
+| **Assumption** | The reasoning behind a design choice was recorded somewhere in the available history. |
+
+## What Research Changed
+
+| Observation | Product decision |
+|---|---|
+| Rationale is scattered across repository artifacts | Model relationships as a graph |
+| Fluent AI output is not automatically trustworthy | Verify evidence snippets |
+| Claims can become detached from sources | Require `evidence_id` |
+| Evidence may simply be missing | Make `no_evidence` a first-class outcome |
+| Different questions need different evidence | Route historical, repository, general and hybrid questions separately |
+
+### Evaluation
+
+The existing README reports:
+
+- **44/45 (97.8%)** classifier benchmark accuracy
+- **25/25** golden retrieval matches
+
+These are **README-reported and not independently re-run for this log**.
+
+### Artifacts and evidence trail
+
+- **Existing project artifacts (README-reported):** benchmark question set, evaluation code and evaluation documentation.
+- **Interview evidence:** the participant notes shared by the project owner are summarized in Activity 5, with partial-note boundaries identified.
+- **Source register and sizing model:** `RESEARCH_EVIDENCE.md` records public sources, claim limits, and the assumptions used in the illustrative opportunity scenarios. It is a curated register created for this submission, not a verbatim export of earlier AI research output.
+
+---
+
+# Activity 4 — Challenge the Design
+
+## Five Whys
+
+| Why? | Answer |
+|---|---|
+| Why do developers hesitate or make mistakes when changing old code? | They do not know whether an unusual design was deliberate. |
+| Why don't they know? | The reasoning is rarely in the code itself. |
+| Why not? | It often lives in long PR and issue conversations. |
+| Why is that hard to reach? | `git blame` and commits identify changes but not the surrounding reasoning. |
+| Why is there still a gap? | Repository tools organize *what, who and when* more directly than *why*. |
+
+### Root Cause
+
+> **Historical rationale is unstructured and poorly linked to the code it explains.**
+
+## Two Reframes
+
+**From:** "Explain this code."  
+**To:** **"Was this design choice intentional, and why?"**
+
+**From:** "Give me a good answer."  
+**To:** **"Give me an answer I can check before I change anything."**
+
+### Two Critics
+
+| Critic | Objection | Response |
+|---|---|---|
+| **Skeptical engineer** | "I can just read the PR myself." | Fair for one change; the proposed value is reducing work across multiple linked sources. |
+| **Hallucination critic** | "An LLM can invent plausible history." | Verbatim verification, mandatory citations and zero-evidence refusal. |
+
+## Three Assumptions + Proposed 48-Hour Tests
+
+These are **proposed tests, not completed results**.
+
+| Assumption | Type | Proposed test | Pass | Inconclusive | Fail |
+|---|---|---|---|---|---|
+| **A1. Rationale exists in repository history** | Evidence availability | Inspect 10 known Flask changes and check whether a source explicitly states the reason | ≥7/10 | 5–6/10 | ≤4/10 |
+| **A2. Retrieval connects the right discussion to the right decision** | Technical | Run 20 “why” questions and compare returned evidence with expected threads | ≥90% | 75–89% | <75% |
+| **A3. Developers trust sourced answers enough to use them** | User | Run a moderated trial with 3 developers; observe source inspection and ask whether the answer would inform a real change | ≥2/3 inspect evidence and say it could help | Mixed behavior or unclear usefulness | 0/3 find it useful or trust the evidence |
+
+## Problem Statement v2
+
+> **A developer about to modify unfamiliar code needs to know whether an old design choice was intentional. Today they chain blame, commits, PRs and issue threads by hand. We provide sourced answers linking each decision to its history, and say plainly when no evidence exists.**
+
+---
+
+# Activity 5 — Product-Market Fit Research
+
+## PMF Hypothesis
+
+> **A developer is about to modify unfamiliar code and needs to know whether an old design choice was intentional. If a tool can show the original reasoning with sources, they will check it before changing the code.**
+
+## Specific ICP
+
+A developer making a **non-trivial change to a mature or legacy codebase they did not write**.
+
+### Practical Situations
 
 - onboarding to an unfamiliar repository
 - preparing a refactor
-- reviewing a change whose rationale is unclear
+- reviewing a change with unclear rationale
 - finding a commit but not understanding why it happened
-- deciding whether an old design constraint is still intentional
+- deciding whether an old constraint is still intentional
 
-This is the current ICP hypothesis, informed by problem framing and early exploratory input.
+These are **scenario hypotheses, not observed user behavior**.
 
-## 3. What must it do?
+## Substitutes
 
-| Capability | Expected behavior |
-|---|---|
-| **Question routing** | Classify a question as historical, repository, general, or hybrid. |
-| **Evidence retrieval** | Retrieve relevant decisions and repository artifacts such as PRs, issues, files, and modules. |
-| **Grounded answer** | Return a structured answer appropriate to the question type, with source references and relevant contributors/dates when available. |
-| **Evidence inspection** | Let the user open the underlying sources and inspect supporting excerpts. |
-| **Investigate mode** | Support a focused, single-question investigation. |
-| **Chat mode** | Support multi-turn exploration. |
-| **No-evidence behavior** | If useful evidence is unavailable, return `no_evidence` rather than invent a historical explanation. |
-
-### Acceptance examples
-
-| Scenario | Expected behavior | Verification status |
+| Substitute | What works | Friction |
 |---|---|---|
-| Relevant, source-backed evidence is retrieved | Return an answer with inspectable citations | Implemented per README; not independently rerun here |
-| No useful evidence is retrieved | Return `no_evidence` rather than inventing rationale | Reported implemented; live behavior not independently exercised here |
-| A snippet does not match its source | Reject the snippet | Grounding behavior described in README; test result not independently verified here |
-| A generated claim has no valid evidence reference | Remove or reject the unsupported claim | Grounding behavior described in README; tests not independently rerun here |
-| A question is ambiguous across categories | Apply deterministic routing/tie-break behavior | Classifier described in README; benchmark results reported, not rerun here |
+| `git blame` / `git log` | Finds who and when | Weak on why |
+| GitHub search + PR threads | Usually authoritative | Slow across connected discussions |
+| General AI | Fast explanation | May explain intent without historical evidence |
+| Ask a teammate | High-context answer | Depends on availability |
 
-### Non-negotiables
-
-- Never invent historical rationale.
-- Never present an uncited claim as evidence-backed.
-- Do not treat absence of evidence as proof that no reason existed.
-- Prefer a clear refusal over unsupported confidence.
-
-## 4. What does it NOT do?
-
-The MVP does not:
-
-- crawl the complete history of every repository
-- support multiple repositories in the deployed instance
-- persist chat sessions across process restarts
-- edit, generate, or refactor code
-- guarantee that the original rationale was recorded in repository history
-- prove product-market fit through benchmark scores
-- claim that the problem is validated across developers after one interview
-
-**Current boundary:** `pallets/flask`, curated decisions, and sample PR/issue data.
-
-## 5. What data does it use?
-
-| Data | Purpose | Coverage note |
-|---|---|---|
-| GitHub pull requests | Historical changes and discussions | Focused on `pallets/flask` |
-| GitHub issues/discussions | Rationale and surrounding context | Sampled/curated; not a complete history crawl |
-| Extracted decisions | Searchable historical decision records | README reports 25 curated golden decisions |
-| Contributors and dates | Context around a decision | Where available in source records |
-| Repository files/modules | Repository-level context | Depends on the ingested dataset |
-| Neo4j knowledge graph | Connects decisions to repository artifacts | Requires configured graph service |
-| Benchmark questions | Routing and retrieval evaluation | README reports 45 questions |
-| Chat history | Short-lived conversation context | In-memory only |
-
-Exact inventory counts should be treated as repository/README-reported unless independently rechecked.
-
-## 6. What constraints apply?
-
-### Data
-
-The MVP uses curated repository history rather than a full crawl. Some design rationale may never have been documented or may live outside GitHub.
-
-### AI
-
-LLM wording can vary across model versions. The model is not trusted to self-report confidence.
-
-### Infrastructure
-
-The documented stack depends on Neo4j Aura, GitHub data access, Gemini for Investigate synthesis, and Sarvam AI for Chat/general Q&A. The backend hosting location is not confirmed in this spec.
-
-### Session behavior
-
-Chat sessions and rate limiting are in memory and tied to the running process; they are not distributed state.
-
-### Security
-
-API credentials must remain server-side and must not be exposed in public frontend environment variables.
-
-### Retrieval
-
-Optional vector retrieval requires a configured embeddings endpoint.
-
-## 7. What does "done" mean?
-
-The technical flow is:
+## Mechanism
 
 ```text
-question → classify → retrieve → verify → synthesize → cite → answer OR no_evidence
+decision ↔ PR ↔ issue ↔ contributor ↔ date ↔ repository context
 ```
 
-### Definition-of-done checklist
+Retrieval finds the connected history. Grounding makes the final answer depend on evidence rather than model confidence.
 
-| Requirement | Current state | Evidence status |
-|---|---|---|
-| Frontend deployed | Landing page and navigation observed live | **Verified: landing page/navigation only** |
-| Question routing | Historical/repository/general/hybrid paths described in project README | Implemented; not independently rerun here |
-| Evidence retrieval | Graph/context retrieval described in README | Implemented; live behavior not independently exercised here |
-| Citation and grounding rules | Snippet verification, claim citations, unsupported-claim removal described in README | Implemented; tests not independently rerun here |
-| Zero-evidence refusal | `no_evidence` path described in README | Reported implemented; not independently exercised here |
-| Automated test suite | README reports 28 passing tests | README-reported, not independently rerun |
-| Classifier benchmark | 44/45 (97.8%) | README-reported, not independently rerun |
-| Golden retrieval matches | 25/25 | README-reported, not independently rerun |
-| Real developer research | Three exploratory developer conversations recorded (P01–P03); P02/P03 excerpts are partial | **Completed; preliminary only** |
-| First-time usability observation | T01 completed the initial question task but could not complete the historical-answer task | Source verification and the no-evidence path were not exercised in this session |
+## One User Flow
 
-**Implementation completion and product validation are separate milestones.**
-
-## 8. Research questions
-
-- Do developers repeatedly encounter difficulty recovering historical rationale?
-- Is the problem common across seniority levels and codebases?
-- Is a cited answer useful enough to change a developer's workflow?
-- How often does repository history actually contain the rationale being sought?
-- Can retrieval connect the right discussion to the right decision outside the curated benchmark?
-- Does the approach transfer to repositories with sparse history?
-- Which need-share, paid-price, and adoption assumptions would have to hold for the opportunity to be meaningful?
+> **Unfamiliar code → ask why → classify → retrieve linked history → verify evidence → grounded answer → inspect source → decide whether to change the code.**
 
 ---
 
-# Core User Flow
+## Real Interview Study
 
-**Unfamiliar code → ask why → classify → retrieve linked history → verify evidence → grounded answer → inspect source → decide whether to change the code.**
+The interview study is designed to validate the problem with **developers who have worked in real, unfamiliar or inherited codebases**.
 
-Example: a developer encounters unfamiliar behavior and asks, **"Why was `request.json` deprecated?"** The system should classify the question, retrieve relevant evidence, verify it, produce a cited explanation, and make the original sources inspectable. If supporting evidence is missing, it should refuse rather than guess.
+### Target participants
 
-# Architecture
+Aim for **3–5 developers**, ideally experienced engineers currently working on software teams. Record seniority and employer only when the participant confirms those details; do not infer them from the conversation.
+
+Prefer participants who have experience with:
+
+- maintaining an existing production codebase
+- onboarding to a large engineering repository
+- reviewing or refactoring code they did not author
+- debugging regressions caused by changes to old code
+- tracing historical decisions through GitHub/Git history
+
+The goal is to speak to people who have actually experienced the problem, rather than people who are simply interested in AI tools.
+
+### Interview format
+
+**10–15 minutes, one-on-one.**
+
+Do not pitch CodeArchaeologist at the beginning.
+
+First understand the participant's current workflow and a specific recent incident. Only introduce the concept near the end.
+
+### Interview script
+
+**Opening**
+
+> "Hey, I'm working on a small developer-tool project and I'm researching how experienced engineers deal with unfamiliar code. I don't want to sell you anything — I'm mainly interested in how you actually work. Could I ask you a few questions about a recent example?"
+
+**Question 1 — Recent situation**
+
+> "Think about the last time you had to change code that someone else had written. What were you working on?"
+
+**Question 2 — First move**
+
+> "When you first got into that code, what did you actually do to understand it?"
+
+**Question 3 — The turning point**
+
+> "Was there a point where you understood what the code was doing but still didn't understand why it had been designed that way?"
+
+**Question 4 — History**
+
+> "What did you check then — Git history, blame, PRs, issues, docs, Slack, someone on the team? Walk me through what you actually did."
+
+**Question 5 — Friction**
+
+> "What was the hardest part of finding that context?"
+
+**Question 6 — Consequence**
+
+> "Did that uncertainty change what you did? For example, did you delay the change, leave the code alone, ask someone, or make a smaller change?"
+
+**Question 7 — Missing owner**
+
+> "What happens when the person who originally worked on it isn't available?"
+
+**Question 8 — Trust**
+
+> "Suppose you got an automated explanation of why a design decision existed. What would you need to see before you trusted it?"
+
+**Question 9 — Evidence**
+
+> "Would the original PR, issue, commit, date, or people involved matter? Which of those would you actually check?"
+
+**Question 10 — Failure mode**
+
+> "What could a tool like that get wrong in a way that would be dangerous or misleading?"
+
+**Only now introduce the concept**
+
+> "We're exploring a tool that searches repository history and tries to answer 'why was this designed this way?' while showing the original evidence. What would you expect it to do before you would consider using something like that?"
+
+**Closing**
+
+> "Is there anything about this problem that I'm missing?"
+
+### Interview rules
+
+- Ask about **specific past behavior**, not idealized behavior.
+- Do not lead participants toward CodeArchaeologist.
+- Do not ask for positive feedback.
+- Do not tell participants what you expect them to say.
+- Capture exact wording where useful.
+- Separate raw notes from interpretation.
+- Do not turn a single participant's opinion into a general finding.
+- Do not create an Insight Ledger entry unless it is supported by actual notes.
+
+### Capture template
 
 ```text
-Next.js frontend
-       ↓
-FastAPI API
-       ↓
-Deterministic query classifier
-       ↓
-Retrieval (Neo4j graph + repository context + optional vectors)
-       ↓
-Category-specific answer synthesis
-       ↓
-Grounding and verification
-       ↓
-Structured cited response OR no_evidence
+Participant ID:
+Role:
+Years of experience:
+Company type:
+Codebase situation:
+Recent example:
+What they actually did:
+Where they got stuck:
+Current workaround:
+Time / effort involved:
+Consequence of uncertainty:
+Evidence they trusted:
+What they distrusted:
+Notable quote:
+Researcher interpretation:
+Follow-up hypothesis:
 ```
 
-Chat also uses a conversation service with in-memory sessions, caching, and rate limiting.
+### Completed Exploratory Interview — P01
 
-# Stack
+| Interview detail | Record |
+|---|---|
+| **Date** | 14 October 2026 (from the shared message timestamps) |
+| **Participant** | P01 (anonymized) |
+| **Format** | Informal, exploratory conversation |
+| **Evidence source** | Conversation transcript shared by the project owner |
 
-| Layer | Technology | Why it is used |
-|---|---|---|
-| Frontend | Next.js 15, TypeScript | Interactive category-specific UI |
-| Backend | FastAPI, Pydantic | Typed API and Python-based model/ingestion integration |
-| Graph | Neo4j Aura | Decisions and repository artifacts are relationship-heavy |
-| Ingestion | PyGithub / GitHub API | Imports repository artifacts |
-| Investigate LLM | Gemini through an OpenAI-compatible endpoint, with failover | Historical answer synthesis |
-| Chat LLM | Sarvam AI (`sarvam-2`) | Chat and general Q&A path |
-| Hosting | Vercel frontend | Deployment of the frontend |
+> **Scope note:** The transcript discusses the participant's developer experience but does not specify an exact job title or employer. Those details are not assumed here.
 
-Backend hosting is not confirmed here.
-
-# Evidence and Grounding
-
-1. Retrieved snippets are checked against source text.
-2. Claims are expected to reference an `evidence_id`.
-3. Unsupported or uncited claims are removed by the grounding layer.
-4. If retrieval produces no useful evidence, the LLM is bypassed and `no_evidence` is returned.
-5. Confidence is computed outside the LLM from evidence-related signals and citation behavior.
-
-# Evaluation and Verification
-
-The project README reports:
-
-| Evaluation | Reported result |
-|---|---:|
-| Historical questions | 25/25 |
-| Repository questions | 10/10 |
-| General questions | 5/5 |
-| Hybrid questions | 4/5 |
-| Overall classifier | **44/45 (97.8%)** |
-| Golden retrieval URLs | **25/25** |
-| Backend tests | **28 passing** |
-
-These are **README-reported, not independently rerun for this spec**. Benchmark results evaluate system behavior; they do not establish user demand, usability, or product-market fit.
-
-# Early User Research
-
-**Three exploratory developer conversations are recorded.** P01 is dated 14 October 2026. Dates, job titles and employers for P02 and P03 were not supplied in the notes reviewed here, so these details are not inferred. P02's supplied excerpt is partial. The P03 excerpt covers workflow-improvement, trust and post-concept-feedback questions but does not include answers to questions 1–7 or a concrete past incident.
-
-### Preliminary observations from P01
+#### What P01 described
 
 > “The commits mostly described what changed, not why.”
 >
 > “I'd rather see ‘couldn't find enough evidence’ than some made-up reasoning.”
 
-The first quote refers to P01's experience searching history. The second came after the product concept was introduced, so it is concept feedback, not evidence of adoption.
+The first quote describes the participant's history-search experience. The second was said after the product concept was introduced, so it is treated as concept feedback rather than evidence of adoption.
 
-- P01 described understanding how modules, files and request/data flow connect as harder than understanding individual functions.
-- P01 described an API call passing through multiple layers; Git history offered clues but did not clearly explain the design rationale.
-- P01 described tracing code, checking documentation and Git history, reading tests, reproducing behavior, and testing assumptions before changing code.
+- **Understanding the whole system was harder than understanding individual functions.** P01 described difficulty connecting files and modules, tracing data flow, and understanding what happened when a request arrived.
+- **The reason behind a design could remain unclear even after the code was traced.** In one example, the same API call passed through multiple layers. P01 could follow what each layer did, but could not confidently establish why it had been structured that way.
+- **Git history gave clues, not always rationale.** P01 said commits often described what changed rather than why. Documentation and history helped partially, but did not always tell the whole story.
+- **The fallback workflow was hands-on investigation.** P01 described tracing the code, checking documentation and Git history, reading tests, reproducing behavior, and testing assumptions before changing anything.
+- **Trust depends on inspectable evidence.** After CodeArchaeologist was introduced, P01 emphasized exact commit/PR links, visible confidence, and a clear refusal when evidence was insufficient. This is concept feedback after the idea was disclosed—not proof of adoption.
 
-### Preliminary observations from P02
+#### Preliminary Insight Ledger
 
-- P02 said tests help clarify expected behavior, while commit messages sometimes fail to explain why a design decision was made.
-- P02 described having to move across commits, PRs and discussions to connect code with its rationale.
-- P02 wanted more than a bare PR link: a concise summary, relevant discussion, and a link back to the actual code.
-- P02 identified a key risk: an AI could treat a related commit as proof of the real reason, especially when old discussions are incomplete or outdated. P02 wanted evidence and inference distinguished and a refusal when evidence is insufficient.
-- After the concept was introduced, P02 said the tool sounded useful. As prompted concept feedback, this is not proof of actual use or adoption.
+| Insight | Origin | Type | Confidence | Product implication |
+|---|---|---|---|---|
+| Understanding how modules and request/data flow connect can be harder than understanding individual functions. | P01 transcript | Participant-reported experience | **Low** — one participant | Keep repository and architecture context visible alongside historical rationale. |
+| Git history may identify a change without explaining why it was made. | P01 transcript | Participant-reported experience | **Low** — one participant | Prioritize linking an answer to the relevant commit, PR, issue, and source excerpt. |
+| A useful explanation must be verifiable; a confident but unsupported explanation could be misleading. | P01 transcript, including concept feedback | Reported trust requirement | **Preliminary** — concept was introduced | Make sources and uncertainty visible, and preserve the `no_evidence` refusal behavior. |
 
-### Preliminary observations from P03
+#### What this interview changes
+
+The first conversation gives a concrete example to investigate further: the problem may include both **understanding system-level flow** and **recovering the rationale behind a particular design choice**. That suggests the product should connect historical evidence to repository context rather than return a standalone explanation.
+
+This interview does **not** establish how common the problem is, quantify time saved, prove willingness to adopt the product, or validate PMF. Further interviews must test whether these themes recur independently.
+
+### Validation threshold
+
+A practical first threshold is:
+
+> **At least 3 of 5 eligible developers independently describe a recurring difficulty in recovering historical rationale, and at least 3 of 5 say source-backed historical context would be useful in that workflow.**
+
+This is a **future validation criterion, not a completed result**.
+
+---
+
+### Second Exploratory Interview — P02
+
+| Interview detail | Record |
+|---|---|
+| **Participant** | P02 (anonymized) |
+| **Format** | Exploratory developer conversation; supplied notes cover workflow, trust, and concept feedback |
+| **Date** | Not recorded in the notes supplied for this participant |
+| **Role / employer** | Not specified; not inferred |
+| **Evidence source** | Responses shared by the project owner |
+
+#### What P02 described
+
+- **Tests and Git history are useful but incomplete.** P02 said tests help clarify expected behavior, while commit messages sometimes fail to explain the reason behind a design decision. When the context remains unclear, the participant tries to understand impact and test assumptions before making a change.
+- **Historical context takes searching across repository artifacts.** P02 described needing to move across commits, PRs, and discussions to connect code with the reason it was written that way.
+- **Source links alone are a starting point, not the whole experience.** P02 wanted a concise explanation, relevant discussion, and a link back to the actual code so they would not have to read an entire PR for one detail.
+- **The main failure mode is a convincing but unsupported explanation.** P02 raised the risk of treating a related commit as proof of the real reason, especially when old discussions are incomplete or outdated. They wanted the system to distinguish evidence from inference and refuse when evidence is insufficient.
+- **Concept feedback was positive but prompted.** After the tool was introduced, P02 said the idea could be useful. Because this response followed the product explanation, it is recorded as concept feedback—not evidence of actual usage or adoption.
+
+#### P02's contribution to the Insight Ledger
+
+| Insight | Origin | Type | Confidence | Product implication |
+|---|---|---|---|---|
+| Tests help establish expected behavior, but may not explain why a design choice was made. | P02 interview notes | Participant-reported workflow | **Low** — one participant | Treat tests as useful context, not a substitute for historical rationale. |
+| Finding rationale can require jumping across commits, PRs, and discussions. | P02 interview notes | Participant-reported friction | **Low** — one participant | Present a connected source trail and concise, traceable excerpts. |
+| A related source must not be presented as proof unless it supports the claim. | P02 interview notes, including concept feedback | Reported trust requirement | **Preliminary** — concept was introduced | Clearly separate evidence from inference; refuse when support is insufficient or ambiguous. |
+
+#### What changes after P02
+
+P02 reinforces several themes also present in P01's account: commit history may explain *what* changed without explaining *why*, and evidence needs to be easy to inspect. P02 adds a useful emphasis on linking the explanation back to the relevant code and treating tests as context for expected behavior.
+
+These were **early cross-interview signals, not robust recurring findings**. At that stage only two participants had been recorded, and P02's notes were partial. The positive reaction to the concept did not prove adoption or PMF.
+
+### Third Exploratory Interview — P03
+
+| Interview detail | Record |
+|---|---|
+| **Participant** | P03 (anonymized) |
+| **Format** | Exploratory developer conversation; the supplied excerpt covers workflow-improvement, trust, and post-concept-feedback questions |
+| **Date** | Not supplied |
+| **Role / employer** | Not specified; not inferred |
+| **Evidence source** | Responses shared by the project owner |
+| **Completeness note** | The excerpt begins at the question about what could be easier and does not include answers to questions 1–7 or a concrete past incident. No specific time cost or past outcome is inferred. |
+
+P03's supplied wording included:
 
 > “I wouldn't want another tool that just summarizes everything without actually helping me find the source.”
 >
+> “If there's no clear evidence for a design decision, it should say that rather than generate a convincing explanation based on guesses.”
+>
 > “I wouldn't want to add another tool to my workflow unless it genuinely saves me time.”
 
-These are excerpts from the supplied later-stage interview responses; the product concept had already been introduced before the adoption-related comment.
+These statements come from the supplied excerpt; the source/trust and tool-adoption comments were made during the later interview discussion, including after the concept was introduced.
 
-- P03 described the current process as fragmented across code, Git history, PRs, and issues, and suggested starting the search from a code location such as a function.
-- P03 preferred a combination of original PR/commit, discussion, and current relevant code. The participant said a PR discussion may explain trade-offs better than a commit alone, and emphasized checking whether old reasoning still applies to today's code.
-- P03 wanted evidence and inference clearly distinguished, and wanted the tool to acknowledge when no clear rationale could be found.
-- After the concept was introduced, P03 named unfamiliar codebases and legacy logic as possible use cases, but questioned how often a dedicated tool would be needed instead of GitHub search or the usual debugging workflow. This is prompted concept feedback, not proof of adoption.
-- **Scope limitation:** the supplied P03 excerpt does not include answers to questions 1–7 or a concrete past incident. No specific time saved, frequency, or consequence is inferred.
+#### What P03 described
 
-These are **preliminary observations from three participants**, not evidence that the problem is widespread or that anyone will adopt the product. P02 and P03's supplied notes are partial, and concept feedback is distinguished from reported past behavior.
+- **The current workflow feels fragmented.** P03 described jumping between code, Git history, PRs, and issues, and wanted searching across these artifacts to start from the code itself.
+- **The preferred result is a connected evidence trail, not a summary alone.** P03 described an ideal flow of selecting a function, seeing relevant history, receiving a short explanation, and opening the original discussions and code.
+- **A PR discussion was considered more informative than a commit alone.** P03 said the discussion may reveal trade-offs, while a commit may show what changed without establishing why. The participant preferred a combination of PR/commit, discussion, and relevant current code.
+- **Historical rationale must be checked against the current code.** P03 specifically raised the possibility that an old explanation may no longer apply after later changes.
+- **Inference must be labeled and missing evidence acknowledged.** P03 wanted the tool to state when it could not find a clear reason rather than generate a plausible story from guesses.
+- **Usefulness depends on a real workflow advantage.** After the concept was introduced, P03 identified unfamiliar codebases and legacy logic as possible use cases, but said ordinary changes may not justify a separate tool. Results must be fast, relevant, easy to verify, and worth the setup cost.
+- **Demand remains uncertain.** In closing concept feedback, P03 explicitly questioned how often developers would need a dedicated product versus GitHub search or their normal debugging workflow. This is prompted concept feedback, not evidence of adoption.
 
-### First-Time Tester Feedback — T01 (separate from interviews)
+#### P03's contribution to the Insight Ledger
 
-T01 is a first-time tester separate from P01–P03. Their date, role, and experience were not supplied, and this feedback is not counted as a fourth developer interview. T01 clarified that the later message describing all four tasks as completed independently was hypothetical, not a new app test. Therefore, it is **not actual usability-test evidence** and must not be counted in the score.
+| Insight | Origin | Type | Confidence | Product implication |
+|---|---|---|---|---|
+| Connecting code to its history can require searching across separate repository artifacts. | P03 supplied excerpt | Participant-reported friction | **Low** — one participant; excerpt is partial | Let users begin from a code location and connect relevant commits, PRs, issues, and discussions. |
+| A useful rationale needs evidence plus current-code context; a commit link by itself may not establish why. | P03 supplied excerpt | Reported trust and workflow requirement | **Low** — one participant; concept discussion included | Show the most relevant source discussion alongside the changed code and make the relationship to the current code inspectable. |
+| A system should label inference, acknowledge missing rationale, and avoid inventing an explanation. | P03 supplied excerpt, including post-concept discussion | Reported trust requirement | **Preliminary** — stated in a concept-focused section | Separate source-backed claims from inference and preserve the `no_evidence` behavior. |
+| Adoption depends on being faster and easier than the existing workflow, not merely producing a plausible answer. | P03 supplied excerpt, including post-concept discussion | Reported adoption condition / concept feedback | **Preliminary** — concept was introduced | Measure end-to-end time and verification effort; test whether GitHub search or current debugging habits already solve the need. |
 
-| Task | Actual reported status | Evidence status |
+#### What changes after P03
+
+P03 adds specificity to the workflow hypothesis: developers may want to start from a function and retrieve a linked chain of historical context, including discussion and current code—not just receive a standalone summary. P03 also raises a key counter-hypothesis that should remain open: the pain may be real but too infrequent, or existing GitHub search may be good enough to reduce demand for a dedicated tool.
+
+Across P01–P03, source traceability and caution about unsupported explanations appear in all three supplied accounts, while the detailed workflow and context needs differ. This is a **preliminary cross-interview signal**, not proof that the problem is widespread. P02 and P03 excerpts are partial, several trust statements occurred after the concept was introduced, and no adoption, time-saved, or willingness-to-pay behavior has been demonstrated.
+
+## Earlier Simulated Conversations
+
+Three AI-generated conversations from an earlier session were used only to rehearse interview questions. They remain separate from the reported P01, P02, and P03 conversations and are **not real participants, findings, quotes, or validation**. They do not contribute to the Insight Ledger.
+
+
+## First-Time Tester Feedback — T01
+
+T01 is a first-time tester separate from P01–P03. Their date, experience, and background were not supplied. The tester liked the interface and concept, but the **actual task-level report is incomplete**. T01 clarified that a later message describing all four tasks as completed independently was hypothetical, not a new test attempt; it must not be counted as observed usability evidence.
+
+### Actual task-level status
+
+| Stranger-test task | Actual reported status | What is known |
 |---|---|---|
-| Ask a question in the app | **Completed independently** | T01 said AI Chat and Investigate were easy enough to find. |
-| Find an answer explaining a historical design decision | **Could not complete** | T01 said they explored the interface but did not finish the interaction end to end. |
-| Open original source links and verify support | **Not tested** | No observed source-opening or claim-verification result is available. |
-| Ask a question with no historical evidence and understand the response | **Not tested** | T01 explicitly said they had not verified the app’s actual response. Their comments about desired no-evidence behavior are hypothetical preferences, not an observed outcome. |
+| 1. Ask a question in the app | **Completed independently** | T01 said AI Chat and Investigate were easy enough to find. |
+| 2. Find an answer explaining a historical design decision | **Could not complete** | T01 said they explored the interface but did not complete this interaction end to end. |
+| 3. Open original source links and check the explanation | **Not tested** | No observed source-opening or claim-verification result is available. |
+| 4. Test a question with little/no expected historical evidence | **Not tested** | T01 explicitly clarified they had not verified the app’s actual response. Their comments about ideal no-evidence behavior are preferences, not an observed result. |
 
-**Actual score: 1/4 tasks completed independently.** The proposed criterion is ≥3/4, so it is **not met**. Since tasks 3–4 were not tested, the usability test is incomplete; this does not establish that those app paths fail. The hypothetical 4/4 report is excluded.
+**Scoring:** 1/4 tasks were completed independently. The proposed criterion is at least 3/4, so the criterion is **not met**. Because tasks 3–4 were not tested, this is an incomplete usability test—not proof that those features fail. The hypothetical 4/4 response is excluded from the actual score.
 
-### Qualitative feedback
+### What the tester said
 
 > “I also liked the overall interface—it feels clean and gives the project a proper developer-tool vibe.”
 >
@@ -289,68 +643,213 @@ T01 is a first-time tester separate from P01–P03. Their date, role, and experi
 >
 > “My main suggestion would be to make the evidence and confidence level really clear so users can quickly tell what the history actually confirms versus what the AI is inferring.”
 
-- **Positive impression:** T01 liked the design and developer-tool presentation; this is qualitative feedback, not a usability pass.
-- **Perceived value:** T01 could imagine using it on unfamiliar or legacy code, but this does not prove adoption or time saved.
-- **Observed usability issue:** T01 completed the question task but could not complete the historical-answer task. The supplied notes do not identify the precise blocker, so the cause is not inferred.
-- **Session boundary:** source-link verification and the app's actual no-evidence response were not observed in T01's session.
-- **UX suggestion:** make AI Chat versus Investigate easier to distinguish, potentially with a short example. This is one tester's suggestion, not a demonstrated pattern across users.
-- **Trust suggestion:** make source evidence, inference, and confidence easy to distinguish. This is a desired product behavior, not proof of current behavior under the no-evidence test.
-- **Time-saving is unproven:** no timing data or comparison with a manual workflow was provided.
+### Evidence-backed interpretation
 
-**Design implication:** give first-time users a clearer distinction between AI Chat and Investigate, potentially through a short example. The tester also recommended making evidence, inference, and confidence visibly distinct. These are qualitative design inputs rather than verified outcomes from the untested source-verification and no-evidence tasks.
+- **Positive first impression:** T01 liked the interface and developer-tool presentation. This is qualitative feedback, not a usability pass.
+- **Perceived value:** T01 could imagine using the concept on unfamiliar or legacy code. Their interest in testing it on a real project is not evidence of measured time savings or adoption.
+- **Observed usability issue:** T01 completed the initial question task but could not complete the historical-answer task. The supplied notes do not identify the exact point of failure, so the cause is not inferred.
+- **Session boundary:** source-link verification and the app’s response to a low-evidence question were not observed in this tester’s session.
+- **UX suggestion:** make AI Chat versus Investigate easier to distinguish, potentially with a short example. This is one tester’s suggestion and should be checked with another first-time user before treating it as a broad issue.
+- **Trust suggestion:** distinguish source-backed evidence from AI inference and make evidence/confidence easy to inspect. This is a desired behavior, not proof that the current UI handles the tested case correctly.
+- **Time-saving is unmeasured:** T01 wants to evaluate the tool on a real project; no timing or comparison with the existing workflow was supplied.
 
-### Preliminary Insight Ledger
+**Design implication:** clarify the difference between AI Chat and Investigate with a short example, and make evidence, inference, and confidence easy to distinguish. These are product recommendations from one tester, not claims that the corresponding interaction has been validated. T01 is a tester feedback record, not an additional developer interview or PMF proof.
 
-| Insight | Origin | Type | Confidence | Product implication |
-|---|---|---|---|---|
-| Connecting modules and request/data flow can be harder than reading individual functions. | P01 | Participant-reported experience | Low; one participant | Preserve repository/architecture context in the investigation experience. |
-| Git history can identify what changed without clarifying why, and recovering rationale may require searching across separate artifacts. | P01, P02, P03 | Participant-reported experiences | **Preliminary cross-interview signal**; three accounts, partial notes for P02/P03 | Let users start from code and navigate a connected chain of commits, PRs, issues and discussion. |
-| Tests help establish expected behavior but do not necessarily explain the historical rationale. | P02 | Participant-reported workflow | Low; one participant | Treat tests as context, not a substitute for historical source evidence. |
-| A useful answer should connect historical discussion to relevant current code; a commit link alone may not explain the rationale. | P02, P03 | Reported workflow / trust requirement | Low; two participants; concept feedback included | Show the original discussion, linked code and whether the historical explanation still applies. |
-| Trust depends on an inspectable source trail and a clear distinction between evidence and inference. | P01, P02, P03; T01 valued source links and evidence/confidence clarity, but did not actually test source verification or the no-evidence path | Reported trust requirements / concept feedback | Preliminary; three accounts plus one tester, partly prompted; T01’s hypothetical 4/4 report is not test evidence | Show exact sources, relevant excerpts and uncertainty; preserve `no_evidence`. |
-| First-time users may benefit from a clearer explanation of AI Chat versus Investigate. | T01 usability suggestion | Qualitative usability feedback | Low; one tester | Product-design option: a brief example or use-case hint for each mode. |
-| Users need to distinguish history-confirmed evidence from AI inference, with a clear confidence/evidence display. | T01 qualitative feedback | Qualitative trust / UX suggestion | Low; one tester; preference only, not evidence the current no-evidence path behaved this way | Consider labels for evidence, inference, and confidence; evaluate with additional first-time users rather than assuming a design solution. |
-| A dedicated tool must beat existing search/debugging workflows on speed, relevance and setup effort. | P03, after concept introduction | Counter-hypothesis / adoption condition | Preliminary; one participant, concept-focused | Test time-to-answer and verification effort against current workflows before claiming demand. |
+---
 
-**Research synthesis:** Three exploratory developer conversations yield early examples of fragmented historical search and a desire for verifiable reasoning. T01's recorded usability result is 1/4 independently completed; the later 4/4 account was hypothetical and is not treated as a retest. The session suggests a clearer AI Chat/Investigate distinction and more visible evidence-versus-inference cues. The available evidence supports product-design hypotheses but does not establish widespread demand or product-market fit.
+## Evidence Snapshot
 
-# Opportunity Sizing
+| Area | Current record |
+|---|---|
+| Problem, ICP, substitutes, and product mechanism | Documented as the current product hypothesis |
+| Exploratory developer conversations | Three records (P01–P03); P02/P03 excerpts are partial |
+| Insight Ledger | Preliminary synthesis across P01–P03, with confidence labels |
+| Assumption tests | Test designs and pass/inconclusive/fail bands documented; no outcomes are represented as observed |
+| First-time usability | T01 independently completed 1/4 tasks; task 2 could not be completed; tasks 3–4 were not tested |
+| Opportunity sizing | Source-backed ecosystem boundary plus clearly labelled assumption-based scenarios in `RESEARCH_EVIDENCE.md` |
+| Technical benchmarks | README-reported results; exact commands and execution boundary documented in `TECHNICAL_VALIDATION.md` |
 
-The detailed source trail and calculation are in `RESEARCH_EVIDENCE.md`. GitHub's About page displays **225M+ developers**, used here only as a broad ecosystem ceiling—not as a qualified buyer count. The 2025 Stack Overflow Developer Survey reports an AI-output trust concern, which provides context for evidence-first design but does not establish demand for CodeArchaeologist.
+### Opportunity Sizing — Scenario Model
 
-Because the share of developers who regularly need historical design rationale is not established by the sources reviewed, the sizing is scenario-based:
+The source register in `RESEARCH_EVIDENCE.md` uses GitHub's published **225M+ developers** as a broad ecosystem ceiling, not as a count of qualified buyers. The same file cites the 2025 Stack Overflow survey's AI-output trust finding as context for evidence-first design, not as proof of demand.
 
-| Scenario | Assumed recurring-need share | Scenario-defined potential users | Assumed paid conversion | Paid seats | Annualised gross revenue at $8/seat/month |
-|---|---:|---:|---:|---:|---:|
-| Conservative | 0.001% of 225M | 2,250 | 1% | 23 | $2,208 |
-| Planning case | 0.005% of 225M | 11,250 | 1% | 113 | $10,848 |
-| Stretch case | 0.01% of 225M | 22,500 | 1% | 225 | $21,600 |
+Because public sources do not quantify how many developers repeatedly need historical rationale, the model uses explicit sensitivity assumptions rather than presenting a fabricated market statistic:
 
-The recurring-need percentages, $8 monthly price, and 1% conversion are **unvalidated assumptions**. These are sensitivity scenarios, not measured TAM/SAM/SOM or a revenue forecast. They make the underlying assumptions explicit without claiming that all GitHub developers are potential buyers.
+| Scenario | Assumed share of broad GitHub developer baseline with recurring need | Scenario-defined users | Assumed 1% paid conversion | Annualised gross revenue at $8/user/month |
+|---|---:|---:|---:|---:|
+| Conservative | 0.001% | 2,250 | 23 seats | $2,208 |
+| Planning case | 0.005% | 11,250 | 113 seats | $10,848 |
+| Stretch case | 0.01% | 22,500 | 225 seats | $21,600 |
 
-# Technical Validation Record
+The $8 monthly price and the need-share/conversion rates are **assumptions, not research findings**. The resulting 23–225 paid seats and $2.2K–$21.6K annualised gross revenue are scenario outputs, not forecasts or validated TAM/SAM/SOM claims. The model is useful for showing which assumptions control the answer; it does not establish willingness to pay or product-market fit. See `RESEARCH_EVIDENCE.md` for sources and arithmetic.
+### PMF Conclusion
 
-The landing page was reachable during a page-level review, and its primary navigation was visible. This did not exercise a repository question or verify source-link and no-evidence behavior. The README reports 28 passing backend tests, 44/45 classifier accuracy, and 25/25 golden retrieval matches; those figures remain README-reported because the repository code was not available in the local working folder for execution. The test commands and scope of the inspection are listed in `TECHNICAL_VALIDATION.md`.
+The three exploratory conversations provide early examples of difficulty recovering historical rationale and make evidence traceability a candidate product requirement. P01 emphasized modules and request/data flow; P02 discussed tests and incomplete Git rationale; P03 described fragmented searching across repository artifacts and preferred links among discussion, commits, and current code. P02/P03 notes are partial, and some trust or usefulness comments followed the concept introduction. P03 also raised a counter-hypothesis: GitHub search or normal debugging workflows may be sufficient for many changes.
 
-# Limitations
+The current evidence supports a preliminary problem hypothesis, not a market-wide conclusion. T01 independently completed 1/4 tasks, could not complete the historical-answer task, and did not test source verification or the no-evidence response; a later 4/4 description was hypothetical and is excluded. The proposed ≥3/4 criterion was not met in the reported session. No measured time saved, willingness-to-pay, or adoption result is claimed.
 
-1. The knowledge base is curated and does not contain the complete Flask history.
-2. The MVP is centered on one repository.
-3. Relevant rationale may not exist in the available source history.
-4. Model-generated wording may vary.
-5. Sessions and rate limiting use in-memory state.
-6. A 45-question benchmark cannot prove broad real-world performance.
-7. User validation is preliminary: three exploratory conversations, including two partial excerpts, plus one first-time tester are not enough to establish PMF. T01 completed 1/4 tasks independently; the later 4/4 description was explicitly hypothetical, so the proposed usability threshold is not met.
+---
 
-# Validation Boundary
+# Activity 6 — Build and Systemize
 
-The current project record separates four kinds of evidence: implementation descriptions, README-reported technical evaluation, exploratory interview material, and a first-time tester's observed task results. The technical figures are not presented as independently rerun results. Interview excerpts are qualitative and partial for P02/P03. T01's recorded session supports an initial-interface observation, not a successful end-to-end usability score: 1/4 tasks were independently completed, the historical-answer task could not be completed, and source verification plus no-evidence behavior were not tested.
+The existing deployed application is the implementation documented here.
 
-The evidence is useful for guiding product decisions—especially clearer mode selection, inspectable source links, and visible distinction between history-supported claims and inference—but does not establish broad product-market fit or measured time savings. These boundaries describe the strength of the current evidence; they do not imply that the implementation is unfinished.
+## Meaningful User Flow
 
+```text
+Ask "why?"
+    ↓
+Classify
+    ↓
+Retrieve decisions / PRs / issues
+    ↓
+Verify evidence
+    ↓
+Synthesize grounded answer
+    ↓
+Show sources / people / dates
+    ↓
+Developer decides what to do next
+```
 
-## Supporting assessment artifacts
+## Stack + Why
 
-- `BUILD_LOG.md` — activity-by-activity process and evidence history.
-- `RESEARCH_EVIDENCE.md` — public sources, evidence classification, and opportunity-sizing arithmetic.
-- `TECHNICAL_VALIDATION.md` — documented commands and review boundaries.
+| Choice | Why |
+|---|---|
+| **FastAPI / Python** | One backend language for ingestion, API and model integration |
+| **Neo4j Aura** | Repository history is naturally relationship-heavy |
+| **Gemini via OpenAI-compatible endpoint** | Investigate synthesis with failover |
+| **Sarvam AI** | Chat and general Q&A path |
+| **Deterministic classifier** | Predictable and testable routing |
+| **Next.js 15 / Vercel** | Interactive frontend and straightforward deployment |
+
+## Architecture
+
+```text
+Next.js
+   ↓
+FastAPI
+   ↓
+Query Classifier
+   ↓
+Retrieval
+ ├── Neo4j graph
+ ├── repository context
+ └── optional vectors
+   ↓
+Category-specific synthesis
+   ↓
+Grounding / Verification
+   ↓
+Structured answer + evidence
+```
+
+Chat additionally uses session handling, caching and rate limiting.
+
+## Evidence + Confidence
+
+1. Evidence snippets are checked against source text.
+2. Claims require `evidence_id`.
+3. Unsupported claims are removed.
+4. No useful evidence → bypass the LLM.
+5. Return `no_evidence` instead of inventing rationale.
+6. Confidence is computed outside the model.
+
+## System Evaluation
+
+| Evaluation | Result |
+|---|---|
+| Historical questions | 25/25 |
+| Repository questions | 10/10 |
+| General questions | 5/5 |
+| Hybrid questions | 4/5 |
+| Overall classifier | **44/45 = 97.8%** |
+| Golden retrieval URLs | **25/25** |
+| Backend tests | **28 passing** |
+
+These are **README-reported results, not independently re-run**.
+
+## Technical Validation Record
+
+The public landing page loaded during the final review and showed the `pallets/flask` label plus Repository, AI Chat, Investigate, and Decisions navigation. This is a page-level observation only; no end-to-end question was submitted.
+
+The repository README defines these commands:
+
+```bash
+cd backend && pytest
+cd backend && python3 -m app.eval
+cd backend && python3 -m app.smoke
+cd frontend && npx tsc --noEmit
+```
+
+The repository source tree was not mounted in the working folder, and this environment could not resolve `github.com` when a checkout was attempted. Those commands therefore were not executed for this package. See `TECHNICAL_VALIDATION.md` for the distinction between observed, README-reported, and unexecuted checks. No fresh test result is inferred.
+
+## Failure / Break Cases
+
+The existing project includes tests for:
+
+- fabricated evidence rejection
+- uncited-claim stripping
+- partial-confidence handling
+- rate limiting
+- session isolation
+- API contract behavior
+
+A dedicated adversarial break-test log was not separately verified.
+
+## Review
+
+| Review | Status |
+|---|---|
+| Automated tests | Exists; README-reported |
+| Benchmark | Exists; README-reported |
+| Human / AI review record | The project README documents automated unit, benchmark, and smoke-check methods; a separate AI-review transcript is not part of this assessment pack |
+| **Stranger-test observation** | **1/4 tasks independently completed in the reported session; 2 were not tested** |
+
+## Reusable Workflow
+
+```text
+github_ingest
+    ↓
+normalize
+    ↓
+extract_decisions
+    ↓
+neo4j_schema
+    ↓
+neo4j_ingest
+    ↓
+eval
+    ↓
+smoke
+```
+
+This is the intended repeatable workflow for changing the repository/data source.
+
+---
+
+# Evidence Boundary
+
+The implementation is built and deployed. The documentation includes three exploratory developer conversations, a preliminary Insight Ledger, the T01 first-time tester report, proposed assumption-test criteria, and README-reported technical evaluation results. These evidence types answer different questions: automated benchmarks assess selected system behaviors, interviews reveal reported experiences and preferences, and observed usability tasks show what one first-time tester actually completed. They should not be treated as interchangeable proof of product-market fit.
+
+T01's recorded result is 1/4 tasks independently completed; the historical-answer task could not be completed, and source verification and the no-evidence path were not tested. A later 4/4 message was explicitly hypothetical, not a retest, and is excluded. The project therefore makes no claim that the proposed usability threshold was achieved.
+
+> **Implementation completion ≠ product validation.**
+
+---
+
+# The Through-Line
+
+We started with a developer problem, not an AI feature.
+
+We asked where AI could help, kept judgment human-owned, challenged the assumption that fluent answers are trustworthy, and built the product around a simple rule:
+
+> **Make the answer easier to check, not merely easier to believe.**
+
+The technical implementation is built and deployed; the available automated test metrics remain README-reported in this assessment pack.
+
+## Assessment artifacts
+
+- `PROJECT_SPEC.md` — product contract and implementation boundaries.
+- `RESEARCH_EVIDENCE.md` — source register, evidence labels, and opportunity-sizing assumptions.
+- `TECHNICAL_VALIDATION.md` — repository test commands and the exact scope of the final review.

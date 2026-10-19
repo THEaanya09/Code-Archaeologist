@@ -1,4 +1,4 @@
-# BUILD LOG: CodeArchaeologist
+# BUILD LOG | CodeArchaeologist
 
 > **Code tells you what. History tells you why.**
 
@@ -6,8 +6,26 @@ You join a project, open a file, and understand what it does in ten minutes. Und
 
 The reasoning may be spread across commits, pull requests, issues, discussions, and the people who were involved at the time. CodeArchaeologist turns that history into a searchable, evidence-grounded system for asking **why**.
 
-**Live:** https://code-archaeologist-tau.vercel.app/  
+**Live demo:** [code-archaeologist-tau.vercel.app](https://code-archaeologist-tau.vercel.app/)  
+**Source repository:** [THEaanya09/Code-Archaeologist](https://github.com/THEaanya09/Code-Archaeologist)  
 **Target repository:** `pallets/flask`
+
+> **Snapshot:** Implementation built · **1 exploratory interview completed** · Broader PMF validation pending.
+
+## At a Glance
+
+| What is complete | What remains open |
+|---|---|
+| Existing deployed app, six-activity documentation, initial interview record | Additional interviews, proposed assumption tests, stranger test, independent evaluation reruns |
+
+## Quick Navigation
+
+- [Activity 1 — Problem and leverage](#activity-1--find-a-problem-worth-solving)
+- [Activity 2 — 4D AI Fluency](#activity-2--work-with-ai-deliberately-4d-fluency)
+- [Activity 3 — Research and verification](#activity-3--research-and-verify)
+- [Activity 4 — Critical design thinking](#activity-4--challenge-the-design)
+- [Activity 5 — PMF research and P01 interview](#activity-5--product-market-fit-research)
+- [Activity 6 — Build and systemize](#activity-6--build-and-systemize)
 
 ---
 
@@ -19,16 +37,16 @@ The reasoning may be spread across commits, pull requests, issues, discussions, 
 | 2 | 4D AI Fluency | ✅ Complete |
 | 3 | Research brief and verification | ✅ Complete |
 | 4 | Critical design thinking | ✅ Complete; 48-hour tests proposed, not run |
-| 5 | PMF research | 🟡 **Partial; senior-developer interview study prepared, execution pending** |
+| 5 | PMF research | 🟡 **Partial — 1 real interview completed; additional interviews and validation pending** |
 | 6 | Build and systemize | ✅ Complete (implementation); **stranger test pending** |
 
 ### Evidence policy
 
-**Real user research:** no completed interviews have been claimed yet.
+**Real user research:** one exploratory developer interview was completed on **14 October 2026**. It is recorded below as participant **P01**. The shared transcript does not record the participant's exact job title or company, so this log does not infer those details. The findings are preliminary and represent one person's experience—not market-wide validation.
 
-**Interview study:** a structured interview protocol is prepared for 3–5 senior developers currently working in technology companies. The purpose is to validate the problem from real past behavior rather than ask participants to approve the proposed solution.
+**Interview study:** the protocol below is prepared for additional developers who have worked in unfamiliar or inherited codebases. More conversations are needed to check whether the same themes recur.
 
-**Simulated conversations:** earlier AI-generated conversations were used only to rehearse the interview questions and surface hypotheses. They are not interviews, findings, quotes, or validation.
+**Simulated conversations:** three AI-generated conversations from an earlier session were used only to rehearse interview questions. They are not interviews, findings, quotes, or validation, and are kept separate from P01's real conversation.
 
 **Synthetic / offline evaluation:** benchmark, classifier, retrieval and grounding checks evaluate the system itself. They are not user validation.
 
@@ -188,6 +206,17 @@ The goal was to use AI as a **work partner**, not an answer machine.
 
 > **Key decision:** 4D AI Fluency became a product property. The tool questions AI output instead of simply presenting it.
 
+### One task through the 4D lens: answering a historical “why” question
+
+| D | Applied to this task |
+|---|---|
+| **Delegation** | Let the system retrieve candidate context and draft an answer from repository evidence. |
+| **Description** | Specify that historical claims must use retrieved evidence and cite valid `evidence_id` values. |
+| **Discernment** | Reject unsupported snippets/claims and return `no_evidence` when evidence is insufficient. |
+| **Diligence** | Check behavior with grounding tests, benchmark questions and a smoke check; the recorded project metrics remain README-reported until rerun. |
+
+This is an implementation walkthrough of the project's approach, not a claim that a new test was run for this document.
+
 ### Artifacts
 
 Grounding logic, category-specific prompts, evaluation tooling and test modules.
@@ -243,9 +272,11 @@ The existing README reports:
 
 These are **README-reported and not independently re-run for this log**.
 
-### Artifact
+### Artifacts and evidence trail
 
-Existing benchmark questions, evaluation code and evaluation documentation.
+- **Existing project artifacts (README-reported):** benchmark question set, evaluation code and evaluation documentation.
+- **Interview evidence:** the P01 transcript shared by the project owner is summarized in Activity 5.
+- **Raw AI research-output archive:** **not located / not verified** in the material reviewed for this log. Do not imply it is saved unless the file is confirmed in the submission folder.
 
 ---
 
@@ -284,11 +315,11 @@ Existing benchmark questions, evaluation code and evaluation documentation.
 
 These are **proposed tests, not completed results**.
 
-| Assumption | Type | Proposed test | Pass | Fail | Result |
-|---|---|---|---|---|---|
-| **A1. Rationale exists in repository history** | Evidence availability | Inspect 10 known Flask changes and check whether a source explicitly states the reason | ≥7/10 | <5/10 | **Pending** |
-| **A2. Retrieval connects the right discussion to the right decision** | Technical | Run 20 "why" questions and compare returned evidence with expected threads | ≥90% | <75% | **Pending** |
-| **A3. Developers trust sourced answers enough to use them** | User | Test with real developers and observe whether they inspect sources and would act on the answer | Most do | Most ignore/distrust | **Pending** |
+| Assumption | Type | Proposed test | Pass | Inconclusive | Fail | Result |
+|---|---|---|---|---|---|---|
+| **A1. Rationale exists in repository history** | Evidence availability | Inspect 10 known Flask changes and check whether a source explicitly states the reason | ≥7/10 | 5–6/10 | ≤4/10 | **Pending** |
+| **A2. Retrieval connects the right discussion to the right decision** | Technical | Run 20 “why” questions and compare returned evidence with expected threads | ≥90% | 75–89% | <75% | **Pending** |
+| **A3. Developers trust sourced answers enough to use them** | User | Run a moderated trial with 3 developers; observe source inspection and ask whether the answer would inform a real change | ≥2/3 inspect evidence and say it could help | Mixed behavior or unclear usefulness | 0/3 find it useful or trust the evidence | **Pending** |
 
 ## Problem Statement v2
 
@@ -451,6 +482,45 @@ Researcher interpretation:
 Follow-up hypothesis:
 ```
 
+### First Completed Interview — P01
+
+| Interview detail | Record |
+|---|---|
+| **Date** | 14 October 2026 (from the shared message timestamps) |
+| **Participant** | P01 (anonymized) |
+| **Format** | Informal, exploratory conversation |
+| **Evidence source** | Conversation transcript shared by the project owner |
+
+> **Scope note:** The transcript discusses the participant's developer experience but does not specify an exact job title or employer. Those details are not assumed here.
+
+#### What P01 described
+
+> “The commits mostly described what changed, not why.”
+>
+> “I'd rather see ‘couldn't find enough evidence’ than some made-up reasoning.”
+
+The first quote describes the participant's history-search experience. The second was said after the product concept was introduced, so it is treated as concept feedback rather than evidence of adoption.
+
+- **Understanding the whole system was harder than understanding individual functions.** P01 described difficulty connecting files and modules, tracing data flow, and understanding what happened when a request arrived.
+- **The reason behind a design could remain unclear even after the code was traced.** In one example, the same API call passed through multiple layers. P01 could follow what each layer did, but could not confidently establish why it had been structured that way.
+- **Git history gave clues, not always rationale.** P01 said commits often described what changed rather than why. Documentation and history helped partially, but did not always tell the whole story.
+- **The fallback workflow was hands-on investigation.** P01 described tracing the code, checking documentation and Git history, reading tests, reproducing behavior, and testing assumptions before changing anything.
+- **Trust depends on inspectable evidence.** After CodeArchaeologist was introduced, P01 emphasized exact commit/PR links, visible confidence, and a clear refusal when evidence was insufficient. This is concept feedback after the idea was disclosed—not proof of adoption.
+
+#### Preliminary Insight Ledger
+
+| Insight | Origin | Type | Confidence | Product implication |
+|---|---|---|---|---|
+| Understanding how modules and request/data flow connect can be harder than understanding individual functions. | P01 transcript | Participant-reported experience | **Low** — one participant | Keep repository and architecture context visible alongside historical rationale. |
+| Git history may identify a change without explaining why it was made. | P01 transcript | Participant-reported experience | **Low** — one participant | Prioritize linking an answer to the relevant commit, PR, issue, and source excerpt. |
+| A useful explanation must be verifiable; a confident but unsupported explanation could be misleading. | P01 transcript, including concept feedback | Reported trust requirement | **Preliminary** — concept was introduced | Make sources and uncertainty visible, and preserve the `no_evidence` refusal behavior. |
+
+#### What this interview changes
+
+The first conversation gives a concrete example to investigate further: the problem may include both **understanding system-level flow** and **recovering the rationale behind a particular design choice**. That suggests the product should connect historical evidence to repository context rather than return a standalone explanation.
+
+This interview does **not** establish how common the problem is, quantify time saved, prove willingness to adopt the product, or validate PMF. Further interviews must test whether these themes recur independently.
+
 ### Validation threshold
 
 A practical first threshold is:
@@ -461,40 +531,25 @@ This is a **future validation criterion, not a completed result**.
 
 ---
 
-## Simulated Conversations
+## Earlier Simulated Conversations
 
-Earlier AI-generated conversations were used only to rehearse the interview questions.
-
-They surfaced hypotheses around:
-
-- understanding *what* before *why*
-- difficulty navigating Git history
-- importance of source links for trust
-- incomplete history as a possible failure mode
-
-They are **not real participants, findings, quotes, or validation**.
+Three AI-generated conversations from an earlier session were used only to rehearse interview questions. They remain separate from the real P01 interview and are **not real participants, findings, quotes, or validation**. They do not contribute to the Insight Ledger above.
 
 ---
 
 ## Validation Status
 
-| Item | Status |
-|---|---|
-| PMF hypothesis | ✅ Reasoned |
-| ICP | ✅ Reasoned |
-| Practical ICP scenarios | ✅ Documented |
-| Substitutes | ✅ Documented |
-| Mechanism | ✅ Documented |
-| One user flow | ✅ Documented |
-| Senior-developer interview target | ✅ Defined |
-| Interview script | ✅ Prepared |
-| Interview capture template | ✅ Prepared |
-| Validation threshold | ✅ Defined |
-| Real interviews | **Pending execution** |
-| Real Insight Ledger | **Pending** |
-| Real user validation | **Pending** |
-| Opportunity sizing | **Pending** |
-| Stranger test | **Pending** |
+| Item | Status | What would close it |
+|---|---|---|
+| PMF hypothesis, ICP, substitutes and mechanism | **Documented** | Revisit after additional interviews |
+| Interview protocol and capture template | **Prepared** | Use with additional eligible participants |
+| **Real exploratory interviews** | **1 completed (P01)** | Complete 2–4 more interviews if possible |
+| **Preliminary Insight Ledger** | **Started from P01** | Compare evidence across participants; revise confidence accordingly |
+| PMF / broader user validation | **Pending** | Look for recurring evidence across independent interviews and behavioral testing |
+| Opportunity sizing | **Pending** | Gather defensible, sourced inputs for users, price and adoption |
+| 48-hour assumption tests | **Proposed, not run** | Execute and record outcomes against pass/inconclusive/fail bands |
+| Stranger test | **Pending** | Observe an unfamiliar person using the app without coaching |
+| Independent technical reruns | **Pending** | Run the existing test/evaluation commands and preserve actual outputs |
 
 ### Opportunity Sizing
 
@@ -506,9 +561,9 @@ No defensible figures were gathered, so no opportunity number is claimed.
 
 ### PMF Conclusion
 
-The problem is **plausible and clearly scoped**.
+The first real interview provides a concrete example of difficulty connecting system flow to the reasoning behind older design decisions. It also highlights source traceability as a trust requirement.
 
-The next evidence needed is not another theoretical exercise. It is whether experienced developers describe the same pain when recalling real work they've already done.
+**One interview is an early signal, not validation.** The next step is to talk to additional developers and compare their actual experiences before treating these themes as recurring or making a PMF claim.
 
 ---
 
@@ -642,9 +697,9 @@ The implementation is built.
 
 The remaining work is **real-world validation**:
 
-- execute the senior-developer interviews
-- capture raw notes
-- build the real Insight Ledger
+- conduct additional interviews with developers
+- preserve raw notes from each conversation
+- refine the preliminary Insight Ledger using evidence across participants
 - test the PMF hypothesis
 - run the proposed 48-hour tests
 - run a stranger test
